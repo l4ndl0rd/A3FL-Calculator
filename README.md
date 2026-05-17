@@ -17,6 +17,10 @@ Statisches Webinterface für GitHub Pages. Es benötigt kein Backend, keine Date
 ## Funktionen
 
 - Rezeptverwaltung je Fabrik
+- Navigation über linke Sidebar statt horizontaler Header-Tabs
+- einklappbares Menü auf kleineren Bildschirmen
+- zentral gesetzte Überschrift
+- Daten-Buttons unten in der Sidebar
 - frei erweiterbare Materialstammdaten
 - Produktionsplan mit Fabrik-, Waren- und Mengenauswahl
 - automatische Berechnung der notwendigen Produktionsläufe

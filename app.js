@@ -41,6 +41,7 @@ let state = loadState();
 
 const els = {
   tabs: document.querySelector("#tabs"),
+  menuToggle: document.querySelector("#menuToggle"),
   factoryPanels: document.querySelector("#factoryPanels"),
   materialsTableBody: document.querySelector("#materialsTable tbody"),
   planTableBody: document.querySelector("#planTable tbody"),
@@ -72,6 +73,13 @@ function bindStaticEvents() {
     const tab = event.target.closest(".tab");
     if (!tab) return;
     activateTab(tab.dataset.target);
+    closeMobileMenu();
+  });
+
+  els.menuToggle.addEventListener("click", () => {
+    const isOpen = document.body.classList.toggle("menu-open");
+    els.menuToggle.setAttribute("aria-expanded", String(isOpen));
+    els.menuToggle.textContent = isOpen ? "Menü schließen" : "Menü";
   });
 
   els.addMaterialBtn.addEventListener("click", addMaterial);
@@ -178,6 +186,12 @@ function createProductCard(factory, product) {
 function activateTab(targetId) {
   document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item.dataset.target === targetId));
   document.querySelectorAll(".panel").forEach((panel) => panel.classList.toggle("active", panel.id === targetId));
+}
+
+function closeMobileMenu() {
+  document.body.classList.remove("menu-open");
+  els.menuToggle.setAttribute("aria-expanded", "false");
+  els.menuToggle.textContent = "Menü";
 }
 
 function renderMaterials() {
