@@ -22,7 +22,7 @@ Statisches Webinterface für GitHub Pages zur Verwaltung von Produktionsrezepten
   - Warenfabrik
   - Chemiefabrik
   - Illegale Waffenfabrik
-- Kompakte Fabrikauswahl per Dropdown statt überlanger Tab-Leiste
+- Calculator, Materialien und alle Fabriken in einer gemeinsamen, responsive umbrechenden Tab-Zeile
 - Lokale Speicherung im Browser per `localStorage`
 - JSON Export/Import
 - Reset auf Standarddaten

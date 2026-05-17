@@ -87,42 +87,20 @@ h2 {
 }
 
 .tabs {
-  display: flex;
-  gap: 10px;
   padding: 8px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 22px;
   background: rgba(24, 24, 24, 0.78);
   backdrop-filter: blur(14px);
   margin-bottom: 18px;
-  align-items: center;
 }
 
-.primary-tabs {
+.tab-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  flex: 0 0 auto;
-}
-
-.factory-nav-label {
-  display: flex;
   align-items: center;
-  gap: 10px;
-  flex: 1 1 320px;
-  min-width: 240px;
-}
-
-.factory-nav-label span {
-  color: var(--muted);
-  font-size: 0.86rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.factory-select {
-  min-height: 41px;
-  border-radius: 999px;
+  justify-content: center;
 }
 
 .tab,
@@ -143,6 +121,7 @@ h2 {
   background: transparent;
   color: var(--muted);
   min-width: max-content;
+  flex: 0 0 auto;
 }
 
 .tab.active,
@@ -375,20 +354,19 @@ label {
   .tabs,
   .data-actions {
     border-radius: var(--radius);
-    flex-direction: column;
-    align-items: stretch;
   }
 
-  .primary-tabs,
-  .factory-nav-label {
-    width: 100%;
+  .tab-row {
+    justify-content: flex-start;
   }
 
-  .primary-tabs .tab,
+  .data-actions {
+    flex-wrap: wrap;
+  }
+
   .data-actions .button,
   .data-actions .file-button {
-    flex: 1;
-    width: 100%;
+    flex: 1 1 180px;
   }
 
   .calculator-grid,

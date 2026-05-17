@@ -41,7 +41,6 @@ let state = loadState();
 
 const els = {
   tabs: document.querySelector("#tabs"),
-  factorySelect: document.querySelector("#factorySelect"),
   factoryPanels: document.querySelector("#factoryPanels"),
   materialsTableBody: document.querySelector("#materialsTable tbody"),
   planTableBody: document.querySelector("#planTable tbody"),
@@ -75,11 +74,6 @@ function bindStaticEvents() {
     activateTab(tab.dataset.target);
   });
 
-  els.factorySelect.addEventListener("change", () => {
-    if (els.factorySelect.value) {
-      activateTab(els.factorySelect.value);
-    }
-  });
 
   els.addMaterialBtn.addEventListener("click", addMaterial);
   els.addPlanRowBtn.addEventListener("click", addPlanRow);
@@ -100,18 +94,25 @@ function renderAll() {
 }
 
 function renderFactoryNavigation() {
-  const currentValue = els.factorySelect.value;
-  els.factorySelect.innerHTML = `<option value="">Fabrik auswählen</option>`;
+  const activeTarget = document.querySelector(".panel.active")?.id || "calculator";
+  const fixedTabs = [
+    { target: "calculator", label: "Calculator" },
+    { target: "materials", label: "Materialien" }
+  ];
+  const factoryTabs = Object.entries(FACTORIES).map(([target, label]) => ({ target, label }));
 
-  for (const [key, label] of Object.entries(FACTORIES)) {
-    const option = document.createElement("option");
-    option.value = key;
-    option.textContent = label;
-    els.factorySelect.appendChild(option);
-  }
+  els.tabs.innerHTML = "";
 
-  if (FACTORIES[currentValue]) {
-    els.factorySelect.value = currentValue;
+  for (const tabInfo of [...fixedTabs, ...factoryTabs]) {
+    const button = document.createElement("button");
+    button.className = "tab";
+    button.dataset.target = tabInfo.target;
+    button.type = "button";
+    button.textContent = tabInfo.label;
+    if (tabInfo.target === activeTarget) {
+      button.classList.add("active");
+    }
+    els.tabs.appendChild(button);
   }
 }
 
@@ -187,12 +188,6 @@ function createProductCard(factory, product) {
 function activateTab(targetId) {
   document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item.dataset.target === targetId));
   document.querySelectorAll(".panel").forEach((panel) => panel.classList.toggle("active", panel.id === targetId));
-
-  if (FACTORIES[targetId]) {
-    els.factorySelect.value = targetId;
-  } else {
-    els.factorySelect.value = "";
-  }
 }
 
 function renderMaterials() {
