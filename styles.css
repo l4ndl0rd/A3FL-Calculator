@@ -691,3 +691,222 @@ label,
   display: grid;
   gap: 12px;
 }
+
+/* v14: responsive layout hardening */
+html {
+  scroll-padding-top: 96px;
+}
+
+.tabs {
+  top: 8px;
+  max-width: 100%;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.24);
+}
+
+.tab-row {
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+}
+
+@media (max-width: 1200px) {
+  .layout {
+    width: min(100% - 24px, 1500px);
+  }
+
+  .calculator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card .kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .app-header {
+    width: min(100% - 24px, 1100px);
+    padding: 26px 0 18px;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .tabs {
+    top: 6px;
+    padding: 7px;
+    border-radius: 18px;
+  }
+
+  .tab-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .tab {
+    padding: 9px 7px;
+    font-size: 0.78rem;
+  }
+
+  .card,
+  .product-card,
+  .modal-card {
+    padding: 16px;
+  }
+
+  .summary-card .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .data-actions {
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .data-actions .button,
+  .data-actions .file-button {
+    padding: 10px 8px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .table-wrap,
+  .recipe-table-wrap {
+    overflow: visible;
+    border: 0;
+  }
+
+  .data-table,
+  .data-table.compact,
+  .material-recipe-table,
+  .nested-recipe-table {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table,
+  .data-table tbody,
+  .data-table tr,
+  .data-table td {
+    display: block;
+  }
+
+  .data-table tr {
+    margin-bottom: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(20, 20, 20, 0.9);
+  }
+
+  .data-table td {
+    min-height: 46px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .data-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .data-table td:not(.empty-state)::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .data-table td.empty-state {
+    border: 1px dashed #444;
+  }
+
+  .data-table td.empty-state::before,
+  .data-table td.row-actions::before {
+    content: none;
+  }
+
+  .row-actions,
+  .product-actions {
+    justify-content: stretch;
+  }
+
+  .row-actions .button,
+  .product-actions .button,
+  .row-actions .icon-button,
+  .product-actions .icon-button {
+    flex: 1;
+  }
+
+  .product-readonly-main {
+    gap: 10px;
+  }
+
+  .modal-dialog {
+    width: min(100% - 18px, 860px);
+    max-height: 92dvh;
+    overflow: auto;
+  }
+
+  .modal-header {
+    gap: 10px;
+  }
+
+  .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .layout,
+  .app-header {
+    width: min(100% - 16px, 1500px);
+  }
+
+  h1 {
+    font-size: clamp(1.72rem, 10vw, 2.35rem);
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .tab-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tab {
+    font-size: 0.72rem;
+    padding: 8px 6px;
+  }
+
+  .card-header,
+  .modal-header,
+  .compact-header {
+    gap: 12px;
+  }
+
+  .button,
+  .file-button {
+    padding: 10px 12px;
+  }
+
+  .data-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    grid-template-columns: 1fr;
+  }
+}

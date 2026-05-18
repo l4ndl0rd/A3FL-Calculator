@@ -1,46 +1,29 @@
 # Warenherstellung Calculator
 
-Statisches Webinterface für GitHub Pages zur Verwaltung von Waren, Fabrikrezepten, Materialien und Rohmaterialbedarf für Arma 3 Fishers Life DE.
+Statisches Webinterface für GitHub Pages zur Verwaltung von Fabrikrezepten und zur Berechnung direkter Materialien sowie rekursiv aufgelöster Rohmaterialien.
 
-## Funktionen
+## Version v14
 
-- Calculator für Produktionsmengen und Materialbedarf
-- Fabriken:
-  - Stahlfabrik
-  - Fahrzeugfabrik
-  - Kleidungsfabrik
-  - Luftfahrzeugsfabrik
-  - Bootsfabrik
-  - Ölfabrik
-  - Warenfabrik
-  - Chemiefabrik
-  - Illegale Waffenfabrik
-- Materialstammdaten mit optionalen Unterrezepten
-- Rekursive Rohmaterialberechnung
-- Dialogfenster zum Hinzufügen und Bearbeiten von Materialien
-- Dialogfenster zum Hinzufügen und Bearbeiten von Waren/Fabrikrezepten
-- Alphabetische Anzeige und Auswahl von Materialien
-- Automatische interne Übernahme von Waren als Material/Zwischenprodukt, ohne diese als manuelle Materialien anzuzeigen
-- JSON Import/Export
-- Speicherung lokal im Browser per localStorage
-- Keine Datenbank, kein Backend, kein Build-Prozess
+Änderungen gegenüber v13:
 
-## GitHub Pages
+- Responsive Layout für Desktop, Tablet und Smartphone verbessert.
+- Navigationsleiste bleibt sticky und bricht abhängig von der Fensterbreite sauber um.
+- Tabellen werden auf kleinen Bildschirmen als kompakte Karten dargestellt, statt starr in den Überlauf zu laufen.
+- Calculator, Materialien, Rohmaterialien, Rezepttabellen und Dialogtabellen sind mobil lesbarer.
+- Dialogfenster sind auf kleinen Viewports scrollbar und laufen nicht mehr aus dem Bildschirm.
+- Datenbuttons skalieren abhängig von der Breite und bleiben im normalen Seitenfluss unten.
 
-1. Dateien in ein GitHub-Repository kopieren.
-2. In GitHub `Settings -> Pages` öffnen.
-3. Source: `Deploy from a branch`.
-4. Branch: `main`, Ordner: `/root`.
-5. Speichern.
+## Hosting über GitHub Pages
 
-## Daten
+1. Dateien in ein GitHub-Repository hochladen.
+2. Repository öffnen.
+3. `Settings -> Pages` öffnen.
+4. Source: `Deploy from a branch`.
+5. Branch: `main`, Ordner: `/root` auswählen.
+6. Speichern.
 
-Alle Daten liegen lokal im Browser. Für Backups die Funktion `Daten exportieren` verwenden.
+Es wird kein Backend und kein Build-Prozess benötigt.
 
-## Version 13 Änderungen
+## Datenspeicherung
 
-- Der Button „Weitere Zeile hinzufügen“ im Materialdialog ist nur noch sichtbar, wenn „Verarbeitetes Material“ aktiv ist.
-- Waren aus Fabriken werden intern weiter als Zwischenprodukte geführt, aber nicht mehr in der manuellen Materialienliste angezeigt.
-- Manuelle Materialien können nicht mit demselben Namen wie eine Fabrik-Ware angelegt werden.
-- Fabrik-Waren werden in Auswahlfeldern als „Ware aus <Fabrik>“ gekennzeichnet.
-- Warennamen werden gegen bestehende manuelle Materialien und andere Fabrik-Waren geprüft.
+Die Daten werden lokal im Browser per `localStorage` gespeichert. Für Backups stehen JSON Export und Import zur Verfügung.

@@ -121,6 +121,7 @@ function renderAll() {
   renderMaterials();
   renderPlan();
   renderRequirements();
+  applyResponsiveTableLabels();
   saveState();
 }
 
@@ -369,6 +370,23 @@ function renderRequirementTable(tbody, requirements, emptyText) {
     const row = document.createElement("tr");
     row.innerHTML = `<td>${escapeHtml(material)}</td><td>${amount.toLocaleString("de-DE")}</td>`;
     tbody.appendChild(row);
+  });
+}
+
+function applyResponsiveTableLabels(root = document) {
+  root.querySelectorAll("table.data-table").forEach((table) => {
+    const headers = Array.from(table.querySelectorAll("thead th")).map((th) => th.textContent.trim());
+    table.querySelectorAll("tbody tr").forEach((row) => {
+      Array.from(row.children).forEach((cell, index) => {
+        if (!(cell instanceof HTMLElement)) return;
+        if (cell.hasAttribute("colspan")) {
+          cell.removeAttribute("data-label");
+          return;
+        }
+        const label = headers[index] || "";
+        if (label) cell.dataset.label = label;
+      });
+    });
   });
 }
 
