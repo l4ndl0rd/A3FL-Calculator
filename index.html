@@ -126,6 +126,37 @@
           </table>
         </div>
       </section>
+
+      <section class="card economy-card">
+        <div class="card-header">
+          <div>
+            <h2>Wirtschaftlichkeit</h2>
+            <p>Kalkulation auf Basis von Materialwerten, optionalen Händlerpreisen und Standardmarge.</p>
+          </div>
+          <label class="inline-setting">
+            Standardmarge %
+            <input id="standardMarginInput" type="number" min="0" step="1" value="30" />
+          </label>
+        </div>
+        <p id="economyHint" class="hint warning-hint" hidden></p>
+        <div class="table-wrap">
+          <table class="data-table economy-table" id="economyTable">
+            <thead>
+              <tr>
+                <th>Ware</th>
+                <th>Menge</th>
+                <th>Kosten/Stück</th>
+                <th>Preis/Stück</th>
+                <th>Quelle</th>
+                <th>Gewinn/Stück</th>
+                <th>Gesamtgewinn</th>
+                <th>Bewertung</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
     </section>
 
     <section id="materials" class="panel" aria-labelledby="materials-tab">
@@ -144,6 +175,7 @@
               <tr>
                 <th>Material / Zwischenprodukt</th>
                 <th>Ausstoß / Lauf</th>
+                <th>Preis / Einheit</th>
                 <th>Unterrezept</th>
                 <th></th>
               </tr>
@@ -188,6 +220,10 @@
           <span class="field-caption">Ausstoß / Lauf</span>
           <strong class="product-output-display"></strong>
         </div>
+        <div>
+          <span class="field-caption">Preisquelle</span>
+          <strong class="product-price-display"></strong>
+        </div>
         <div class="row-actions product-actions">
           <button class="button button-secondary edit-product" type="button">Bearbeiten</button>
           <button class="button button-danger remove-product" type="button">Entfernen</button>
@@ -230,7 +266,7 @@
         <button id="closeMaterialDialogBtn" class="icon-button" type="button" aria-label="Fenster schließen">×</button>
       </div>
 
-      <div class="modal-fields">
+      <div class="modal-fields material-price-fields">
         <label>
           Materialname
           <input id="newMaterialName" type="text" placeholder="z. B. Eisenerz" autocomplete="off" />
@@ -238,6 +274,10 @@
         <label>
           Ausstoß pro Produktionszyklus
           <input id="newMaterialOutput" type="number" min="1" step="1" value="1" />
+        </label>
+        <label>
+          Preis pro Einheit <span class="optional-label">optional</span>
+          <input id="newMaterialUnitPrice" type="number" min="0" step="0.01" placeholder="0" />
         </label>
       </div>
 
@@ -304,6 +344,25 @@
         <label>
           Ausstoß pro Produktionslauf
           <input id="newProductOutput" type="number" min="1" step="1" value="1" />
+        </label>
+      </div>
+
+      <div class="modal-fields price-fields">
+        <label>
+          Importpreis <span class="optional-label">optional</span>
+          <input id="newProductImportPrice" type="number" min="0" step="0.01" placeholder="0" />
+        </label>
+        <label>
+          Exportpreis <span class="optional-label">optional</span>
+          <input id="newProductExportPrice" type="number" min="0" step="0.01" placeholder="0" />
+        </label>
+        <label>
+          Marktwert <span class="optional-label">optional</span>
+          <input id="newProductMarketValue" type="number" min="0" step="0.01" placeholder="0" />
+        </label>
+        <label>
+          Laufkosten <span class="optional-label">optional</span>
+          <input id="newProductRunCost" type="number" min="0" step="0.01" placeholder="0" />
         </label>
       </div>
 

@@ -43,3 +43,12 @@ Die Daten werden lokal im Browser per `localStorage` gespeichert. Für Backups s
 - Fabriken werden in einem ausklappbaren Raster angezeigt.
 - Farb-/Kontrastwirkung wieder näher an v13 belassen.
 - Responsive Tabellen-/Dialoglogik aus den neueren Versionen bleibt erhalten.
+
+## Version v31
+
+- Hybride Preis- und Wirtschaftlichkeitskalkulation ergänzt.
+- Materialien können jetzt einen optionalen Preis pro Einheit erhalten.
+- Waren können optional Importpreis, Exportpreis, Marktwert und Laufkosten erhalten.
+- Der Calculator berechnet Herstellungskosten pro Stück, Verkaufspreis, Preisquelle, Gewinn und Bewertung.
+- Fehlen Händlerpreise, wird der Verkaufspreis aus Herstellungskosten plus Standardmarge abgeleitet.
+- Fehlen Materialpreise, wird die Kalkulation als unvollständig markiert, statt mit 0 zu rechnen.

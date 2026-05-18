@@ -2418,3 +2418,103 @@ select {
   caret-color: transparent !important;
   user-select: auto !important;
 }
+
+/* v31: hybrid price/economy calculation UI */
+.inline-setting {
+  width: min(220px, 100%);
+  justify-self: end;
+}
+
+.optional-label {
+  color: rgba(244, 238, 232, 0.48);
+  font-size: 0.78em;
+  font-weight: 650;
+}
+
+.material-price-fields {
+  grid-template-columns: minmax(0, 1fr) 210px 190px;
+}
+
+.price-fields {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.product-readonly-main {
+  grid-template-columns: minmax(0, 1fr) 150px 220px auto;
+  gap: 14px;
+}
+
+.product-price-display {
+  display: block;
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+.economy-card {
+  margin-top: 18px;
+}
+
+.economy-table {
+  min-width: 1180px;
+}
+
+.source-badge,
+.assessment-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.source-badge {
+  color: rgba(244, 238, 232, 0.82);
+  border: 1px solid rgba(255, 151, 56, 0.16);
+  background: rgba(255, 151, 56, 0.08);
+}
+
+.assessment-good {
+  color: #dff7e5;
+  border: 1px solid rgba(76, 175, 80, 0.30);
+  background: rgba(76, 175, 80, 0.16);
+}
+
+.assessment-warning {
+  color: #ffe9c2;
+  border: 1px solid rgba(255, 178, 64, 0.34);
+  background: rgba(255, 178, 64, 0.16);
+}
+
+.assessment-bad {
+  color: #ffe0dd;
+  border: 1px solid rgba(224, 82, 66, 0.34);
+  background: rgba(224, 82, 66, 0.18);
+}
+
+.assessment-neutral {
+  color: rgba(244, 238, 232, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.muted-inline {
+  color: var(--muted);
+  font-size: 0.86em;
+}
+
+@media (max-width: 980px) {
+  .material-price-fields,
+  .price-fields,
+  .product-readonly-main {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-setting {
+    width: 100%;
+    justify-self: stretch;
+  }
+}

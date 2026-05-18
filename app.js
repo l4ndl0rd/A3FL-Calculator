@@ -29,6 +29,9 @@ const els = {
   requirementsTableBody: document.querySelector("#requirementsTable tbody"),
   rawRequirementsTableBody: document.querySelector("#rawRequirementsTable tbody"),
   rawRequirementsHint: document.querySelector("#rawRequirementsHint"),
+  economyTableBody: document.querySelector("#economyTable tbody"),
+  economyHint: document.querySelector("#economyHint"),
+  standardMarginInput: document.querySelector("#standardMarginInput"),
   addPlanRowBtn: document.querySelector("#addPlanRowBtn"),
   addMaterialBtn: document.querySelector("#addMaterialBtn"),
   copyMaterialsBtn: document.querySelector("#copyMaterialsBtn"),
@@ -46,6 +49,7 @@ const els = {
   materialDialogSubmitBtn: document.querySelector("#materialDialogSubmitBtn"),
   newMaterialName: document.querySelector("#newMaterialName"),
   newMaterialOutput: document.querySelector("#newMaterialOutput"),
+  newMaterialUnitPrice: document.querySelector("#newMaterialUnitPrice"),
   materialHasRecipeCheckbox: document.querySelector("#materialHasRecipeCheckbox"),
   materialRecipeEditor: document.querySelector("#materialRecipeEditor"),
   addMaterialDialogRecipeRowBtn: document.querySelector("#addMaterialDialogRecipeRowBtn"),
@@ -61,6 +65,10 @@ const els = {
   productFactoryLabel: document.querySelector("#productFactoryLabel"),
   newProductName: document.querySelector("#newProductName"),
   newProductOutput: document.querySelector("#newProductOutput"),
+  newProductImportPrice: document.querySelector("#newProductImportPrice"),
+  newProductExportPrice: document.querySelector("#newProductExportPrice"),
+  newProductMarketValue: document.querySelector("#newProductMarketValue"),
+  newProductRunCost: document.querySelector("#newProductRunCost"),
   addProductDialogRecipeRowBtn: document.querySelector("#addProductDialogRecipeRowBtn"),
   productDialogRecipeTableBody: document.querySelector("#productDialogRecipeTable tbody"),
   kpiPositions: document.querySelector("#kpiPositions"),
@@ -109,6 +117,10 @@ function bindStaticEvents() {
   els.exportDataBtn.addEventListener("click", exportData);
   els.importDataInput.addEventListener("change", importData);
   els.resetDataBtn.addEventListener("click", resetData);
+  els.standardMarginInput.addEventListener("change", () => {
+    state.pricing.standardMarginPercent = positiveNumber(els.standardMarginInput.value, 0);
+    renderAll();
+  });
 
   els.addMaterialForm.addEventListener("submit", saveMaterialFromDialog);
   els.closeMaterialDialogBtn.addEventListener("click", closeMaterialDialog);
@@ -136,6 +148,8 @@ function renderAll() {
   renderMaterials();
   renderPlan();
   renderRequirements();
+  renderEconomy();
+  if (els.standardMarginInput) els.standardMarginInput.value = formatInputNumber(state.pricing.standardMarginPercent);
   applyResponsiveTableLabels();
   saveState();
 }
@@ -238,6 +252,9 @@ function createProductCard(factory, product) {
   node.dataset.productId = product.id;
   node.querySelector(".product-name-display").textContent = product.name;
   node.querySelector(".product-output-display").textContent = positiveInteger(product.output, 1).toLocaleString("de-DE");
+  const sale = getSalePrice(product, null);
+  const priceDisplay = node.querySelector(".product-price-display");
+  if (priceDisplay) priceDisplay.textContent = sale.price > 0 ? `${formatMoney(sale.price)} · ${sale.source}` : "nicht gesetzt";
 
   const recipeBody = node.querySelector(".recipe-table tbody");
   if (!product.recipe.length) {
@@ -282,7 +299,7 @@ function renderMaterials() {
 
   if (!visibleMaterials.length) {
     const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="4" class="empty-state">Noch keine manuell angelegten Materialien vorhanden. Waren aus Fabriken werden intern als Zwischenprodukte geführt, aber hier nicht als manuelle Materialien angezeigt.</td>`;
+    row.innerHTML = `<td colspan="5" class="empty-state">Noch keine manuell angelegten Materialien vorhanden. Waren aus Fabriken werden intern als Zwischenprodukte geführt, aber hier nicht als manuelle Materialien angezeigt.</td>`;
     els.materialsTableBody.appendChild(row);
     return;
   }
@@ -294,6 +311,7 @@ function renderMaterials() {
     row.innerHTML = `
       <td><strong>${escapeHtml(material)}</strong></td>
       <td>${positiveInteger(recipeDef.output, 1).toLocaleString("de-DE")}</td>
+      <td>${formatOptionalMoney(getMaterialManualPrice(material))}</td>
       <td><div class="nested-recipe"></div></td>
       <td class="row-actions">
         <button class="button button-secondary edit-material" type="button">Bearbeiten</button>
@@ -332,6 +350,7 @@ function renderMaterials() {
       if (!confirm(`Material "${material}" wirklich entfernen?`)) return;
       state.materials = state.materials.filter((item) => item !== material);
       delete state.materialRecipes[material];
+      delete state.materialPrices[material];
       renderAll();
       activateTab("materials");
     });
@@ -420,6 +439,66 @@ function renderRequirements() {
   els.kpiPositions.textContent = state.plan.length.toLocaleString("de-DE");
   els.kpiRuns.textContent = totalRuns.toLocaleString("de-DE");
   els.kpiMaterials.textContent = directEntries.length.toLocaleString("de-DE");
+}
+
+
+function renderEconomy() {
+  els.economyTableBody.innerHTML = "";
+  const rows = [];
+  const warnings = [];
+
+  for (const item of state.plan) {
+    const product = findProduct(item.productId);
+    if (!product) continue;
+    const output = positiveInteger(product.output, 1);
+    const quantity = positiveInteger(item.quantity, 0);
+    const runs = quantity > 0 ? Math.ceil(quantity / output) : 0;
+    const produced = runs * output;
+    if (!runs || !produced) continue;
+
+    const cost = calculateProductUnitCost(product, new Set());
+    const sale = getSalePrice(product, cost.complete ? cost.unitCost : null);
+    const unitCost = cost.complete ? cost.unitCost : null;
+    const unitProfit = unitCost !== null && sale.price !== null ? sale.price - unitCost : null;
+    const totalProfit = unitProfit !== null ? unitProfit * produced : null;
+    const totalCost = unitCost !== null ? unitCost * produced : null;
+    const totalRevenue = sale.price !== null ? sale.price * produced : null;
+    const assessment = getEconomyAssessment(product, unitCost, sale.price);
+
+    if (!cost.complete) warnings.push(`${product.name}: ${cost.missing.length ? `fehlende Materialpreise (${cost.missing.join(", ")})` : "Kosten unvollständig"}.`);
+
+    rows.push({ product, quantity, produced, runs, unitCost, sale, unitProfit, totalProfit, totalCost, totalRevenue, assessment });
+  }
+
+  if (!rows.length) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="8" class="empty-state">Noch keine Wirtschaftsdaten vorhanden. Lege im Produktionsplan mindestens eine Position an.</td>`;
+    els.economyTableBody.appendChild(row);
+    els.economyHint.hidden = true;
+    return;
+  }
+
+  for (const item of rows) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${escapeHtml(item.product.name)}</td>
+      <td>${item.produced.toLocaleString("de-DE")} <span class="muted-inline">(${item.runs.toLocaleString("de-DE")} Läufe)</span></td>
+      <td>${formatOptionalMoney(item.unitCost)}</td>
+      <td>${formatOptionalMoney(item.sale.price)}</td>
+      <td><span class="source-badge">${escapeHtml(item.sale.source)}</span></td>
+      <td>${formatProfit(item.unitProfit)}</td>
+      <td>${formatProfit(item.totalProfit)}</td>
+      <td><span class="assessment-badge ${item.assessment.className}">${escapeHtml(item.assessment.text)}</span></td>
+    `;
+    els.economyTableBody.appendChild(row);
+  }
+
+  if (warnings.length) {
+    els.economyHint.textContent = `Hinweis: ${unique(warnings).join(" ")}`;
+    els.economyHint.hidden = false;
+  } else {
+    els.economyHint.hidden = true;
+  }
 }
 
 function renderRequirementTable(tbody, requirements, emptyText) {
@@ -554,6 +633,7 @@ function openMaterialDialogCreate() {
   els.materialDialogSubmitBtn.textContent = "Material speichern";
   els.newMaterialName.value = "";
   els.newMaterialOutput.value = 1;
+  els.newMaterialUnitPrice.value = "";
   setMaterialRecipeEditorEnabled(false);
   renderMaterialDialogRecipeRows();
   showDialog(els.addMaterialDialog, "#newMaterialName");
@@ -570,6 +650,7 @@ function openMaterialDialogEdit(materialName) {
   els.materialDialogSubmitBtn.textContent = "Änderungen speichern";
   els.newMaterialName.value = materialName;
   els.newMaterialOutput.value = positiveInteger(recipeDef.output, 1);
+  els.newMaterialUnitPrice.value = formatInputNumber(getMaterialManualPrice(materialName));
   setMaterialRecipeEditorEnabled(materialDialogRecipe.length > 0);
   renderMaterialDialogRecipeRows();
   showDialog(els.addMaterialDialog, "#newMaterialName");
@@ -583,6 +664,7 @@ function saveMaterialFromDialog(event) {
   event.preventDefault();
   const name = cleanText(els.newMaterialName.value);
   const output = positiveInteger(els.newMaterialOutput.value, 1);
+  const unitPrice = optionalNumber(els.newMaterialUnitPrice.value);
   const recipe = els.materialHasRecipeCheckbox.checked
     ? materialDialogRecipe
         .map((item) => ({ material: cleanText(item.material), amount: positiveInteger(item.amount, 0) }))
@@ -626,6 +708,7 @@ function saveMaterialFromDialog(event) {
     state.materialRecipes[name] = { output, recipe };
   }
 
+  setMaterialManualPrice(name, unitPrice);
   clearAutoRecipeFlag(name);
   closeMaterialDialog();
   renderAll();
@@ -697,6 +780,10 @@ function openProductDialogCreate(factory) {
   els.productFactoryLabel.value = FACTORIES[factory];
   els.newProductName.value = "";
   els.newProductOutput.value = 1;
+  els.newProductImportPrice.value = "";
+  els.newProductExportPrice.value = "";
+  els.newProductMarketValue.value = "";
+  els.newProductRunCost.value = "";
   renderProductDialogRecipeRows();
   showDialog(els.productDialog, "#newProductName");
 }
@@ -715,6 +802,10 @@ function openProductDialogEdit(factory, productId) {
   els.productFactoryLabel.value = FACTORIES[factory];
   els.newProductName.value = product.name;
   els.newProductOutput.value = positiveInteger(product.output, 1);
+  els.newProductImportPrice.value = formatInputNumber(product.importPrice);
+  els.newProductExportPrice.value = formatInputNumber(product.exportPrice);
+  els.newProductMarketValue.value = formatInputNumber(product.marketValue);
+  els.newProductRunCost.value = formatInputNumber(product.runCost);
   renderProductDialogRecipeRows();
   showDialog(els.productDialog, "#newProductName");
 }
@@ -727,6 +818,10 @@ function saveProductFromDialog(event) {
   event.preventDefault();
   const name = cleanText(els.newProductName.value);
   const output = positiveInteger(els.newProductOutput.value, 1);
+  const importPrice = optionalNumber(els.newProductImportPrice.value);
+  const exportPrice = optionalNumber(els.newProductExportPrice.value);
+  const marketValue = optionalNumber(els.newProductMarketValue.value);
+  const runCost = optionalNumber(els.newProductRunCost.value);
   const recipe = productDialogRecipe
     .map((item) => ({ material: cleanText(item.material), amount: positiveInteger(item.amount, 0) }))
     .filter((item) => item.material && item.amount > 0);
@@ -757,7 +852,7 @@ function saveProductFromDialog(event) {
   }
 
   if (productDialogMode === "create") {
-    const product = { id: cryptoId(), name, output, recipe };
+    const product = { id: cryptoId(), name, output, importPrice, exportPrice, marketValue, runCost, recipe };
     factoryProducts.unshift(product);
     ensureMaterial(name);
     recipe.forEach((item) => ensureMaterial(item.material));
@@ -774,6 +869,10 @@ function saveProductFromDialog(event) {
   const oldName = product.name;
   product.name = name;
   product.output = output;
+  product.importPrice = importPrice;
+  product.exportPrice = exportPrice;
+  product.marketValue = marketValue;
+  product.runCost = runCost;
   product.recipe = recipe;
   ensureMaterial(name);
   recipe.forEach((item) => ensureMaterial(item.material));
@@ -990,6 +1089,9 @@ function findProductByName(productName) {
 function getMaterialRecipe(materialName) {
   const name = cleanText(materialName);
   state.materialRecipes ??= {};
+  state.materialPrices ??= {};
+  state.pricing ??= {};
+  state.pricing.standardMarginPercent = positiveNumber(state.pricing.standardMarginPercent, 30);
   state.materialRecipes[name] ??= { output: 1, recipe: [] };
   state.materialRecipes[name].output = positiveInteger(state.materialRecipes[name].output, 1);
   state.materialRecipes[name].recipe = Array.isArray(state.materialRecipes[name].recipe) ? state.materialRecipes[name].recipe : [];
@@ -1020,6 +1122,10 @@ function renameMaterial(oldName, newName, shouldRender = true) {
   if (state.materialRecipes?.[oldName]) {
     state.materialRecipes[newName] = state.materialRecipes[oldName];
     delete state.materialRecipes[oldName];
+  }
+  if (state.materialPrices?.[oldName] !== undefined) {
+    state.materialPrices[newName] = state.materialPrices[oldName];
+    delete state.materialPrices[oldName];
   }
   replaceRecipeMaterialReferences(oldName, newName);
   if (shouldRender) renderAll();
@@ -1096,6 +1202,9 @@ function normalizeState() {
   state.products ??= {};
   state.plan ??= [];
   state.materialRecipes ??= {};
+  state.materialPrices ??= {};
+  state.pricing ??= {};
+  state.pricing.standardMarginPercent = positiveNumber(state.pricing.standardMarginPercent, 30);
 
   for (const factory of Object.keys(FACTORIES)) {
     state.products[factory] ??= [];
@@ -1103,6 +1212,10 @@ function normalizeState() {
       id: product.id || cryptoId(),
       name: cleanText(product.name) || "Unbenannte Ware",
       output: positiveInteger(product.output, 1),
+      importPrice: optionalNumber(product.importPrice),
+      exportPrice: optionalNumber(product.exportPrice),
+      marketValue: optionalNumber(product.marketValue),
+      runCost: optionalNumber(product.runCost),
       recipe: Array.isArray(product.recipe)
         ? product.recipe.map((item) => ({ material: cleanText(item.material), amount: positiveInteger(item.amount, 0) })).filter((item) => item.material)
         : []
@@ -1128,7 +1241,14 @@ function normalizeState() {
     };
     normalizedMaterialRecipes[name].recipe.forEach((item) => ensureMaterial(item.material));
   }
+  const normalizedMaterialPrices = {};
+  for (const [materialName, price] of Object.entries(state.materialPrices ?? {})) {
+    const name = cleanText(materialName);
+    const value = optionalNumber(price);
+    if (name && value !== null) normalizedMaterialPrices[name] = value;
+  }
   state.materialRecipes = normalizedMaterialRecipes;
+  state.materialPrices = normalizedMaterialPrices;
   syncProductRecipesToMaterials();
   sortMaterials();
 
@@ -1153,6 +1273,8 @@ function validateImportedState(value) {
   }
   if (!Array.isArray(value.plan)) throw new Error("Feld 'plan' fehlt oder ist ungültig.");
   if (value.materialRecipes !== undefined && (typeof value.materialRecipes !== "object" || Array.isArray(value.materialRecipes))) throw new Error("Feld 'materialRecipes' ist ungültig.");
+  if (value.materialPrices !== undefined && (typeof value.materialPrices !== "object" || Array.isArray(value.materialPrices))) throw new Error("Feld 'materialPrices' ist ungültig.");
+  if (value.pricing !== undefined && (typeof value.pricing !== "object" || Array.isArray(value.pricing))) throw new Error("Feld 'pricing' ist ungültig.");
 }
 
 function loadState() {
@@ -1178,7 +1300,128 @@ function firstFactoryWithProduct() {
 function createDefaultState() {
   const products = {};
   for (const factory of Object.keys(FACTORIES)) products[factory] = [];
-  return { materials: [], materialRecipes: {}, products, plan: [] };
+  return { materials: [], materialRecipes: {}, materialPrices: {}, pricing: { standardMarginPercent: 30 }, products, plan: [] };
+}
+
+
+function optionalNumber(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const number = Number.parseFloat(String(value).replace(",", "."));
+  if (!Number.isFinite(number) || number <= 0) return null;
+  return number;
+}
+
+function positiveNumber(value, fallback) {
+  const number = Number.parseFloat(String(value ?? "").replace(",", "."));
+  if (!Number.isFinite(number) || number < 0) return fallback;
+  return number;
+}
+
+function formatInputNumber(value) {
+  const number = optionalNumber(value);
+  return number === null ? "" : String(number);
+}
+
+function getMaterialManualPrice(materialName) {
+  const value = state.materialPrices?.[cleanText(materialName)];
+  return optionalNumber(value);
+}
+
+function setMaterialManualPrice(materialName, value) {
+  state.materialPrices ??= {};
+  const name = cleanText(materialName);
+  if (!name) return;
+  const price = optionalNumber(value);
+  if (price === null) delete state.materialPrices[name];
+  else state.materialPrices[name] = price;
+}
+
+function calculateMaterialUnitCost(materialName, stack = new Set()) {
+  const name = cleanText(materialName);
+  const materialKey = `material:${name.toLocaleLowerCase("de-DE")}`;
+  if (stack.has(materialKey)) return { complete: false, unitCost: null, missing: [name] };
+
+  const recipeDef = getExistingMaterialRecipe(name);
+  const autoOrigin = recipeDef?.autoProductId ? getProductOrigin(recipeDef.autoProductId) : null;
+  if (autoOrigin?.product) return calculateProductUnitCost(autoOrigin.product, stack);
+
+  if (recipeDef?.recipe?.length) {
+    const nextStack = new Set(stack);
+    nextStack.add(materialKey);
+    let total = 0;
+    const missing = [];
+    for (const item of recipeDef.recipe) {
+      const child = calculateMaterialUnitCost(item.material, nextStack);
+      if (!child.complete) missing.push(...child.missing);
+      else total += child.unitCost * positiveInteger(item.amount, 0);
+    }
+    if (missing.length) return { complete: false, unitCost: null, missing: unique(missing) };
+    return { complete: true, unitCost: total / positiveInteger(recipeDef.output, 1), missing: [] };
+  }
+
+  const craftableProduct = findProductByName(name);
+  if (craftableProduct?.recipe?.length) return calculateProductUnitCost(craftableProduct, stack);
+
+  const manualPrice = getMaterialManualPrice(name);
+  if (manualPrice === null) return { complete: false, unitCost: null, missing: [name] };
+  return { complete: true, unitCost: manualPrice, missing: [] };
+}
+
+function calculateProductUnitCost(product, stack = new Set()) {
+  const productKey = `product:${product.id}`;
+  if (stack.has(productKey)) return { complete: false, unitCost: null, missing: [product.name] };
+  const nextStack = new Set(stack);
+  nextStack.add(productKey);
+
+  let runCost = optionalNumber(product.runCost) ?? 0;
+  const missing = [];
+  for (const item of product.recipe ?? []) {
+    const materialCost = calculateMaterialUnitCost(item.material, nextStack);
+    if (!materialCost.complete) missing.push(...materialCost.missing);
+    else runCost += materialCost.unitCost * positiveInteger(item.amount, 0);
+  }
+  if (missing.length) return { complete: false, unitCost: null, missing: unique(missing) };
+  return { complete: true, unitCost: runCost / positiveInteger(product.output, 1), missing: [] };
+}
+
+function getSalePrice(product, unitCost) {
+  const exportPrice = optionalNumber(product.exportPrice);
+  if (exportPrice !== null) return { price: exportPrice, source: "Exportpreis" };
+  const marketValue = optionalNumber(product.marketValue);
+  if (marketValue !== null) return { price: marketValue, source: "Marktwert" };
+  if (unitCost !== null) {
+    const margin = positiveNumber(state.pricing?.standardMarginPercent, 30);
+    return { price: unitCost * (1 + margin / 100), source: "Kosten + Marge" };
+  }
+  return { price: null, source: "Unvollständig" };
+}
+
+function getEconomyAssessment(product, unitCost, salePrice) {
+  if (unitCost === null || salePrice === null) return { text: "Unvollständig", className: "assessment-neutral" };
+  const profit = salePrice - unitCost;
+  const importPrice = optionalNumber(product.importPrice);
+  if (profit < 0) return { text: "Nicht profitabel", className: "assessment-bad" };
+  if (importPrice !== null && importPrice < unitCost) return { text: "Import günstiger", className: "assessment-warning" };
+  if (profit === 0) return { text: "Break-even", className: "assessment-neutral" };
+  return { text: "Profitabel", className: "assessment-good" };
+}
+
+function formatMoney(value) {
+  const number = optionalNumber(value);
+  if (number === null) return "—";
+  return `${number.toLocaleString("de-DE", { minimumFractionDigits: number % 1 ? 2 : 0, maximumFractionDigits: 2 })} $`;
+}
+
+function formatOptionalMoney(value) {
+  return optionalNumber(value) === null ? "—" : formatMoney(value);
+}
+
+function formatProfit(value) {
+  const number = Number.parseFloat(String(value ?? "").replace(",", "."));
+  if (!Number.isFinite(number)) return "—";
+  const sign = number > 0 ? "+" : "";
+  const abs = Math.abs(number);
+  return `${sign}${number < 0 ? "-" : ""}${formatMoney(abs)}`;
 }
 
 function positiveInteger(value, fallback) {
