@@ -1,54 +1,192 @@
 # Warenherstellung Calculator
 
-Statisches Webinterface für GitHub Pages zur Verwaltung von Fabrikrezepten und zur Berechnung direkter Materialien sowie rekursiv aufgelöster Rohmaterialien.
+Statisches Webinterface für den Warenherstellungs-Workflow von **Arma 3 Fishers Life DE**. Die Anwendung dient zur Pflege von Fabriken, Waren, Materialien, Rezepten und Produktionsplänen. Aus den eingegebenen Rezeptdaten berechnet sie automatisch Produktionsläufe, direkten Materialbedarf, rekursiv aufgelöste Rohmaterialien und eine optionale Wirtschaftlichkeitsauswertung.
 
-## Version v14
+Die Seite ist für GitHub Pages ausgelegt und benötigt keinen Build-Prozess, kein Backend und keine Serverdatenbank.
 
-Änderungen gegenüber v13:
+## Funktionsumfang
 
-- Responsive Layout für Desktop, Tablet und Smartphone verbessert.
-- Navigationsleiste bleibt sticky und bricht abhängig von der Fensterbreite sauber um.
-- Tabellen werden auf kleinen Bildschirmen als kompakte Karten dargestellt, statt starr in den Überlauf zu laufen.
-- Calculator, Materialien, Rohmaterialien, Rezepttabellen und Dialogtabellen sind mobil lesbarer.
-- Dialogfenster sind auf kleinen Viewports scrollbar und laufen nicht mehr aus dem Bildschirm.
-- Datenbuttons skalieren abhängig von der Breite und bleiben im normalen Seitenfluss unten.
+### Calculator
 
-## Hosting über GitHub Pages
+- Produktionspositionen mit Fabrik, Ware und Zielmenge anlegen
+- Produktionsläufe automatisch anhand von Ausstoß pro Lauf berechnen
+- direkten Materialbedarf über alle Positionen aggregieren
+- Rohmaterialbedarf rekursiv aus Zwischenprodukt-Rezepten auflösen
+- Material- und Rohmaterialtabellen in die Zwischenablage kopieren
+- Wirtschaftlichkeit je Ware berechnen
 
-1. Dateien in ein GitHub-Repository hochladen.
-2. Repository öffnen.
-3. `Settings -> Pages` öffnen.
-4. Source: `Deploy from a branch`.
-5. Branch: `main`, Ordner: `/root` auswählen.
-6. Speichern.
+### Fabriken und Waren
 
-Es wird kein Backend und kein Build-Prozess benötigt.
+- Waren pro Fabrik verwalten
+- Ausstoß pro Produktionslauf definieren
+- Rezept je Ware hinterlegen
+- optionale Preisfelder je Ware pflegen:
+  - Importpreis
+  - Exportpreis
+  - Marktwert
+  - Laufkosten pro Produktionslauf
+
+### Materialien
+
+- Materialstammdaten verwalten
+- Materialien als Rohmaterial oder verarbeitetes Zwischenprodukt behandeln
+- optionalen Preis pro Einheit hinterlegen
+- Unterrezepte für Zwischenprodukte definieren
+
+### Datenverwaltung
+
+- lokale Daten als JSON exportieren
+- JSON-Daten wieder importieren
+- lokal gespeicherte Daten zurücksetzen
+- alle Daten werden browserseitig gespeichert
+
+## Wirtschaftlichkeitslogik
+
+Die Preisberechnung ist hybrid aufgebaut, damit sie auch funktioniert, wenn nicht für jede Ware Händlerpreise vorhanden sind.
+
+### Materialkosten
+
+Für jedes benötigte Material wird der hinterlegte **Preis pro Einheit** verwendet. Wenn ein Material ein eigenes Unterrezept besitzt, wird es rekursiv bis zu seinen Rohmaterialien aufgelöst.
+
+Fehlen notwendige Materialpreise, wird die Kalkulation nicht künstlich mit `0` gerechnet, sondern als unvollständig markiert.
+
+### Verkaufspreis einer Ware
+
+Die Anwendung verwendet folgende Priorität:
+
+1. **Exportpreis**, wenn vorhanden  
+   Der Exportpreis gilt als belastbarster Händlerwert.
+2. **Marktwert**, wenn kein Exportpreis vorhanden ist  
+   Der Marktwert kann als interner RP-, Markt- oder Schätzpreis genutzt werden.
+3. **Herstellungskosten + Standardmarge**, wenn weder Exportpreis noch Marktwert vorhanden sind  
+   Die Standardmarge kann im Calculator angepasst werden.
+4. **Unvollständig**, wenn die Herstellungskosten wegen fehlender Materialpreise nicht berechnet werden können
+
+### Importvergleich
+
+Wenn für eine Ware ein Importpreis vorhanden ist, kann die Herstellung gegen den Import verglichen werden. Dadurch wird sichtbar, ob Eigenproduktion wirtschaftlicher ist als Einkauf/Import.
+
+## Datenmodell, vereinfacht
+
+Die Anwendung arbeitet intern mit:
+
+- Fabriken
+- Waren je Fabrik
+- Materialien
+- Rezepten
+- optionalen Preisfeldern
+- globaler Standardmarge
+- Produktionsplan im Calculator
+
+Die gespeicherten Daten liegen im Browser in `localStorage`. Export und Import verwenden JSON.
 
 ## Datenspeicherung
 
-Die Daten werden lokal im Browser per `localStorage` gespeichert. Für Backups stehen JSON Export und Import zur Verfügung.
+Diese Anwendung ist rein clientseitig. Dadurch gilt:
 
+- jeder User hat eigene lokale Browserdaten
+- Daten werden nicht automatisch zwischen Usern synchronisiert
+- ein anderer Browser oder ein anderer PC hat eine eigene Datenbasis
+- gelöschte Browserdaten entfernen auch die gespeicherten Calculator-Daten
+- gemeinsamer Austausch erfolgt über JSON Export/Import
 
-## Version v15
+Für zentrale gemeinsame Daten wäre ein Backend mit Datenbank nötig, zum Beispiel eine kleine API mit SQLite. GitHub Pages allein kann keine zentrale schreibbare Datenbank betreiben.
 
-- Farbvariablen explizit auf die ursprüngliche dunkle/orange Palette gesetzt.
-- Navigationsmenü bleibt in einer einzelnen Zeile ohne Zeilenumbruch.
-- Bei kleinen Fensterbreiten ist die Navigationszeile horizontal scrollbar, statt umzubrechen.
+## GitHub-Pages-Deployment
 
+1. Repository auf GitHub erstellen oder vorhandenes Repository öffnen.
+2. Dateien aus diesem Projekt in das Repository hochladen:
+   - `index.html`
+   - `styles.css`
+   - `app.js`
+   - `fishers-life-logo.png`
+   - `README.md`
+3. In GitHub öffnen: `Settings -> Pages`.
+4. Unter **Build and deployment** auswählen:
+   - Source: `Deploy from a branch`
+   - Branch: `main`
+   - Folder: `/root`
+5. Speichern.
+6. Nach kurzer Zeit ist die Seite über die GitHub-Pages-URL erreichbar.
 
-## Version v16
+Es werden keine Node.js-Abhängigkeiten, kein Build-Befehl und keine Serverkonfiguration benötigt.
 
-- Navigation auf verschachteltes Fabrikmenü umgestellt: keine horizontale Scrollbar im Nav-Menü.
-- Hauptnavigation bleibt kompakt: Calculator, Fabriken, Materialien.
-- Fabriken werden in einem ausklappbaren Raster angezeigt.
-- Farb-/Kontrastwirkung wieder näher an v13 belassen.
-- Responsive Tabellen-/Dialoglogik aus den neueren Versionen bleibt erhalten.
+## Projektstruktur
 
-## Version v31
+```text
+waren-calculator-web/
+├── index.html              # Seitenstruktur und Dialoge
+├── styles.css              # Layout, Farben, Navigation, Responsive Design
+├── app.js                  # Calculator-, Rezept-, Material- und Datenlogik
+├── fishers-life-logo.png   # Logo im Header
+└── README.md               # Projektdokumentation
+```
 
-- Hybride Preis- und Wirtschaftlichkeitskalkulation ergänzt.
-- Materialien können jetzt einen optionalen Preis pro Einheit erhalten.
-- Waren können optional Importpreis, Exportpreis, Marktwert und Laufkosten erhalten.
-- Der Calculator berechnet Herstellungskosten pro Stück, Verkaufspreis, Preisquelle, Gewinn und Bewertung.
-- Fehlen Händlerpreise, wird der Verkaufspreis aus Herstellungskosten plus Standardmarge abgeleitet.
-- Fehlen Materialpreise, wird die Kalkulation als unvollständig markiert, statt mit 0 zu rechnen.
+## Bedienhinweise
+
+### Neue Ware anlegen
+
+1. In der Navigation eine Fabrik auswählen.
+2. `Ware hinzufügen` klicken.
+3. Warenname und Ausstoß pro Produktionslauf eintragen.
+4. Optional Importpreis, Exportpreis, Marktwert und Laufkosten eintragen.
+5. Rezeptmaterialien hinzufügen.
+6. Ware speichern.
+
+### Neues Material anlegen
+
+1. Bereich `Materialien` öffnen.
+2. `Material hinzufügen` klicken.
+3. Materialname eintragen.
+4. Optional Preis pro Einheit setzen.
+5. Falls das Material selbst hergestellt wird, `Verarbeitetes Material` aktivieren und ein Unterrezept eintragen.
+6. Material speichern.
+
+### Produktionsbedarf berechnen
+
+1. Bereich `Calculator` öffnen.
+2. `Position hinzufügen` klicken.
+3. Fabrik, Ware und Zielmenge auswählen.
+4. Die Anwendung berechnet automatisch:
+   - Produktionsläufe
+   - benötigte Materialien
+   - benötigte Rohmaterialien
+   - Wirtschaftlichkeit
+
+## Backup und Austausch
+
+Für Backups oder gemeinsame Datenpflege sollte regelmäßig ein JSON-Export erstellt werden.
+
+Empfohlener Ablauf:
+
+1. Daten pflegen.
+2. Über `Daten -> Daten exportieren` sichern.
+3. Exportdatei versionieren oder im Team teilen.
+4. Andere User können die Datei über `Daten -> Daten importieren` übernehmen.
+
+## Hinweise zur Weiterentwicklung
+
+Sinnvolle nächste Ausbaustufen wären:
+
+- zentrale Datenhaltung über kleines Backend mit SQLite
+- Admin-Modus für Datenpflege
+- öffentlich lesbare, zentral gepflegte Stammdaten
+- getrennte Rollen für reine Nutzung und Bearbeitung
+- optionaler Preisvergleich zwischen Händlerimport, Eigenproduktion und Export
+- weitere Auswertungen für Gewinn pro Produktionslauf oder pro Rohmaterialeinsatz
+
+## Aktueller Stand
+
+Diese Version enthält:
+
+- vier gleichberechtigte Navbar-Punkte: Calculator, Fabriken, Materialien, Daten
+- klassisches Dropdown für Fabriken und Daten
+- Fishers-Life-Logo im Header
+- Copyright mit Discord-Link
+- lokale JSON-Datenverwaltung
+- hybride Wirtschaftlichkeitskalkulation mit optionalen Händler-/Marktpreisen
+- responsive Oberfläche für Desktop und kleinere Viewports
+
+## Lizenz / Rechte
+
+© 2026 l4ndl0rd · Warenherstellung Calculator · Fishers Life DE · Alle Rechte vorbehalten.
