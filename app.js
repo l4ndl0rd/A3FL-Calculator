@@ -36,6 +36,7 @@ const DEFAULT_RAW_MATERIALS = [
 let state = loadState();
 let adminUnlocked = localStorage.getItem(ADMIN_FLAG_KEY) === "1";
 let materialSearchQuery = "";
+let tradeSearchQuery = "";
 const productSearchQueries = {};
 let inventoryDraftRows = [];
 let materialDialogMode = "create";
@@ -45,6 +46,7 @@ let productDialogMode = "create";
 let productDialogFactory = null;
 let productDialogProductId = null;
 let productDialogRecipe = [];
+let tradeDraftRows = [];
 
 const els = {
   tabs: document.querySelector("#tabs"),
@@ -65,6 +67,11 @@ const els = {
   clearPlanBtn: document.querySelector("#clearPlanBtn"),
   addMaterialBtn: document.querySelector("#addMaterialBtn"),
   materialSearchInput: document.querySelector("#materialSearchInput"),
+  tradeTableBody: document.querySelector("#tradeTable tbody"),
+  tradeSearchInput: document.querySelector("#tradeSearchInput"),
+  tradeSearchCount: document.querySelector("#tradeSearchCount"),
+  addTradeItemBtn: document.querySelector("#addTradeItemBtn"),
+  tradeItemOptions: document.querySelector("#tradeItemOptions"),
   copyMaterialsBtn: document.querySelector("#copyMaterialsBtn"),
   copyRawMaterialsBtn: document.querySelector("#copyRawMaterialsBtn"),
   exportDataBtn: document.querySelector("#exportDataBtn"),
@@ -85,8 +92,6 @@ const els = {
   newMaterialName: document.querySelector("#newMaterialName"),
   newMaterialOutput: document.querySelector("#newMaterialOutput"),
   newMaterialUnitPrice: document.querySelector("#newMaterialUnitPrice"),
-  newMaterialImportPrice: document.querySelector("#newMaterialImportPrice"),
-  newMaterialExportPrice: document.querySelector("#newMaterialExportPrice"),
   materialHasRecipeCheckbox: document.querySelector("#materialHasRecipeCheckbox"),
   materialRecipeEditor: document.querySelector("#materialRecipeEditor"),
   addMaterialDialogRecipeRowBtn: document.querySelector("#addMaterialDialogRecipeRowBtn"),
@@ -102,9 +107,6 @@ const els = {
   productFactoryLabel: document.querySelector("#productFactoryLabel"),
   newProductName: document.querySelector("#newProductName"),
   newProductOutput: document.querySelector("#newProductOutput"),
-  newProductImportPrice: document.querySelector("#newProductImportPrice"),
-  newProductExportPrice: document.querySelector("#newProductExportPrice"),
-  newProductMarketValue: document.querySelector("#newProductMarketValue"),
   addProductDialogRecipeRowBtn: document.querySelector("#addProductDialogRecipeRowBtn"),
   productDialogRecipeTableBody: document.querySelector("#productDialogRecipeTable tbody"),
   kpiPositions: document.querySelector("#kpiPositions"),
@@ -162,6 +164,14 @@ function bindStaticEvents() {
       applyResponsiveTableLabels();
     });
   }
+  if (els.tradeSearchInput) {
+    els.tradeSearchInput.addEventListener("input", () => {
+      tradeSearchQuery = cleanText(els.tradeSearchInput.value);
+      renderTrade();
+      applyResponsiveTableLabels();
+    });
+  }
+  if (els.addTradeItemBtn) els.addTradeItemBtn.addEventListener("click", addTradeItemRow);
   els.copyMaterialsBtn.addEventListener("click", copyRequirementsTable);
   els.copyRawMaterialsBtn.addEventListener("click", copyRawRequirementsTable);
   els.exportDataBtn.addEventListener("click", exportData);
@@ -211,6 +221,7 @@ function renderAll() {
   renderFactoryNavigation();
   renderFactoryPanels();
   renderMaterials();
+  renderTrade();
   renderPlan();
   renderInventory();
   renderRequirements();
@@ -255,8 +266,9 @@ function renderFactoryNavigation() {
   factoryGroup.append(factoryButton, factoryMenu);
 
   const materialsButton = createPrimaryTab("materials", "Materialien", activeTarget === "materials");
+  const tradeButton = createPrimaryTab("trade", "Handel", activeTarget === "trade");
 
-  primaryRow.append(calculatorButton, factoryGroup, materialsButton);
+  primaryRow.append(calculatorButton, factoryGroup, materialsButton, tradeButton);
   els.tabs.append(primaryRow);
 }
 
@@ -352,9 +364,9 @@ function productMatchesSearch(factory, product, query) {
     FACTORIES[factory],
     product.name,
     product.output,
-    product.importPrice,
-    product.exportPrice,
-    product.marketValue,
+    getTradeImportPrice(product.name),
+    getTradeExportPrice(product.name),
+    getTradeMarketValue(product.name),
     ...(product.recipe ?? []).flatMap((item) => [item.material, item.amount])
   ].map((value) => cleanText(value)).join(" ").toLocaleLowerCase("de-DE");
   return haystack.includes(cleanText(query).toLocaleLowerCase("de-DE"));
@@ -491,8 +503,7 @@ function renderMaterials() {
       state.materials = state.materials.filter((item) => item !== material);
       delete state.materialRecipes[material];
       delete state.materialPrices[material];
-      delete state.materialImportPrices?.[material];
-      delete state.materialExportPrices?.[material];
+      deleteTradePrice(material);
       delete state.inventory?.[material];
       renderAll();
       activateTab("materials");
@@ -521,6 +532,144 @@ function updateMaterialSearchCount(visibleCount, totalCount) {
   count.textContent = materialSearchQuery
     ? `${visibleCount.toLocaleString("de-DE")} von ${totalCount.toLocaleString("de-DE")} Materialien`
     : `${totalCount.toLocaleString("de-DE")} Materialien`;
+}
+
+function renderTrade() {
+  if (!els.tradeTableBody) return;
+  els.tradeTableBody.innerHTML = "";
+  renderTradeDatalist();
+
+  const rows = [...Object.entries(state.tradePrices ?? {})]
+    .map(([name, record]) => ({ name, record }))
+    .filter((item) => item.name)
+    .sort((a, b) => a.name.localeCompare(b.name, "de", { sensitivity: "base" }));
+
+  const query = cleanText(tradeSearchQuery).toLocaleLowerCase("de-DE");
+  const visibleRows = query
+    ? rows.filter(({ name, record }) => [name, record.importPrice, record.exportPrice, record.marketValue].map(cleanText).join(" ").toLocaleLowerCase("de-DE").includes(query))
+    : rows;
+
+  if (els.tradeSearchCount) {
+    els.tradeSearchCount.textContent = query
+      ? `${visibleRows.length.toLocaleString("de-DE")} von ${rows.length.toLocaleString("de-DE")} Handelseinträgen`
+      : `${rows.length.toLocaleString("de-DE")} Handelseinträge`;
+  }
+
+  if (!rows.length && !tradeDraftRows.length) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="5" class="empty-state">Noch keine zentralen Handelsdaten vorhanden.</td>`;
+    els.tradeTableBody.appendChild(row);
+    return;
+  }
+
+  for (const { name, record } of visibleRows) {
+    els.tradeTableBody.appendChild(createTradeRow(name, record, false));
+  }
+  if (adminUnlocked) {
+    for (const draft of tradeDraftRows) els.tradeTableBody.appendChild(createTradeRow(draft.name, draft, true));
+  }
+}
+
+function createTradeRow(name, record, isDraft) {
+  const row = document.createElement("tr");
+  row.className = isDraft ? "trade-row trade-draft-row" : "trade-row";
+  const currentName = cleanText(name);
+  const importPrice = optionalNumber(record?.importPrice);
+  const exportPrice = optionalNumber(record?.exportPrice);
+  const marketValue = optionalNumber(record?.marketValue);
+
+  if (!adminUnlocked) {
+    row.innerHTML = `
+      <td><strong>${escapeHtml(currentName)}</strong></td>
+      <td>${formatOptionalMoney(importPrice)}</td>
+      <td>${formatOptionalMoney(exportPrice)}</td>
+      <td>${formatOptionalMoney(marketValue)}</td>
+      <td class="row-actions"></td>
+    `;
+    return row;
+  }
+
+  row.innerHTML = `
+    <td><input class="trade-name" list="tradeItemOptions" type="text" autocomplete="off" value="${escapeAttribute(currentName)}" placeholder="Artikel auswählen oder eingeben" /></td>
+    <td><input class="trade-import" type="number" min="0" step="0.01" value="${formatInputNumber(importPrice)}" placeholder="—" /></td>
+    <td><input class="trade-export" type="number" min="0" step="0.01" value="${formatInputNumber(exportPrice)}" placeholder="—" /></td>
+    <td><input class="trade-market" type="number" min="0" step="0.01" value="${formatInputNumber(marketValue)}" placeholder="—" /></td>
+    <td class="row-actions"><button class="button button-danger remove-trade-row" type="button">Entfernen</button></td>
+  `;
+
+  const nameInput = row.querySelector(".trade-name");
+  const importInput = row.querySelector(".trade-import");
+  const exportInput = row.querySelector(".trade-export");
+  const marketInput = row.querySelector(".trade-market");
+
+  const commit = () => {
+    const nextName = cleanText(nameInput.value);
+    const nextValues = {
+      importPrice: optionalNumber(importInput.value),
+      exportPrice: optionalNumber(exportInput.value),
+      marketValue: optionalNumber(marketInput.value)
+    };
+
+    if (isDraft) {
+      record.name = nextName;
+      record.importPrice = nextValues.importPrice;
+      record.exportPrice = nextValues.exportPrice;
+      record.marketValue = nextValues.marketValue;
+      if (!nextName || (nextValues.importPrice === null && nextValues.exportPrice === null && nextValues.marketValue === null)) return;
+      tradeDraftRows = tradeDraftRows.filter((item) => item !== record);
+      setTradePrice(nextName, nextValues);
+      ensureMaterial(nextName);
+      renderAll();
+      activateTab("trade");
+      return;
+    }
+
+    if (!nextName) return;
+    if (nextName !== currentName) {
+      renameTradePrice(currentName, nextName);
+      if (!state.tradePrices?.[nextName]) setTradePrice(nextName, nextValues);
+    } else {
+      setTradePrice(nextName, nextValues);
+    }
+    ensureMaterial(nextName);
+    renderAll();
+    activateTab("trade");
+  };
+
+  [nameInput, importInput, exportInput, marketInput].forEach((input) => input.addEventListener("change", commit));
+  row.querySelector(".remove-trade-row").addEventListener("click", () => {
+    if (isDraft) tradeDraftRows = tradeDraftRows.filter((item) => item !== record);
+    else if (confirm(`Handelseintrag "${currentName}" wirklich entfernen?`)) deleteTradePrice(currentName);
+    renderAll();
+    activateTab("trade");
+  });
+  return row;
+}
+
+function addTradeItemRow() {
+  if (!requireAdminAccess()) return;
+  tradeDraftRows.push({ name: "", importPrice: null, exportPrice: null, marketValue: null });
+  renderTrade();
+  activateTab("trade");
+  setTimeout(() => document.querySelector(".trade-draft-row .trade-name")?.focus(), 0);
+}
+
+function renderTradeDatalist() {
+  if (!els.tradeItemOptions) return;
+  els.tradeItemOptions.innerHTML = "";
+  for (const option of getAllItemNames()) {
+    const node = document.createElement("option");
+    node.value = option;
+    els.tradeItemOptions.appendChild(node);
+  }
+}
+
+function getAllItemNames() {
+  return unique([
+    ...(state.materials ?? []),
+    ...Object.values(state.products ?? {}).flat().map((product) => product.name),
+    ...Object.keys(state.tradePrices ?? {})
+  ].map(cleanText).filter(Boolean)).sort((a, b) => a.localeCompare(b, "de", { sensitivity: "base" }));
 }
 
 function renderPlan() {
@@ -649,9 +798,9 @@ function renderEconomy() {
 
     const cost = calculateProductBatchCostWithInventory(product, runs, inventoryRemaining, new Set());
     const unitCost = cost.complete ? cost.totalCost / produced : null;
-    const baseCost = calculateProductUnitCost(product, new Set());
+    const baseCost = calculateProductUnitCostWithOptimalInputs(product, new Set());
     const craftUnitCost = baseCost.complete ? baseCost.unitCost : null;
-    const buyUnitCost = getBuyUnitCost(product);
+    const buyUnitCost = getProductBuyUnitCost(product);
     const recommendationCost = craftUnitCost ?? (unitCost !== null && unitCost > 0 ? unitCost : null);
     const sale = getSalePrice(product, recommendationCost);
     const unitProfit = unitCost !== null && sale.price !== null ? sale.price - unitCost : null;
@@ -661,7 +810,7 @@ function renderEconomy() {
     const assessment = getProcurementAssessment(craftUnitCost, buyUnitCost);
 
     if (!cost.complete) warnings.push(`${product.name}: ${cost.missing.length ? `fehlende Materialpreise für persönliche Kosten (${cost.missing.join(", ")})` : "Kosten unvollständig"}.`);
-    if (sale.price === null && !baseCost.complete) warnings.push(`${product.name}: keine Preisempfehlung möglich, da normale Herstellungskosten unvollständig sind (${baseCost.missing.join(", ")}).`);
+    if (sale.price === null && !baseCost.complete) warnings.push(`${product.name}: keine Preisempfehlung möglich, da Produktionskosten unvollständig sind (${baseCost.missing.join(", ")}).`);
 
     rows.push({ product, quantity, produced, runs, unitCost, craftUnitCost, buyUnitCost, sale, unitProfit, totalProfit, totalCost, totalRevenue, assessment });
   }
@@ -677,7 +826,7 @@ function renderEconomy() {
   for (const item of rows) {
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${escapeHtml(item.product.name)}<br><span class="muted-inline">Craft: ${formatOptionalMoney(item.craftUnitCost)} · Kauf: ${formatOptionalMoney(item.buyUnitCost)}</span></td>
+      <td>${escapeHtml(item.product.name)}<br><span class="muted-inline">Produktion: ${formatOptionalMoney(item.craftUnitCost)} · Direktkauf: ${formatOptionalMoney(item.buyUnitCost)}</span></td>
       <td>${item.produced.toLocaleString("de-DE")} <span class="muted-inline">(${item.runs.toLocaleString("de-DE")} Läufe)</span></td>
       <td>${formatOptionalMoney(item.unitCost)}</td>
       <td>${formatOptionalMoney(item.sale.price)}</td>
@@ -742,18 +891,31 @@ function calculateMaterialBatchCostWithInventory(materialName, requiredAmount, i
   const inventory = consumeInventory(inventoryPool, name, requiredAmount);
   if (inventory.remaining <= 0) return { complete: true, totalCost: 0, missing: [] };
 
+  const buyUnitCost = getMaterialBuyUnitCost(name);
+  const buyOption = buyUnitCost !== null
+    ? { complete: true, totalCost: buyUnitCost * inventory.remaining, missing: [] }
+    : null;
+  const craftOption = calculateMaterialCraftBatchCostWithInventory(name, inventory.remaining, inventoryPool, stack);
+
+  return chooseCheapestBatchOption(buyOption, craftOption, name);
+}
+
+function calculateMaterialCraftBatchCostWithInventory(materialName, requiredAmount, inventoryPool, stack = new Set()) {
+  const name = cleanText(materialName);
+  const materialKey = `material:${name.toLocaleLowerCase("de-DE")}`;
+
   const recipeDef = getExistingMaterialRecipe(name);
   const autoOrigin = recipeDef?.autoProductId ? getProductOrigin(recipeDef.autoProductId) : null;
   if (autoOrigin?.product) {
     const output = positiveInteger(autoOrigin.product.output, 1);
-    const runs = Math.ceil(inventory.remaining / output);
+    const runs = Math.ceil(positiveInteger(requiredAmount, 0) / output);
     return calculateProductBatchCostWithInventory(autoOrigin.product, runs, inventoryPool, stack);
   }
 
   if (recipeDef?.recipe?.length) {
     const nextStack = new Set(stack);
     nextStack.add(materialKey);
-    const runs = Math.ceil(inventory.remaining / positiveInteger(recipeDef.output, 1));
+    const runs = Math.ceil(positiveInteger(requiredAmount, 0) / positiveInteger(recipeDef.output, 1));
     let totalCost = 0;
     const missing = [];
     for (const item of recipeDef.recipe) {
@@ -768,13 +930,22 @@ function calculateMaterialBatchCostWithInventory(materialName, requiredAmount, i
   const craftableProduct = findProductByName(name);
   if (craftableProduct?.recipe?.length) {
     const output = positiveInteger(craftableProduct.output, 1);
-    const runs = Math.ceil(inventory.remaining / output);
+    const runs = Math.ceil(positiveInteger(requiredAmount, 0) / output);
     return calculateProductBatchCostWithInventory(craftableProduct, runs, inventoryPool, stack);
   }
 
-  const materialCost = getMaterialCostPrice(name);
+  const materialCost = getMaterialManualPrice(name);
   if (materialCost === null) return { complete: false, totalCost: null, missing: [name] };
-  return { complete: true, totalCost: materialCost * inventory.remaining, missing: [] };
+  return { complete: true, totalCost: materialCost * positiveInteger(requiredAmount, 0), missing: [] };
+}
+
+function chooseCheapestBatchOption(buyOption, craftOption, fallbackName) {
+  if (buyOption?.complete && craftOption?.complete) {
+    return buyOption.totalCost <= craftOption.totalCost ? buyOption : craftOption;
+  }
+  if (craftOption?.complete) return craftOption;
+  if (buyOption?.complete) return buyOption;
+  return { complete: false, totalCost: null, missing: unique([...(craftOption?.missing ?? []), fallbackName].filter(Boolean)) };
 }
 
 
@@ -1029,8 +1200,6 @@ function openMaterialDialogCreate() {
   els.newMaterialName.value = "";
   els.newMaterialOutput.value = 1;
   els.newMaterialUnitPrice.value = "";
-  els.newMaterialImportPrice.value = "";
-  els.newMaterialExportPrice.value = "";
   setMaterialRecipeEditorEnabled(false);
   renderMaterialDialogRecipeRows();
   showDialog(els.addMaterialDialog, "#newMaterialName");
@@ -1049,8 +1218,6 @@ function openMaterialDialogEdit(materialName) {
   els.newMaterialName.value = materialName;
   els.newMaterialOutput.value = positiveInteger(recipeDef.output, 1);
   els.newMaterialUnitPrice.value = formatInputNumber(getMaterialManualPrice(materialName));
-  els.newMaterialImportPrice.value = formatInputNumber(getMaterialImportPrice(materialName));
-  els.newMaterialExportPrice.value = formatInputNumber(getMaterialExportPrice(materialName));
   setMaterialRecipeEditorEnabled(materialDialogRecipe.length > 0);
   renderMaterialDialogRecipeRows();
   showDialog(els.addMaterialDialog, "#newMaterialName");
@@ -1066,8 +1233,6 @@ function saveMaterialFromDialog(event) {
   const name = cleanText(els.newMaterialName.value);
   const output = positiveInteger(els.newMaterialOutput.value, 1);
   const unitPrice = optionalNumber(els.newMaterialUnitPrice.value);
-  const importPrice = optionalNumber(els.newMaterialImportPrice.value);
-  const exportPrice = optionalNumber(els.newMaterialExportPrice.value);
   const recipe = els.materialHasRecipeCheckbox.checked
     ? materialDialogRecipe
         .map((item) => ({ material: cleanText(item.material), amount: positiveInteger(item.amount, 0) }))
@@ -1112,8 +1277,6 @@ function saveMaterialFromDialog(event) {
   }
 
   setMaterialManualPrice(name, unitPrice);
-  setMaterialImportPrice(name, importPrice);
-  setMaterialExportPrice(name, exportPrice);
   clearAutoRecipeFlag(name);
   closeMaterialDialog();
   renderAll();
@@ -1186,9 +1349,6 @@ function openProductDialogCreate(factory) {
   els.productFactoryLabel.value = FACTORIES[factory];
   els.newProductName.value = "";
   els.newProductOutput.value = 1;
-  els.newProductImportPrice.value = "";
-  els.newProductExportPrice.value = "";
-  els.newProductMarketValue.value = "";
   renderProductDialogRecipeRows();
   showDialog(els.productDialog, "#newProductName");
 }
@@ -1208,9 +1368,6 @@ function openProductDialogEdit(factory, productId) {
   els.productFactoryLabel.value = FACTORIES[factory];
   els.newProductName.value = product.name;
   els.newProductOutput.value = positiveInteger(product.output, 1);
-  els.newProductImportPrice.value = formatInputNumber(product.importPrice);
-  els.newProductExportPrice.value = formatInputNumber(product.exportPrice);
-  els.newProductMarketValue.value = formatInputNumber(product.marketValue);
   renderProductDialogRecipeRows();
   showDialog(els.productDialog, "#newProductName");
 }
@@ -1224,9 +1381,6 @@ function saveProductFromDialog(event) {
   if (!requireAdminAccess()) return;
   const name = cleanText(els.newProductName.value);
   const output = positiveInteger(els.newProductOutput.value, 1);
-  const importPrice = optionalNumber(els.newProductImportPrice.value);
-  const exportPrice = optionalNumber(els.newProductExportPrice.value);
-  const marketValue = optionalNumber(els.newProductMarketValue.value);
   const recipe = productDialogRecipe
     .map((item) => ({ material: cleanText(item.material), amount: positiveInteger(item.amount, 0) }))
     .filter((item) => item.material && item.amount > 0);
@@ -1257,7 +1411,7 @@ function saveProductFromDialog(event) {
   }
 
   if (productDialogMode === "create") {
-    const product = { id: cryptoId(), name, output, importPrice, exportPrice, marketValue, recipe };
+    const product = { id: cryptoId(), name, output, recipe };
     factoryProducts.unshift(product);
     ensureMaterial(name);
     recipe.forEach((item) => ensureMaterial(item.material));
@@ -1274,9 +1428,6 @@ function saveProductFromDialog(event) {
   const oldName = product.name;
   product.name = name;
   product.output = output;
-  product.importPrice = importPrice;
-  product.exportPrice = exportPrice;
-  product.marketValue = marketValue;
   product.recipe = recipe;
   ensureMaterial(name);
   recipe.forEach((item) => ensureMaterial(item.material));
@@ -1503,7 +1654,9 @@ function updateAdminUi() {
   if (els.standardMarginInput) els.standardMarginInput.disabled = !adminUnlocked;
   if (!adminUnlocked) {
     materialSearchQuery = "";
+    tradeSearchQuery = "";
     if (els.materialSearchInput) els.materialSearchInput.value = "";
+    if (els.tradeSearchInput) els.tradeSearchInput.value = "";
     Object.keys(productSearchQueries).forEach((key) => { productSearchQueries[key] = ""; });
   }
   document.querySelectorAll(".admin-only").forEach((item) => {
@@ -1520,7 +1673,7 @@ function updateFloatingAddButton() {
   if (!els.floatingAddBtn) return;
   const activeTarget = getActiveTarget();
   const isFactory = Object.hasOwn(FACTORIES, activeTarget);
-  const shouldShow = adminUnlocked && (activeTarget === "materials" || isFactory);
+  const shouldShow = adminUnlocked && (activeTarget === "materials" || activeTarget === "trade" || isFactory);
   els.floatingAddBtn.hidden = !shouldShow;
   if (!shouldShow) {
     els.floatingAddBtn.removeAttribute("data-target");
@@ -1528,7 +1681,7 @@ function updateFloatingAddButton() {
   }
 
   els.floatingAddBtn.dataset.target = activeTarget;
-  els.floatingAddBtn.textContent = activeTarget === "materials" ? "Material hinzufügen" : "Ware hinzufügen";
+  els.floatingAddBtn.textContent = activeTarget === "materials" ? "Material hinzufügen" : activeTarget === "trade" ? "Handelseintrag hinzufügen" : "Ware hinzufügen";
 }
 
 function handleFloatingAdd() {
@@ -1536,6 +1689,11 @@ function handleFloatingAdd() {
   const target = els.floatingAddBtn?.dataset.target || getActiveTarget();
   if (target === "materials") {
     openMaterialDialogCreate();
+    return;
+  }
+  if (target === "trade") {
+    addTradeItemRow();
+    activateTab("trade");
     return;
   }
   if (Object.hasOwn(FACTORIES, target)) {
@@ -1616,8 +1774,7 @@ function getMaterialRecipe(materialName) {
   const name = cleanText(materialName);
   state.materialRecipes ??= {};
   state.materialPrices ??= {};
-  state.materialImportPrices ??= {};
-  state.materialExportPrices ??= {};
+  state.tradePrices ??= {};
   state.inventory ??= {};
   state.pricing ??= {};
   state.pricing.standardMarginPercent = positiveNumber(state.pricing.standardMarginPercent, 30);
@@ -1656,14 +1813,7 @@ function renameMaterial(oldName, newName, shouldRender = true) {
     state.materialPrices[newName] = state.materialPrices[oldName];
     delete state.materialPrices[oldName];
   }
-  if (state.materialImportPrices?.[oldName] !== undefined) {
-    state.materialImportPrices[newName] = state.materialImportPrices[oldName];
-    delete state.materialImportPrices[oldName];
-  }
-  if (state.materialExportPrices?.[oldName] !== undefined) {
-    state.materialExportPrices[newName] = state.materialExportPrices[oldName];
-    delete state.materialExportPrices[oldName];
-  }
+  renameTradePrice(oldName, newName);
   if (state.inventory?.[oldName] !== undefined) {
     state.inventory[newName] = (positiveInteger(state.inventory[newName], 0) || 0) + positiveInteger(state.inventory[oldName], 0);
     delete state.inventory[oldName];
@@ -1738,14 +1888,53 @@ function sortMaterials() {
   state.materials = unique(state.materials).sort((a, b) => a.localeCompare(b, "de", { sensitivity: "base" }));
 }
 
+function normalizeTradePricesFromState() {
+  const normalized = {};
+  const add = (itemName, values) => {
+    const name = cleanText(itemName);
+    if (!name) return;
+    const record = {
+      importPrice: optionalNumber(values?.importPrice),
+      exportPrice: optionalNumber(values?.exportPrice),
+      marketValue: optionalNumber(values?.marketValue)
+    };
+    if (record.importPrice === null && record.exportPrice === null && record.marketValue === null) return;
+    normalized[name] = mergeTradeRecord(normalized[name], record);
+  };
+
+  for (const [name, record] of Object.entries(state.tradePrices ?? {})) add(name, record);
+  for (const [name, price] of Object.entries(state.materialImportPrices ?? {})) add(name, { importPrice: price });
+  for (const [name, price] of Object.entries(state.materialExportPrices ?? {})) add(name, { exportPrice: price });
+
+  for (const product of Object.values(state.products ?? {}).flat()) {
+    add(product.name, {
+      importPrice: product.importPrice,
+      exportPrice: product.exportPrice,
+      marketValue: product.marketValue
+    });
+    delete product.importPrice;
+    delete product.exportPrice;
+    delete product.marketValue;
+  }
+
+  return Object.fromEntries(Object.entries(normalized).sort(([a], [b]) => a.localeCompare(b, "de", { sensitivity: "base" })));
+}
+
+function mergeTradeRecord(base, extra) {
+  return {
+    importPrice: optionalNumber(extra?.importPrice) ?? optionalNumber(base?.importPrice),
+    exportPrice: optionalNumber(extra?.exportPrice) ?? optionalNumber(base?.exportPrice),
+    marketValue: optionalNumber(extra?.marketValue) ?? optionalNumber(base?.marketValue)
+  };
+}
+
 function normalizeState() {
   state.materials = unique((state.materials ?? []).map(cleanText).filter(Boolean));
   state.products ??= {};
   state.plan ??= [];
   state.materialRecipes ??= {};
   state.materialPrices ??= {};
-  state.materialImportPrices ??= {};
-  state.materialExportPrices ??= {};
+  state.tradePrices ??= {};
   state.inventory ??= {};
   state.pricing ??= {};
   state.pricing.standardMarginPercent = positiveNumber(state.pricing.standardMarginPercent, 30);
@@ -1791,18 +1980,7 @@ function normalizeState() {
     const value = optionalNumber(price);
     if (name && value !== null) normalizedMaterialPrices[name] = value;
   }
-  const normalizedMaterialImportPrices = {};
-  for (const [materialName, price] of Object.entries(state.materialImportPrices ?? {})) {
-    const name = cleanText(materialName);
-    const value = optionalNumber(price);
-    if (name && value !== null) normalizedMaterialImportPrices[name] = value;
-  }
-  const normalizedMaterialExportPrices = {};
-  for (const [materialName, price] of Object.entries(state.materialExportPrices ?? {})) {
-    const name = cleanText(materialName);
-    const value = optionalNumber(price);
-    if (name && value !== null) normalizedMaterialExportPrices[name] = value;
-  }
+  const normalizedTradePrices = normalizeTradePricesFromState();
   const normalizedInventory = {};
   for (const [materialName, amount] of Object.entries(state.inventory ?? {})) {
     const name = cleanText(materialName);
@@ -1814,8 +1992,9 @@ function normalizeState() {
   }
   state.materialRecipes = normalizedMaterialRecipes;
   state.materialPrices = normalizedMaterialPrices;
-  state.materialImportPrices = normalizedMaterialImportPrices;
-  state.materialExportPrices = normalizedMaterialExportPrices;
+  state.tradePrices = normalizedTradePrices;
+  delete state.materialImportPrices;
+  delete state.materialExportPrices;
   state.inventory = normalizedInventory;
   syncProductRecipesToMaterials();
   sortMaterials();
@@ -1844,6 +2023,7 @@ function validateImportedState(value) {
   if (value.materialPrices !== undefined && (typeof value.materialPrices !== "object" || Array.isArray(value.materialPrices))) throw new Error("Feld 'materialPrices' ist ungültig.");
   if (value.materialImportPrices !== undefined && (typeof value.materialImportPrices !== "object" || Array.isArray(value.materialImportPrices))) throw new Error("Feld 'materialImportPrices' ist ungültig.");
   if (value.materialExportPrices !== undefined && (typeof value.materialExportPrices !== "object" || Array.isArray(value.materialExportPrices))) throw new Error("Feld 'materialExportPrices' ist ungültig.");
+  if (value.tradePrices !== undefined && (typeof value.tradePrices !== "object" || Array.isArray(value.tradePrices))) throw new Error("Feld 'tradePrices' ist ungültig.");
   if (value.inventory !== undefined && (typeof value.inventory !== "object" || Array.isArray(value.inventory))) throw new Error("Feld 'inventory' ist ungültig.");
   if (value.pricing !== undefined && (typeof value.pricing !== "object" || Array.isArray(value.pricing))) throw new Error("Feld 'pricing' ist ungültig.");
 }
@@ -1871,7 +2051,7 @@ function firstFactoryWithProduct() {
 function createDefaultState() {
   const products = {};
   for (const factory of Object.keys(FACTORIES)) products[factory] = [];
-  return { materials: [], materialRecipes: {}, materialPrices: {}, materialImportPrices: {}, materialExportPrices: {}, inventory: {}, pricing: { standardMarginPercent: 30 }, products, plan: [] };
+  return { materials: [], materialRecipes: {}, materialPrices: {}, tradePrices: {}, inventory: {}, pricing: { standardMarginPercent: 30 }, products, plan: [] };
 }
 
 
@@ -1907,36 +2087,73 @@ function setMaterialManualPrice(materialName, value) {
   else state.materialPrices[name] = price;
 }
 
-function getMaterialImportPrice(materialName) {
-  const value = state.materialImportPrices?.[cleanText(materialName)];
-  return optionalNumber(value);
+function getTradeRecord(itemName) {
+  const name = cleanText(itemName);
+  if (!name) return null;
+  const record = state.tradePrices?.[name];
+  if (!record || typeof record !== "object") return null;
+  return record;
 }
 
-function setMaterialImportPrice(materialName, value) {
-  state.materialImportPrices ??= {};
-  const name = cleanText(materialName);
+function setTradePrice(itemName, values) {
+  state.tradePrices ??= {};
+  const name = cleanText(itemName);
   if (!name) return;
-  const price = optionalNumber(value);
-  if (price === null) delete state.materialImportPrices[name];
-  else state.materialImportPrices[name] = price;
+  const record = {
+    importPrice: optionalNumber(values?.importPrice),
+    exportPrice: optionalNumber(values?.exportPrice),
+    marketValue: optionalNumber(values?.marketValue)
+  };
+  if (record.importPrice === null && record.exportPrice === null && record.marketValue === null) {
+    delete state.tradePrices[name];
+    return;
+  }
+  state.tradePrices[name] = record;
+}
+
+function deleteTradePrice(itemName) {
+  const name = cleanText(itemName);
+  if (name && state.tradePrices) delete state.tradePrices[name];
+}
+
+function renameTradePrice(oldName, newName) {
+  const oldKey = cleanText(oldName);
+  const newKey = cleanText(newName);
+  if (!oldKey || !newKey || oldKey === newKey || !state.tradePrices?.[oldKey]) return;
+  state.tradePrices[newKey] = mergeTradeRecord(state.tradePrices[newKey], state.tradePrices[oldKey]);
+  delete state.tradePrices[oldKey];
+}
+
+function getTradeImportPrice(itemName) {
+  return optionalNumber(getTradeRecord(itemName)?.importPrice);
+}
+
+function getTradeExportPrice(itemName) {
+  return optionalNumber(getTradeRecord(itemName)?.exportPrice);
+}
+
+function getTradeMarketValue(itemName) {
+  return optionalNumber(getTradeRecord(itemName)?.marketValue);
+}
+
+function getMaterialImportPrice(materialName) {
+  return getTradeImportPrice(materialName);
 }
 
 function getMaterialExportPrice(materialName) {
-  const value = state.materialExportPrices?.[cleanText(materialName)];
-  return optionalNumber(value);
-}
-
-function setMaterialExportPrice(materialName, value) {
-  state.materialExportPrices ??= {};
-  const name = cleanText(materialName);
-  if (!name) return;
-  const price = optionalNumber(value);
-  if (price === null) delete state.materialExportPrices[name];
-  else state.materialExportPrices[name] = price;
+  return getTradeExportPrice(materialName);
 }
 
 function getMaterialCostPrice(materialName) {
-  return getMaterialImportPrice(materialName) ?? getMaterialManualPrice(materialName);
+  return getTradeImportPrice(materialName) ?? getMaterialManualPrice(materialName);
+}
+
+function getProductBuyUnitCost(product) {
+  return getTradeImportPrice(product?.name);
+}
+
+function getMaterialBuyUnitCost(materialName) {
+  return getTradeImportPrice(materialName);
 }
 
 function calculateMaterialUnitCost(materialName, stack = new Set()) {
@@ -1970,6 +2187,54 @@ function calculateMaterialUnitCost(materialName, stack = new Set()) {
   return { complete: true, unitCost: materialCost, missing: [] };
 }
 
+function calculateMaterialUnitCostWithOptimalInputs(materialName, stack = new Set()) {
+  const name = cleanText(materialName);
+  const materialKey = `material-optimal:${name.toLocaleLowerCase("de-DE")}`;
+  if (stack.has(materialKey)) return { complete: false, unitCost: null, missing: [name] };
+
+  const buyUnitCost = getMaterialBuyUnitCost(name);
+  const buyOption = buyUnitCost !== null
+    ? { complete: true, unitCost: buyUnitCost, missing: [] }
+    : null;
+
+  const nextStack = new Set(stack);
+  nextStack.add(materialKey);
+  const craftOption = calculateMaterialCraftUnitCostWithOptimalInputs(name, nextStack);
+
+  return chooseCheapestUnitOption(buyOption, craftOption, name);
+}
+
+function calculateMaterialCraftUnitCostWithOptimalInputs(materialName, stack = new Set()) {
+  const name = cleanText(materialName);
+  const materialKey = `material-craft:${name.toLocaleLowerCase("de-DE")}`;
+  if (stack.has(materialKey)) return { complete: false, unitCost: null, missing: [name] };
+
+  const recipeDef = getExistingMaterialRecipe(name);
+  const autoOrigin = recipeDef?.autoProductId ? getProductOrigin(recipeDef.autoProductId) : null;
+  if (autoOrigin?.product) return calculateProductUnitCostWithOptimalInputs(autoOrigin.product, stack);
+
+  if (recipeDef?.recipe?.length) {
+    const nextStack = new Set(stack);
+    nextStack.add(materialKey);
+    let total = 0;
+    const missing = [];
+    for (const item of recipeDef.recipe) {
+      const child = calculateMaterialUnitCostWithOptimalInputs(item.material, nextStack);
+      if (!child.complete) missing.push(...child.missing);
+      else total += child.unitCost * positiveInteger(item.amount, 0);
+    }
+    if (missing.length) return { complete: false, unitCost: null, missing: unique(missing) };
+    return { complete: true, unitCost: total / positiveInteger(recipeDef.output, 1), missing: [] };
+  }
+
+  const craftableProduct = findProductByName(name);
+  if (craftableProduct?.recipe?.length) return calculateProductUnitCostWithOptimalInputs(craftableProduct, stack);
+
+  const manualCost = getMaterialManualPrice(name);
+  if (manualCost === null) return { complete: false, unitCost: null, missing: [name] };
+  return { complete: true, unitCost: manualCost, missing: [] };
+}
+
 function calculateProductUnitCost(product, stack = new Set()) {
   const productKey = `product:${product.id}`;
   if (stack.has(productKey)) return { complete: false, unitCost: null, missing: [product.name] };
@@ -1987,22 +2252,42 @@ function calculateProductUnitCost(product, stack = new Set()) {
   return { complete: true, unitCost: totalCost / positiveInteger(product.output, 1), missing: [] };
 }
 
+function calculateProductUnitCostWithOptimalInputs(product, stack = new Set()) {
+  const productKey = `product-optimal:${product.id}`;
+  if (stack.has(productKey)) return { complete: false, unitCost: null, missing: [product.name] };
+  const nextStack = new Set(stack);
+  nextStack.add(productKey);
+
+  let totalCost = 0;
+  const missing = [];
+  for (const item of product.recipe ?? []) {
+    const materialCost = calculateMaterialUnitCostWithOptimalInputs(item.material, nextStack);
+    if (!materialCost.complete) missing.push(...materialCost.missing);
+    else totalCost += materialCost.unitCost * positiveInteger(item.amount, 0);
+  }
+  if (missing.length) return { complete: false, unitCost: null, missing: unique(missing) };
+  return { complete: true, unitCost: totalCost / positiveInteger(product.output, 1), missing: [] };
+}
+
+function chooseCheapestUnitOption(buyOption, craftOption, fallbackName) {
+  if (buyOption?.complete && craftOption?.complete) {
+    return buyOption.unitCost <= craftOption.unitCost ? buyOption : craftOption;
+  }
+  if (craftOption?.complete) return craftOption;
+  if (buyOption?.complete) return buyOption;
+  return { complete: false, unitCost: null, missing: unique([...(craftOption?.missing ?? []), fallbackName].filter(Boolean)) };
+}
+
 function getSalePrice(product, unitCost) {
-  const exportPrice = optionalNumber(product.exportPrice);
+  const exportPrice = getTradeExportPrice(product?.name);
   if (exportPrice !== null) return { price: exportPrice, source: "Exportpreis" };
-  const marketValue = optionalNumber(product.marketValue);
+  const marketValue = getTradeMarketValue(product?.name);
   if (marketValue !== null) return { price: marketValue, source: "Marktwert" };
   if (unitCost !== null) {
     const margin = positiveNumber(state.pricing?.standardMarginPercent, 30);
     return { price: unitCost * (1 + margin / 100), source: "Kosten + Marge" };
   }
   return { price: null, source: "Unvollständig" };
-}
-
-function getBuyUnitCost(product) {
-  const productImport = optionalNumber(product.importPrice);
-  if (productImport !== null) return productImport;
-  return getMaterialImportPrice(product.name);
 }
 
 function getProcurementAssessment(craftUnitCost, buyUnitCost) {
@@ -2057,6 +2342,14 @@ function cleanText(value) {
 
 function unique(values) {
   return [...new Set(values)];
+}
+
+function escapeAttribute(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 function escapeHtml(value) {

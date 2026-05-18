@@ -987,9 +987,6 @@
         "id": "b32cde6a-bc23-4b20-8dce-60b02c6e988b",
         "name": "Amethystbarrenpalette",
         "output": 1,
-        "importPrice": 18400,
-        "exportPrice": 20000,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Amethystbarren",
@@ -1001,9 +998,6 @@
         "id": "ffa45688-b532-4cb6-8f59-68beb4ec27ee",
         "name": "Goldbarrenpalette",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Goldbarren",
@@ -1015,9 +1009,6 @@
         "id": "faa78d58-607f-4955-9a99-e5cacd5cef52",
         "name": "Smaragdbarrenpalette",
         "output": 1,
-        "importPrice": 150000,
-        "exportPrice": 102500,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Smaragdbarren",
@@ -1029,9 +1020,6 @@
         "id": "2f3ec299-6257-4a1f-aa04-f43365fdd508",
         "name": "Vivianitbarrenpalette",
         "output": 1,
-        "importPrice": 100000,
-        "exportPrice": 55000,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Vivianitbarren",
@@ -1043,9 +1031,6 @@
         "id": "9d29ea1e-9e6f-4578-8793-859c1016d7d9",
         "name": "Saphirbarrenpalette",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Saphirbarren",
@@ -1057,9 +1042,6 @@
         "id": "94c21217-f84e-45b1-aa16-03e2522efa6b",
         "name": "Titanbarrenpalette",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Titanbarren",
@@ -1071,9 +1053,6 @@
         "id": "2e481a70-91b1-4a3f-afde-a50feb5621e3",
         "name": "Aluminiumbarrenpalette",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumbarren",
@@ -1085,9 +1064,6 @@
         "id": "077d2156-96af-4744-aa54-4273f4d00c5b",
         "name": "Kohlebarrenpalette",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Kohlebarren",
@@ -1099,9 +1075,6 @@
         "id": "37b413fe-670e-4d65-879e-a7cc80203748",
         "name": "Eisenbarrenpalette",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Eisenbarren",
@@ -1113,9 +1086,6 @@
         "id": "83f53fc4-a9ad-4514-8597-f6baf0fe2339",
         "name": "Titanplatten (aus Palette)",
         "output": 60,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Titanpalette",
@@ -1127,9 +1097,6 @@
         "id": "5da442d8-6f4e-40a2-90db-2fcb59f9d1fc",
         "name": "Titanpalette",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Titanplatten",
@@ -1141,9 +1108,6 @@
         "id": "ceaebb47-820f-4e75-aa7d-6a136a4cad66",
         "name": "Aluminiumplatten (aus Palette)",
         "output": 60,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumpalette",
@@ -1155,9 +1119,6 @@
         "id": "9104a569-b515-4e58-9acd-fe683717d67e",
         "name": "Aluminiumpalette",
         "output": 1,
-        "importPrice": 550,
-        "exportPrice": 4000,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumplatten",
@@ -1169,9 +1130,6 @@
         "id": "9f40b3e9-48fb-4041-9137-72cf16d41e70",
         "name": "Stahlplatten (aus Palette)",
         "output": 60,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Stahlpalette",
@@ -1183,9 +1141,6 @@
         "id": "adaac0bd-edd3-487b-b958-62c6ad35a7fe",
         "name": "Stahlpalette",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Stahlplatten",
@@ -1197,9 +1152,6 @@
         "id": "46f0ca06-672d-4b67-a16a-36bbbfa0835b",
         "name": "Titanplatten",
         "output": 15,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Titanbarren",
@@ -1215,9 +1167,6 @@
         "id": "21cfbcd8-5591-4330-8d2e-c037eb74c4fd",
         "name": "Goldplatten",
         "output": 30,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Goldbarren",
@@ -1233,9 +1182,6 @@
         "id": "8e26454b-b18a-4a02-918c-807e765b1bfa",
         "name": "Aluminiumplatten",
         "output": 30,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumbarren",
@@ -1255,9 +1201,6 @@
         "id": "27f40765-529d-491f-bb34-b8167171c003",
         "name": "Amethystbarren",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Amethysterz",
@@ -1269,9 +1212,6 @@
         "id": "b3793fd4-4a1d-4839-8d83-86a42cb422bc",
         "name": "Goldbarren",
         "output": 1,
-        "importPrice": 1000,
-        "exportPrice": 70,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Golderz",
@@ -1283,9 +1223,6 @@
         "id": "f2d745e5-cd3d-4293-bf11-3f08be14c274",
         "name": "Smaragdbarren",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Smaragderz",
@@ -1297,9 +1234,6 @@
         "id": "328f2391-8ac4-4115-b9f1-642b0ab3ec72",
         "name": "Vivianitbarren",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Vivianiterz",
@@ -1311,9 +1245,6 @@
         "id": "e85b64a1-277d-4ede-b8d4-ce380e60deec",
         "name": "Saphirbarren",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Saphirerz",
@@ -1325,9 +1256,6 @@
         "id": "c60624f6-25a5-4c73-a400-387f98952a62",
         "name": "Titanbarren",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Titanerz",
@@ -1339,9 +1267,6 @@
         "id": "34824925-a9d7-4506-ae17-71f25e09b3aa",
         "name": "Kohlebarren",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Kohleerz",
@@ -1353,9 +1278,6 @@
         "id": "4782211c-275e-47d1-88b9-e07a518af6d1",
         "name": "Eisenbarren",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Eisenerz",
@@ -1367,9 +1289,6 @@
         "id": "98e50703-8788-4f8f-8ef2-7caa002af625",
         "name": "Presslufthammer (Bagger)",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Stahlplatten",
@@ -1381,9 +1300,6 @@
         "id": "730239f0-b536-4b5c-9c32-7e59c7488415",
         "name": "Baggerschaufel",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Stahlplatten",
@@ -1395,9 +1311,6 @@
         "id": "d685036c-b8a4-490e-9940-77f5e3efa75e",
         "name": "Stahlplatten",
         "output": 30,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Eisenbarren",
@@ -1415,9 +1328,6 @@
         "id": "795b10ed-f832-4a71-91c8-09f36dbe40ba",
         "name": "Reifen",
         "output": 8,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Gummi",
@@ -1429,9 +1339,6 @@
         "id": "6e319ec1-1b1e-407b-8074-ca736be10d73",
         "name": "Fenster",
         "output": 4,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Glas",
@@ -1446,9 +1353,6 @@
         "id": "feb13cf7-7a02-43da-a23b-453adb774ef8",
         "name": "Steerable Parachute",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Polyester",
@@ -1468,9 +1372,6 @@
         "id": "535a12b0-35d6-40c7-9ae5-7dcf43ab0678",
         "name": "Grumman Goose",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumpalette",
@@ -1486,9 +1387,6 @@
         "id": "f3815c2e-b37e-4501-b547-70c083b56f7a",
         "name": "Bell 214 (Luxury)",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumpalette",
@@ -1516,9 +1414,6 @@
         "id": "b7a91f2f-b9a3-49c2-a705-7a9f2710ee5a",
         "name": "Bell 412 (Veteran Transport)",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumpalette",
@@ -1546,9 +1441,6 @@
         "id": "8378e079-08d0-44f4-b1fb-cd12f3263f5b",
         "name": "Bell 412 (Ex-Military)",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumpalette",
@@ -1576,9 +1468,6 @@
         "id": "018d69ad-aa88-4809-813e-2497bb975479",
         "name": "Bell 412 (Civil)",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumbarrenpalette",
@@ -1606,9 +1495,6 @@
         "id": "9d7dd64d-158c-4ac5-b9ea-05c0c1790d47",
         "name": "Eurocopter AS 350",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumpalette",
@@ -1636,9 +1522,6 @@
         "id": "5aadd4fa-d6cb-4833-83bf-6d631c323055",
         "name": "M-900",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumpalette",
@@ -1662,9 +1545,6 @@
         "id": "19f14d40-f88a-4e28-bba4-11e0a983ff90",
         "name": "Pallet Lifter",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumpalette",
@@ -1687,9 +1567,6 @@
         "id": "6e362003-5147-4871-a7b8-9d1baca299e5",
         "name": "Benzinkanister - leerer Kanister",
         "output": 2,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Benzin",
@@ -1705,9 +1582,6 @@
         "id": "1d534685-a2dd-485f-b000-3511e0a29a82",
         "name": "Spritkanister (Kerosin) - leerer Kanister",
         "output": 2,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Kerosin",
@@ -1723,9 +1597,6 @@
         "id": "19c8e079-8faf-4694-9a16-cfe66af1d7bf",
         "name": "Spritkanister (Kerosin)",
         "output": 2,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Kerosin",
@@ -1741,9 +1612,6 @@
         "id": "d17f9976-c0d9-4860-8943-3c8eb74ff91b",
         "name": "Ölkanister",
         "output": 20,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Rohöl",
@@ -1755,9 +1623,6 @@
         "id": "0a197268-66ae-4ec3-b48d-4aa8e915d392",
         "name": "Kerosin",
         "output": 3,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Rohöl",
@@ -1769,9 +1634,6 @@
         "id": "e213a1d1-64e4-4295-a4ce-d3229ed78b22",
         "name": "Spritkanister",
         "output": 2,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Stahlplatten",
@@ -1787,9 +1649,6 @@
         "id": "394d9893-6804-472e-94af-fb03c554b07c",
         "name": "Leerer Spritkanister",
         "output": 2,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Stahlplatten",
@@ -1801,9 +1660,6 @@
         "id": "eafc19b7-9298-42d5-86aa-e16d484a08bd",
         "name": "Benzin",
         "output": 3,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Rohöl",
@@ -1815,9 +1671,6 @@
         "id": "74966ecd-b1e1-4349-8112-7657b50eceba",
         "name": "Ölpumpe",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": []
       }
     ],
@@ -1827,9 +1680,6 @@
         "id": "f95d2b40-2a26-4a82-b205-1a84fa2cc27b",
         "name": "Amethystbarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Amethystbarrenpalette",
@@ -1841,9 +1691,6 @@
         "id": "993d3c64-0423-4567-a8bd-c5424413fcfb",
         "name": "Goldbarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Goldbarrenpalette",
@@ -1855,9 +1702,6 @@
         "id": "fa25c055-6123-4cc4-9f73-60fd791bee69",
         "name": "Smaragdbarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Smaragdbarrenpalette",
@@ -1869,9 +1713,6 @@
         "id": "e200f907-3f04-4a3e-aaf9-d976944031d6",
         "name": "Vivianitbarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Vivianitbarrenpalette",
@@ -1883,9 +1724,6 @@
         "id": "3c160dc7-18dc-4b8b-872e-4657e4b4b714",
         "name": "Saphirbarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Saphirbarrenpalette",
@@ -1897,9 +1735,6 @@
         "id": "640799f1-2890-453c-9921-6a9fa19f02ba",
         "name": "Aluminiumbarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumbarrenpalette",
@@ -1911,9 +1746,6 @@
         "id": "ad907c1a-8c66-4fbb-a858-3b46c7c3dd09",
         "name": "Kohlebarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Kohlebarrenpalette",
@@ -1925,9 +1757,6 @@
         "id": "268ee9aa-ab6a-4eb2-9675-25746b221451",
         "name": "Eisenbarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Eisenbarrenpalette",
@@ -1939,9 +1768,6 @@
         "id": "9b895dd8-ce2d-4493-9da0-4756345c6879",
         "name": "Titanbarren (aus Palette)",
         "output": 256,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Titanbarrenpalette",
@@ -1953,18 +1779,12 @@
         "id": "3a89978c-6788-46b9-b082-916c5580f464",
         "name": "Dünger",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": []
       },
       {
         "id": "9a95913d-1ec6-4f9f-97d2-dd92588ed621",
         "name": "Glas",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Glasfaser",
@@ -1976,9 +1796,6 @@
         "id": "0426db5a-5564-4cfd-a014-d8cbb1896c8a",
         "name": "Leere Wasserflasche",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Kunststoff",
@@ -1990,9 +1807,6 @@
         "id": "98ebd364-323a-4a1a-9c3d-33315ec350f9",
         "name": "Polyester",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Kunstfaser",
@@ -2004,9 +1818,6 @@
         "id": "6fe0f348-d249-4f46-aec8-a0e843d928a3",
         "name": "Glasfaser",
         "output": 3,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Sand",
@@ -2018,9 +1829,6 @@
         "id": "70dce5dc-2ac6-45b6-80e0-b76140d43c72",
         "name": "Kunstfaser",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Rohöl",
@@ -2032,9 +1840,6 @@
         "id": "7e4e90ab-4b4b-485d-842b-e56f546414fd",
         "name": "Gummi",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Kunstfaser",
@@ -2046,9 +1851,6 @@
         "id": "25a84a9a-4321-4ed7-b5e6-e8ac01589bb7",
         "name": "Fiberglas",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Glasfaser",
@@ -2060,9 +1862,6 @@
         "id": "312bc031-b9bc-4d52-80c8-9592498ccb29",
         "name": "Kunststoff",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Rohöl",
@@ -2074,9 +1873,6 @@
         "id": "d4b372b9-7d45-4acd-bae9-10ee61ce3042",
         "name": "Schießpulver",
         "output": 5,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Schwefelbarren",
@@ -2092,9 +1888,6 @@
         "id": "1b75f5c2-c02e-49a6-b0cb-11d017ea35b9",
         "name": "Schwefelbarren",
         "output": 10,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Schwefelerz",
@@ -2106,9 +1899,6 @@
         "id": "4b381b66-0126-46ca-a83a-7a0c72d5fc04",
         "name": "Titanerz",
         "output": 4,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Sand",
@@ -2120,9 +1910,6 @@
         "id": "6f1c8dd9-b697-4d31-917f-ffb45a56c9b7",
         "name": "Aluminiumbarren",
         "output": 1,
-        "importPrice": null,
-        "exportPrice": null,
-        "marketValue": null,
         "recipe": [
           {
             "material": "Aluminiumerz",
@@ -2139,23 +1926,67 @@
   "pricing": {
     "standardMarginPercent": 30
   },
-  "materialImportPrices": {
-    "Aluminiumerz": 30,
-    "Kohleerz": 30,
-    "Smaragderz": 600,
-    "Rohöl": 25,
-    "Eisenerz": 25,
-    "Saphirerz": 150,
-    "Vivianiterz": 350
-  },
-  "materialExportPrices": {
-    "Aluminiumerz": 3,
-    "Kohleerz": 7,
-    "Smaragderz": 100,
-    "Rohöl": 8,
-    "Eisenerz": 5,
-    "Saphirerz": 40,
-    "Vivianiterz": 50
-  },
-  "inventory": {}
+  "inventory": {},
+  "tradePrices": {
+    "Aluminiumerz": {
+      "importPrice": 30,
+      "exportPrice": 3,
+      "marketValue": null
+    },
+    "Aluminiumpalette": {
+      "importPrice": 550,
+      "exportPrice": 4000,
+      "marketValue": null
+    },
+    "Amethystbarrenpalette": {
+      "importPrice": 18400,
+      "exportPrice": 20000,
+      "marketValue": null
+    },
+    "Eisenerz": {
+      "importPrice": 25,
+      "exportPrice": 5,
+      "marketValue": null
+    },
+    "Goldbarren": {
+      "importPrice": 1000,
+      "exportPrice": 70,
+      "marketValue": null
+    },
+    "Kohleerz": {
+      "importPrice": 30,
+      "exportPrice": 7,
+      "marketValue": null
+    },
+    "Rohöl": {
+      "importPrice": 25,
+      "exportPrice": 8,
+      "marketValue": null
+    },
+    "Saphirerz": {
+      "importPrice": 150,
+      "exportPrice": 40,
+      "marketValue": null
+    },
+    "Smaragdbarrenpalette": {
+      "importPrice": 150000,
+      "exportPrice": 102500,
+      "marketValue": null
+    },
+    "Smaragderz": {
+      "importPrice": 600,
+      "exportPrice": 100,
+      "marketValue": null
+    },
+    "Vivianitbarrenpalette": {
+      "importPrice": 100000,
+      "exportPrice": 55000,
+      "marketValue": null
+    },
+    "Vivianiterz": {
+      "importPrice": 350,
+      "exportPrice": 50,
+      "marketValue": null
+    }
+  }
 }

@@ -222,8 +222,8 @@
                 <th>Material / Zwischenprodukt</th>
                 <th>Produktion</th>
                 <th>Wert / Einheit</th>
-                <th>Importpreis</th>
-                <th>Exportpreis</th>
+                <th>Import</th>
+                <th>Export</th>
                 <th>Unterrezept</th>
                 <th></th>
               </tr>
@@ -233,6 +233,42 @@
         </div>
       </section>
     </section>
+
+    <section id="trade" class="panel" aria-labelledby="trade-tab">
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Zentrale Handelsdaten</h2>
+            <p>Import-, Export- und Marktpreise werden hier zentral gepflegt und automatisch bei Fabriken, Materialien und im Calculator verwendet.</p>
+          </div>
+          <button id="addTradeItemBtn" class="button admin-only" type="button">Handelseintrag hinzufügen</button>
+        </div>
+        <p class="hint">Nur Artikel mit einem Eintrag in dieser Liste gelten als kaufbar oder exportierbar. Rezepte und Materialien speichern keine eigenen Import-/Exportpreise mehr.</p>
+        <div class="edit-search-bar">
+          <label>
+            Handelsartikel suchen
+            <input id="tradeSearchInput" type="search" placeholder="Artikel oder Preis eingeben" autocomplete="off" />
+          </label>
+          <span id="tradeSearchCount" class="search-count">0 Handelseinträge</span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table trade-table" id="tradeTable">
+            <thead>
+              <tr>
+                <th>Artikel</th>
+                <th>Import</th>
+                <th>Export</th>
+                <th>Marktwert</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <datalist id="tradeItemOptions"></datalist>
+        </div>
+      </section>
+    </section>
+
 
     <div id="factoryPanels"></div>
 
@@ -337,14 +373,6 @@
           Wert pro Einheit <span class="optional-label">optional</span>
           <input id="newMaterialUnitPrice" type="number" min="0" step="0.01" placeholder="0" />
         </label>
-        <label>
-          Importpreis <span class="optional-label">optional</span>
-          <input id="newMaterialImportPrice" type="number" min="0" step="0.01" placeholder="0" />
-        </label>
-        <label>
-          Exportpreis <span class="optional-label">optional</span>
-          <input id="newMaterialExportPrice" type="number" min="0" step="0.01" placeholder="0" />
-        </label>
       </div>
 
       <div class="modal-section">
@@ -393,7 +421,7 @@
         <div>
           <p id="productDialogEyebrow" class="eyebrow modal-eyebrow">Ware</p>
           <h2 id="productDialogTitle">Ware hinzufügen</h2>
-          <p id="productDialogIntro">Die Ware wird automatisch als Material/Zwischenprodukt übernommen.</p>
+          <p id="productDialogIntro">Die Ware wird automatisch als Material/Zwischenprodukt übernommen. Handelswerte werden separat unter Handel gepflegt.</p>
         </div>
         <button id="closeProductDialogBtn" class="icon-button" type="button" aria-label="Fenster schließen">×</button>
       </div>
@@ -410,21 +438,6 @@
         <label>
           Ausstoß pro Produktionslauf
           <input id="newProductOutput" type="number" min="1" step="1" value="1" />
-        </label>
-      </div>
-
-      <div class="modal-fields price-fields">
-        <label>
-          Importpreis <span class="optional-label">optional</span>
-          <input id="newProductImportPrice" type="number" min="0" step="0.01" placeholder="0" />
-        </label>
-        <label>
-          Exportpreis <span class="optional-label">optional</span>
-          <input id="newProductExportPrice" type="number" min="0" step="0.01" placeholder="0" />
-        </label>
-        <label>
-          Marktwert <span class="optional-label">optional</span>
-          <input id="newProductMarketValue" type="number" min="0" step="0.01" placeholder="0" />
         </label>
       </div>
 

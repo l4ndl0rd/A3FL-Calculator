@@ -14,37 +14,42 @@ Der Calculator läuft vollständig statisch und ist für GitHub Pages geeignet. 
 - Eigenes Inventar zur Verrechnung erfarmter Items
 - Direkter Materialbedarf und rekursiver Rohmaterialbedarf
 - Wirtschaftlichkeitsberechnung mit Preisempfehlung
-- Vergleich, ob Kaufen oder Farmen/Craften günstiger ist
-- Materialien mit optionalem Wert, Importpreis und Exportpreis
-- Waren mit Importpreis, Exportpreis und Marktwert
+- Vergleich, ob direkte Beschaffung oder Produktion günstiger ist
+- Zentrale Handelsdaten für Importpreis, Exportpreis und Marktwert
+- Materialien mit optionalem Wert pro Einheit und optionalem Unterrezept
+- Waren mit Produktionsmenge und Rezeptdaten pro Fabrik
 - Bearbeitungsmodus mit Bestätigungsdialog als UI-Sperre
-- Suche in Material- und Warenlisten
+- Suche in Material-, Waren- und Handelslisten
 - JSON Import, Export und Zurücksetzen
 - Standarddatenbestand über `waren-daten.json`
 
 ## Preislogik
 
-Für Materialkosten gilt:
+Für Material- und Zwischenproduktkosten prüft der Calculator rekursiv die günstigste verfügbare Beschaffungsart:
 
-1. Importpreis des Materials
-2. sonst Wert pro Einheit
-3. sonst rekursiv berechnete Herstellungskosten, wenn ein Rezept vorhanden ist
+1. vorhandenes Inventar wird in der aktuellen Kalkulation zuerst als kostenloser Eigenbestand verrechnet
+2. kaufbare Materialien oder Zwischenprodukte werden über zentrale Importpreise aus `tradePrices` berücksichtigt
+3. herstellbare Zwischenprodukte werden rekursiv aus ihren Rezepten berechnet
+4. bei mehreren möglichen Wegen wird der günstigere Wert verwendet
 
 Für Verkaufspreise gilt:
 
-1. Exportpreis der Ware
-2. sonst Marktwert
+1. zentraler Exportpreis des Artikels
+2. sonst zentraler Marktwert des Artikels
 3. sonst Herstellungskosten plus Standardmarge
 
 Inventar senkt die persönlichen Herstellungskosten für die aktuelle Kalkulation. Die Preisempfehlung auf Basis von `Kosten + Marge` verwendet weiterhin die normalen Herstellungskosten, damit auch bei vollständig vorhandenem Inventar ein sinnvoller Verkaufspreis angezeigt wird.
 
-## Kaufen oder Craften
+## Zentrale Handelsdaten
 
-Die Bewertung in der Wirtschaftlichkeit vergleicht die normalen Herstellungskosten pro Stück mit einem vorhandenen Einkaufspreis. Als Einkaufspreis wird zuerst der Importpreis der Ware verwendet, andernfalls ein gleichnamiger Material-Importpreis.
+Import-, Export- und Marktpreise werden nicht mehr direkt an Materialien oder Waren gespeichert. Stattdessen gibt es den Bereich **Handel**.
 
-## Marktwert
+Ein Handelseintrag wird über den Artikelnamen zugeordnet. Wenn ein Material oder eine Ware denselben Namen trägt, übernimmt der Calculator die Werte automatisch in:
 
-Der Marktwert ist ein manuelles Preisfeld. Er sollte nicht automatisch dauerhaft aus Importpreis, Exportpreis oder Herstellungskosten überschrieben werden. Für berechnete Empfehlungen nutzt der Calculator bereits `Kosten + Marge`, wenn kein Exportpreis oder Marktwert gesetzt ist.
+- Materialienliste
+- Fabrik-Warenkarten
+- Calculator-Wirtschaftlichkeit
+- Kaufen-vs-Craften-Bewertung
 
 ## Datenmodell
 
@@ -64,13 +69,28 @@ Wichtige Felder:
   "plan": [],
   "inventory": {},
   "materialPrices": {},
-  "materialImportPrices": {},
-  "materialExportPrices": {},
+  "tradePrices": {},
   "pricing": {
     "standardMarginPercent": 30
   }
 }
 ```
+
+`tradePrices` verwendet Artikelnamen als Schlüssel:
+
+```json
+{
+  "tradePrices": {
+    "Eisenerz": {
+      "importPrice": 25,
+      "exportPrice": 5,
+      "marketValue": null
+    }
+  }
+}
+```
+
+Ältere JSON-Dateien mit `materialImportPrices`, `materialExportPrices` oder Preisfeldern direkt an Produkten werden beim Import weiterhin gelesen und in `tradePrices` migriert.
 
 ## GitHub Pages
 

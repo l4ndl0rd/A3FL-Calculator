@@ -2452,7 +2452,7 @@ select {
 }
 
 .material-price-fields {
-  grid-template-columns: minmax(0, 1fr) 170px repeat(3, minmax(150px, 1fr));
+  grid-template-columns: minmax(0, 1fr) 170px minmax(180px, 0.6fr);
 }
 
 .price-fields {
@@ -4170,4 +4170,79 @@ body:not(.admin-locked) #materials .material-recipe-table td:nth-child(7) { widt
 @media (max-width: 760px) {
   #materials .table-wrap { overflow-x: auto !important; }
   #materials .material-recipe-table { min-width: 980px !important; }
+}
+
+/* v62: zentrale Handelsdaten als eigener Bereich. */
+#tabs > .primary-tab-row,
+.primary-tab-row {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.trade-table {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.trade-table th,
+.trade-table td {
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.trade-table th:nth-child(1),
+.trade-table td:nth-child(1) { width: 34%; }
+.trade-table th:nth-child(2),
+.trade-table td:nth-child(2),
+.trade-table th:nth-child(3),
+.trade-table td:nth-child(3),
+.trade-table th:nth-child(4),
+.trade-table td:nth-child(4) {
+  width: 16%;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.trade-table th:nth-child(5),
+.trade-table td:nth-child(5) { width: 18%; text-align: right; }
+
+body.admin-locked .trade-table th:nth-child(5),
+body.admin-locked .trade-table td:nth-child(5) {
+  display: none !important;
+}
+
+body.admin-locked .trade-table th:nth-child(1),
+body.admin-locked .trade-table td:nth-child(1) { width: 40%; }
+body.admin-locked .trade-table th:nth-child(2),
+body.admin-locked .trade-table td:nth-child(2),
+body.admin-locked .trade-table th:nth-child(3),
+body.admin-locked .trade-table td:nth-child(3),
+body.admin-locked .trade-table th:nth-child(4),
+body.admin-locked .trade-table td:nth-child(4) { width: 20%; }
+
+.trade-table input {
+  width: 100%;
+  min-width: 0;
+}
+
+.trade-table td.row-actions .button {
+  width: auto !important;
+  min-width: 94px;
+  justify-content: center;
+}
+
+@media (max-width: 760px) {
+  #tabs > .primary-tab-row,
+  .primary-tab-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #trade .table-wrap {
+    overflow-x: auto !important;
+  }
+
+  #trade .trade-table {
+    min-width: 760px !important;
+  }
 }
