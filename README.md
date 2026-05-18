@@ -325,3 +325,10 @@ Für echte Zugriffskontrolle wäre ein Backend erforderlich, z. B. eine kleine A
 - Die Mengenangabe in Fabrik-Rezepten steht nicht mehr rechtsbündig am Kartenrand, sondern in einer festen Spalte direkt rechts neben dem Material.
 - Materialnamen werden nicht mehr per Ellipsis abgeschnitten, sondern umbrechen innerhalb der Materialspalte.
 - Alte Legacy-Migration für das frühere projektspezifische LocalStorage-Präfix wurde aus dem Code entfernt.
+
+## v52 - Fabrik-/Materiallisten-Layout
+
+- Fabrik-Rezeptmengen stehen jetzt in einem festen Abstand direkt rechts neben dem Materialnamen statt weit am rechten Kartenrand.
+- Die Rezepttabelle in Fabrik-Warenkarten erzeugt weiterhin keine horizontale Scrollbar.
+- Materialstammdaten nutzen wieder die gesamte verfügbare Tabellenbreite.
+- Die Spalten der Materialliste wurden auf prozentuale Breiten umgestellt, damit die Einträge nicht mehr zusammengedrückt wirken.

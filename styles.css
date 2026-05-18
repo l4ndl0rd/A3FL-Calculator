@@ -3116,3 +3116,153 @@ body.admin-locked .floating-add {
     white-space: normal;
   }
 }
+
+/* v52: Fabrik-Rezeptmengen näher an Materialspalte; Materialliste nutzt wieder die volle Kartenbreite. */
+.factory-panel .product-card .recipe-table-wrap {
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.factory-panel .product-card .recipe-table.data-table,
+.factory-panel .product-card .recipe-table.data-table.compact {
+  width: min(650px, 100%) !important;
+  min-width: 0 !important;
+  max-width: 100%;
+  table-layout: fixed;
+}
+
+.factory-panel .product-card .recipe-table th:first-child,
+.factory-panel .product-card .recipe-table td:first-child {
+  width: min(430px, 66%) !important;
+  max-width: none !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.factory-panel .product-card .recipe-table th:last-child,
+.factory-panel .product-card .recipe-table td:last-child {
+  width: min(220px, 34%) !important;
+  max-width: none !important;
+  text-align: left !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+#materials .table-wrap {
+  overflow-x: hidden;
+}
+
+#materials .material-recipe-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+#materials .material-recipe-table th,
+#materials .material-recipe-table td {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+#materials .material-recipe-table th:nth-child(1),
+#materials .material-recipe-table td:nth-child(1) {
+  width: 18%;
+}
+
+#materials .material-recipe-table th:nth-child(2),
+#materials .material-recipe-table td:nth-child(2) {
+  width: 9%;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#materials .material-recipe-table th:nth-child(3),
+#materials .material-recipe-table td:nth-child(3),
+#materials .material-recipe-table th:nth-child(4),
+#materials .material-recipe-table td:nth-child(4),
+#materials .material-recipe-table th:nth-child(5),
+#materials .material-recipe-table td:nth-child(5) {
+  width: 9%;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#materials .material-recipe-table th:nth-child(6),
+#materials .material-recipe-table td:nth-child(6) {
+  width: 27%;
+}
+
+#materials .material-recipe-table th:nth-child(7),
+#materials .material-recipe-table td:nth-child(7) {
+  width: 19%;
+}
+
+#materials .material-recipe-table tr,
+#materials .material-recipe-table td {
+  max-width: none;
+}
+
+#materials .nested-recipe-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+#materials .nested-recipe-table th:first-child,
+#materials .nested-recipe-table td:first-child {
+  width: 72%;
+}
+
+#materials .nested-recipe-table th:last-child,
+#materials .nested-recipe-table td:last-child {
+  width: 28%;
+  text-align: left;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 760px) {
+  .factory-panel .product-card .recipe-table.data-table,
+  .factory-panel .product-card .recipe-table.data-table.compact {
+    width: 100% !important;
+  }
+
+  .factory-panel .product-card .recipe-table th:first-child,
+  .factory-panel .product-card .recipe-table td:first-child {
+    width: 66% !important;
+  }
+
+  .factory-panel .product-card .recipe-table th:last-child,
+  .factory-panel .product-card .recipe-table td:last-child {
+    width: 34% !important;
+    white-space: normal;
+  }
+
+  #materials .material-recipe-table th:nth-child(1),
+  #materials .material-recipe-table td:nth-child(1) {
+    width: 20%;
+  }
+
+  #materials .material-recipe-table th:nth-child(2),
+  #materials .material-recipe-table td:nth-child(2),
+  #materials .material-recipe-table th:nth-child(3),
+  #materials .material-recipe-table td:nth-child(3),
+  #materials .material-recipe-table th:nth-child(4),
+  #materials .material-recipe-table td:nth-child(4),
+  #materials .material-recipe-table th:nth-child(5),
+  #materials .material-recipe-table td:nth-child(5) {
+    width: 10%;
+  }
+
+  #materials .material-recipe-table th:nth-child(6),
+  #materials .material-recipe-table td:nth-child(6) {
+    width: 22%;
+  }
+
+  #materials .material-recipe-table th:nth-child(7),
+  #materials .material-recipe-table td:nth-child(7) {
+    width: 18%;
+  }
+}
