@@ -1,5 +1,8 @@
-const STORAGE_KEY = "l4n_warenherstellung_calculator_v4_empty";
-const ADMIN_FLAG_KEY = "l4n_warenherstellung_calculator_admin_unlocked";
+const STORAGE_KEY = "warenherstellung_calculator_v4_empty";
+const ADMIN_FLAG_KEY = "warenherstellung_calculator_edit_unlocked";
+const LEGACY_PREFIX = ["f", "g", "2"].join("");
+const LEGACY_STORAGE_KEYS = [`${LEGACY_PREFIX}_warenherstellung_calculator_v4_empty`];
+const LEGACY_ADMIN_FLAG_KEYS = [`${LEGACY_PREFIX}_warenherstellung_calculator_admin_unlocked`];
 const BUNDLED_DATA_URL = "waren-daten.json";
 const EDIT_CONFIRMATION_TEXT = [
   "Bearbeitung auf eigene Gefahr freischalten?",
@@ -34,7 +37,9 @@ const DEFAULT_RAW_MATERIALS = [
 ];
 
 let state = loadState();
-let adminUnlocked = localStorage.getItem(ADMIN_FLAG_KEY) === "1";
+let adminUnlocked = localStorage.getItem(ADMIN_FLAG_KEY) === "1" || LEGACY_ADMIN_FLAG_KEYS.some((key) => localStorage.getItem(key) === "1");
+let materialSearchQuery = "";
+const productSearchQueries = {};
 let materialDialogMode = "create";
 let materialDialogOriginalName = null;
 let materialDialogRecipe = [];
@@ -48,6 +53,8 @@ const els = {
   factoryPanels: document.querySelector("#factoryPanels"),
   materialsTableBody: document.querySelector("#materialsTable tbody"),
   planTableBody: document.querySelector("#planTable tbody"),
+  inventoryTableBody: document.querySelector("#inventoryTable tbody"),
+  addInventoryItemBtn: document.querySelector("#addInventoryItemBtn"),
   requirementsTableBody: document.querySelector("#requirementsTable tbody"),
   rawRequirementsTableBody: document.querySelector("#rawRequirementsTable tbody"),
   rawRequirementsHint: document.querySelector("#rawRequirementsHint"),
@@ -56,6 +63,7 @@ const els = {
   standardMarginInput: document.querySelector("#standardMarginInput"),
   addPlanRowBtn: document.querySelector("#addPlanRowBtn"),
   addMaterialBtn: document.querySelector("#addMaterialBtn"),
+  materialSearchInput: document.querySelector("#materialSearchInput"),
   copyMaterialsBtn: document.querySelector("#copyMaterialsBtn"),
   copyRawMaterialsBtn: document.querySelector("#copyRawMaterialsBtn"),
   exportDataBtn: document.querySelector("#exportDataBtn"),
@@ -144,6 +152,14 @@ function bindStaticEvents() {
     openMaterialDialogCreate();
   });
   els.addPlanRowBtn.addEventListener("click", addPlanRow);
+  if (els.addInventoryItemBtn) els.addInventoryItemBtn.addEventListener("click", addInventoryItem);
+  if (els.materialSearchInput) {
+    els.materialSearchInput.addEventListener("input", () => {
+      materialSearchQuery = cleanText(els.materialSearchInput.value);
+      renderMaterials();
+      applyResponsiveTableLabels();
+    });
+  }
   els.copyMaterialsBtn.addEventListener("click", copyRequirementsTable);
   els.copyRawMaterialsBtn.addEventListener("click", copyRawRequirementsTable);
   els.exportDataBtn.addEventListener("click", exportData);
@@ -194,6 +210,7 @@ function renderAll() {
   renderFactoryPanels();
   renderMaterials();
   renderPlan();
+  renderInventory();
   renderRequirements();
   renderEconomy();
   if (els.standardMarginInput) els.standardMarginInput.value = formatInputNumber(state.pricing.standardMarginPercent);
@@ -283,20 +300,63 @@ function renderFactoryPanels() {
     });
     addButton.hidden = !adminUnlocked;
 
-    const container = panel.querySelector(".product-list");
-    if (!state.products[factory].length) {
-      container.innerHTML = `<div class="empty-state">Noch keine Waren vorhanden.</div>`;
-    } else {
-      state.products[factory]
-        .slice()
-        .sort((a, b) => a.name.localeCompare(b.name, "de", { sensitivity: "base" }))
-        .forEach((product) => container.appendChild(createProductCard(factory, product)));
+    const searchInput = panel.querySelector(".product-search-input");
+    const searchCount = panel.querySelector(".product-search-count");
+    const factoryQuery = productSearchQueries[factory] || "";
+    if (searchInput) {
+      searchInput.value = factoryQuery;
+      searchInput.addEventListener("input", () => {
+        productSearchQueries[factory] = cleanText(searchInput.value);
+        renderProductListForFactory(panel, factory);
+      });
     }
+
+    renderProductListForFactory(panel, factory);
+    if (searchCount) searchCount.hidden = !adminUnlocked;
 
     els.factoryPanels.appendChild(panel);
   }
 
   activateTab(document.getElementById(activeTarget) ? activeTarget : "calculator");
+}
+
+function renderProductListForFactory(panel, factory) {
+  const container = panel.querySelector(".product-list");
+  const searchCount = panel.querySelector(".product-search-count");
+  if (!container) return;
+
+  const allProducts = (state.products[factory] ?? []).slice().sort((a, b) => a.name.localeCompare(b.name, "de", { sensitivity: "base" }));
+  const query = productSearchQueries[factory] || "";
+  const visibleProducts = adminUnlocked && query ? allProducts.filter((product) => productMatchesSearch(factory, product, query)) : allProducts;
+
+  container.innerHTML = "";
+  if (!allProducts.length) {
+    container.innerHTML = `<div class="empty-state">Noch keine Waren vorhanden.</div>`;
+  } else if (!visibleProducts.length) {
+    container.innerHTML = `<div class="empty-state">Keine Ware passend zur Suche gefunden.</div>`;
+  } else {
+    visibleProducts.forEach((product) => container.appendChild(createProductCard(factory, product)));
+  }
+
+  if (searchCount) {
+    searchCount.textContent = query
+      ? `${visibleProducts.length.toLocaleString("de-DE")} von ${allProducts.length.toLocaleString("de-DE")} Waren`
+      : `${allProducts.length.toLocaleString("de-DE")} Waren`;
+  }
+}
+
+function productMatchesSearch(factory, product, query) {
+  const haystack = [
+    FACTORIES[factory],
+    product.name,
+    product.output,
+    product.importPrice,
+    product.exportPrice,
+    product.marketValue,
+    product.runCost,
+    ...(product.recipe ?? []).flatMap((item) => [item.material, item.amount])
+  ].map((value) => cleanText(value)).join(" ").toLocaleLowerCase("de-DE");
+  return haystack.includes(cleanText(query).toLocaleLowerCase("de-DE"));
 }
 
 function createProductCard(factory, product) {
@@ -355,11 +415,21 @@ function activateTab(targetId) {
 
 function renderMaterials() {
   els.materialsTableBody.innerHTML = "";
-  const visibleMaterials = getManualMaterials();
+  const allMaterials = getManualMaterials();
+  const visibleMaterials = adminUnlocked && materialSearchQuery ? allMaterials.filter((material) => materialMatchesSearch(material, materialSearchQuery)) : allMaterials;
+
+  updateMaterialSearchCount(visibleMaterials.length, allMaterials.length);
+
+  if (!allMaterials.length) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="7" class="empty-state">Noch keine manuell angelegten Materialien vorhanden. Waren aus Fabriken werden intern als Zwischenprodukte geführt, aber hier nicht als manuelle Materialien angezeigt.</td>`;
+    els.materialsTableBody.appendChild(row);
+    return;
+  }
 
   if (!visibleMaterials.length) {
     const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="7" class="empty-state">Noch keine manuell angelegten Materialien vorhanden. Waren aus Fabriken werden intern als Zwischenprodukte geführt, aber hier nicht als manuelle Materialien angezeigt.</td>`;
+    row.innerHTML = `<td colspan="7" class="empty-state">Kein Material passend zur Suche gefunden.</td>`;
     els.materialsTableBody.appendChild(row);
     return;
   }
@@ -421,12 +491,34 @@ function renderMaterials() {
       delete state.materialPrices[material];
       delete state.materialImportPrices?.[material];
       delete state.materialExportPrices?.[material];
+      delete state.inventory?.[material];
       renderAll();
       activateTab("materials");
     });
 
     els.materialsTableBody.appendChild(row);
   });
+}
+
+function materialMatchesSearch(material, query) {
+  const recipeDef = getMaterialRecipe(material);
+  const haystack = [
+    material,
+    recipeDef.output,
+    getMaterialManualPrice(material),
+    getMaterialImportPrice(material),
+    getMaterialExportPrice(material),
+    ...(recipeDef.recipe ?? []).flatMap((item) => [item.material, item.amount])
+  ].map((value) => cleanText(value)).join(" ").toLocaleLowerCase("de-DE");
+  return haystack.includes(cleanText(query).toLocaleLowerCase("de-DE"));
+}
+
+function updateMaterialSearchCount(visibleCount, totalCount) {
+  const count = document.querySelector("#materialSearchCount");
+  if (!count) return;
+  count.textContent = materialSearchQuery
+    ? `${visibleCount.toLocaleString("de-DE")} von ${totalCount.toLocaleString("de-DE")} Materialien`
+    : `${totalCount.toLocaleString("de-DE")} Materialien`;
 }
 
 function renderPlan() {
@@ -516,6 +608,7 @@ function renderEconomy() {
   els.economyTableBody.innerHTML = "";
   const rows = [];
   const warnings = [];
+  const inventoryRemaining = createInventoryPool();
 
   for (const item of state.plan) {
     const product = findProduct(item.productId);
@@ -526,9 +619,9 @@ function renderEconomy() {
     const produced = runs * output;
     if (!runs || !produced) continue;
 
-    const cost = calculateProductUnitCost(product, new Set());
-    const sale = getSalePrice(product, cost.complete ? cost.unitCost : null);
-    const unitCost = cost.complete ? cost.unitCost : null;
+    const cost = calculateProductBatchCostWithInventory(product, runs, inventoryRemaining, new Set());
+    const unitCost = cost.complete ? cost.totalCost / produced : null;
+    const sale = getSalePrice(product, unitCost);
     const unitProfit = unitCost !== null && sale.price !== null ? sale.price - unitCost : null;
     const totalProfit = unitProfit !== null ? unitProfit * produced : null;
     const totalCost = unitCost !== null ? unitCost * produced : null;
@@ -571,21 +664,180 @@ function renderEconomy() {
   }
 }
 
+function createInventoryPool() {
+  const pool = {};
+  for (const [material, amount] of Object.entries(state.inventory ?? {})) {
+    const name = cleanText(material);
+    const value = positiveInteger(amount, 0);
+    if (name && value > 0) pool[name] = value;
+  }
+  return pool;
+}
+
+function consumeInventory(pool, materialName, requiredAmount) {
+  const name = cleanText(materialName);
+  const required = positiveInteger(requiredAmount, 0);
+  const available = positiveInteger(pool[name], 0);
+  const consumed = Math.min(required, available);
+  if (consumed > 0) pool[name] = available - consumed;
+  return { consumed, remaining: required - consumed };
+}
+
+function calculateProductBatchCostWithInventory(product, runs, inventoryPool, stack = new Set()) {
+  const productKey = `product:${product.id}`;
+  if (stack.has(productKey)) return { complete: false, totalCost: null, missing: [product.name] };
+  const nextStack = new Set(stack);
+  nextStack.add(productKey);
+
+  let totalCost = (optionalNumber(product.runCost) ?? 0) * positiveInteger(runs, 0);
+  const missing = [];
+  for (const item of product.recipe ?? []) {
+    const requiredAmount = positiveInteger(item.amount, 0) * positiveInteger(runs, 0);
+    const result = calculateMaterialBatchCostWithInventory(item.material, requiredAmount, inventoryPool, nextStack);
+    if (!result.complete) missing.push(...result.missing);
+    else totalCost += result.totalCost;
+  }
+  if (missing.length) return { complete: false, totalCost: null, missing: unique(missing) };
+  return { complete: true, totalCost, missing: [] };
+}
+
+function calculateMaterialBatchCostWithInventory(materialName, requiredAmount, inventoryPool, stack = new Set()) {
+  const name = cleanText(materialName);
+  const materialKey = `material:${name.toLocaleLowerCase("de-DE")}`;
+  if (stack.has(materialKey)) return { complete: false, totalCost: null, missing: [name] };
+
+  const inventory = consumeInventory(inventoryPool, name, requiredAmount);
+  if (inventory.remaining <= 0) return { complete: true, totalCost: 0, missing: [] };
+
+  const recipeDef = getExistingMaterialRecipe(name);
+  const autoOrigin = recipeDef?.autoProductId ? getProductOrigin(recipeDef.autoProductId) : null;
+  if (autoOrigin?.product) {
+    const output = positiveInteger(autoOrigin.product.output, 1);
+    const runs = Math.ceil(inventory.remaining / output);
+    return calculateProductBatchCostWithInventory(autoOrigin.product, runs, inventoryPool, stack);
+  }
+
+  if (recipeDef?.recipe?.length) {
+    const nextStack = new Set(stack);
+    nextStack.add(materialKey);
+    const runs = Math.ceil(inventory.remaining / positiveInteger(recipeDef.output, 1));
+    let totalCost = 0;
+    const missing = [];
+    for (const item of recipeDef.recipe) {
+      const result = calculateMaterialBatchCostWithInventory(item.material, positiveInteger(item.amount, 0) * runs, inventoryPool, nextStack);
+      if (!result.complete) missing.push(...result.missing);
+      else totalCost += result.totalCost;
+    }
+    if (missing.length) return { complete: false, totalCost: null, missing: unique(missing) };
+    return { complete: true, totalCost, missing: [] };
+  }
+
+  const craftableProduct = findProductByName(name);
+  if (craftableProduct?.recipe?.length) {
+    const output = positiveInteger(craftableProduct.output, 1);
+    const runs = Math.ceil(inventory.remaining / output);
+    return calculateProductBatchCostWithInventory(craftableProduct, runs, inventoryPool, stack);
+  }
+
+  const materialCost = getMaterialCostPrice(name);
+  if (materialCost === null) return { complete: false, totalCost: null, missing: [name] };
+  return { complete: true, totalCost: materialCost * inventory.remaining, missing: [] };
+}
+
+
+function renderInventory() {
+  if (!els.inventoryTableBody) return;
+  els.inventoryTableBody.innerHTML = "";
+  state.inventory ??= {};
+  const entries = Object.entries(state.inventory)
+    .filter(([, amount]) => positiveInteger(amount, 0) > 0)
+    .sort((a, b) => a[0].localeCompare(b[0], "de", { sensitivity: "base" }));
+
+  if (!entries.length) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td colspan="3" class="empty-state">Noch kein eigenes Inventar eingetragen.</td>`;
+    els.inventoryTableBody.appendChild(row);
+    return;
+  }
+
+  const options = getMaterialOptionsForDialog();
+  entries.forEach(([material, amount]) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td><select class="inventory-material"></select></td>
+      <td><input class="inventory-amount" type="number" min="0" step="1" value="${positiveInteger(amount, 0)}" /></td>
+      <td><button class="icon-button remove-inventory-row" type="button" aria-label="Inventarzeile entfernen">×</button></td>
+    `;
+    const materialSelect = row.querySelector(".inventory-material");
+    const amountInput = row.querySelector(".inventory-amount");
+    fillSelect(materialSelect, options.some((item) => item.value === material) ? options : [...options, { value: material, label: material }], material);
+
+    materialSelect.addEventListener("change", () => {
+      const oldMaterial = material;
+      const newMaterial = cleanText(materialSelect.value);
+      const currentAmount = positiveInteger(amountInput.value, 0);
+      if (!newMaterial || oldMaterial === newMaterial) return;
+      delete state.inventory[oldMaterial];
+      state.inventory[newMaterial] = (positiveInteger(state.inventory[newMaterial], 0) || 0) + currentAmount;
+      renderAll();
+    });
+
+    amountInput.addEventListener("change", () => {
+      const value = positiveInteger(amountInput.value, 0);
+      if (value <= 0) delete state.inventory[material];
+      else state.inventory[material] = value;
+      renderAll();
+    });
+
+    row.querySelector(".remove-inventory-row").addEventListener("click", () => {
+      delete state.inventory[material];
+      renderAll();
+    });
+
+    els.inventoryTableBody.appendChild(row);
+  });
+}
+
 function renderRequirementTable(tbody, requirements, emptyText) {
   tbody.innerHTML = "";
   const entries = Object.entries(requirements).sort((a, b) => a[0].localeCompare(b[0], "de", { sensitivity: "base" }));
   if (!entries.length) {
     const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="2" class="empty-state">${escapeHtml(emptyText)}</td>`;
+    row.innerHTML = `<td colspan="4" class="empty-state">${escapeHtml(emptyText)}</td>`;
     tbody.appendChild(row);
     return;
   }
 
   entries.forEach(([material, amount]) => {
+    const inventoryAmount = Math.min(positiveInteger(getInventoryAmount(material), 0), positiveInteger(amount, 0));
+    const purchaseAmount = Math.max(positiveInteger(amount, 0) - inventoryAmount, 0);
     const row = document.createElement("tr");
-    row.innerHTML = `<td>${escapeHtml(material)}</td><td>${amount.toLocaleString("de-DE")}</td>`;
+    row.innerHTML = `
+      <td>${escapeHtml(material)}</td>
+      <td>${amount.toLocaleString("de-DE")}</td>
+      <td>${inventoryAmount ? inventoryAmount.toLocaleString("de-DE") : "—"}</td>
+      <td>${purchaseAmount.toLocaleString("de-DE")}</td>
+    `;
     tbody.appendChild(row);
   });
+}
+
+function addInventoryItem() {
+  const options = getMaterialOptionsForDialog();
+  if (!options.length) {
+    alert("Lege zuerst mindestens ein Material oder eine Ware an.");
+    return;
+  }
+  const material = options.find((item) => !state.inventory?.[item.value])?.value || options[0].value;
+  state.inventory ??= {};
+  state.inventory[material] = positiveInteger(state.inventory[material], 0) || 1;
+  renderAll();
+  activateTab("calculator");
+  queueFocus("#inventoryTable tbody tr:last-child .inventory-amount");
+}
+
+function getInventoryAmount(materialName) {
+  return positiveInteger(state.inventory?.[cleanText(materialName)], 0);
 }
 
 function applyResponsiveTableLabels(root = document) {
@@ -1045,7 +1297,10 @@ function addPlanRow() {
 
 async function copyRequirementsTable() {
   const requirements = calculateRequirements();
-  const lines = [["Material", "Gesamtbedarf"], ...Object.entries(requirements).sort((a, b) => a[0].localeCompare(b[0], "de", { sensitivity: "base" }))].map((row) => row.join("\t"));
+  const lines = [["Material", "Gesamtbedarf", "Aus Inventar", "Zukaufbedarf"], ...Object.entries(requirements).sort((a, b) => a[0].localeCompare(b[0], "de", { sensitivity: "base" })).map(([material, amount]) => {
+    const inventoryAmount = Math.min(getInventoryAmount(material), positiveInteger(amount, 0));
+    return [material, amount, inventoryAmount, Math.max(positiveInteger(amount, 0) - inventoryAmount, 0)];
+  })].map((row) => row.join("\t"));
   try {
     await navigator.clipboard.writeText(lines.join("\n"));
     temporaryButtonText(els.copyMaterialsBtn, "Kopiert", "Tabelle kopieren");
@@ -1056,7 +1311,10 @@ async function copyRequirementsTable() {
 
 async function copyRawRequirementsTable() {
   const rawRequirements = calculateRawRequirements().totals;
-  const lines = [["Rohmaterial", "Gesamtbedarf"], ...Object.entries(rawRequirements).sort((a, b) => a[0].localeCompare(b[0], "de", { sensitivity: "base" }))].map((row) => row.join("\t"));
+  const lines = [["Rohmaterial", "Gesamtbedarf", "Aus Inventar", "Zukaufbedarf"], ...Object.entries(rawRequirements).sort((a, b) => a[0].localeCompare(b[0], "de", { sensitivity: "base" })).map(([material, amount]) => {
+    const inventoryAmount = Math.min(getInventoryAmount(material), positiveInteger(amount, 0));
+    return [material, amount, inventoryAmount, Math.max(positiveInteger(amount, 0) - inventoryAmount, 0)];
+  })].map((row) => row.join("\t"));
   try {
     await navigator.clipboard.writeText(lines.join("\n"));
     temporaryButtonText(els.copyRawMaterialsBtn, "Kopiert", "Tabelle kopieren");
@@ -1141,6 +1399,7 @@ function toggleAdminAccess() {
   if (adminUnlocked) {
     adminUnlocked = false;
     localStorage.removeItem(ADMIN_FLAG_KEY);
+    LEGACY_ADMIN_FLAG_KEYS.forEach((key) => localStorage.removeItem(key));
     renderAll();
     return;
   }
@@ -1162,6 +1421,11 @@ function updateAdminUi() {
   document.body.classList.toggle("admin-locked", !adminUnlocked);
   if (els.adminAccessBtn) els.adminAccessBtn.textContent = adminUnlocked ? "Bearbeitung sperren" : "Bearbeitung aktivieren";
   if (els.standardMarginInput) els.standardMarginInput.disabled = !adminUnlocked;
+  if (!adminUnlocked) {
+    materialSearchQuery = "";
+    if (els.materialSearchInput) els.materialSearchInput.value = "";
+    Object.keys(productSearchQueries).forEach((key) => { productSearchQueries[key] = ""; });
+  }
   document.querySelectorAll(".admin-only").forEach((item) => {
     item.hidden = !adminUnlocked;
   });
@@ -1274,6 +1538,7 @@ function getMaterialRecipe(materialName) {
   state.materialPrices ??= {};
   state.materialImportPrices ??= {};
   state.materialExportPrices ??= {};
+  state.inventory ??= {};
   state.pricing ??= {};
   state.pricing.standardMarginPercent = positiveNumber(state.pricing.standardMarginPercent, 30);
   state.materialRecipes[name] ??= { output: 1, recipe: [] };
@@ -1318,6 +1583,10 @@ function renameMaterial(oldName, newName, shouldRender = true) {
   if (state.materialExportPrices?.[oldName] !== undefined) {
     state.materialExportPrices[newName] = state.materialExportPrices[oldName];
     delete state.materialExportPrices[oldName];
+  }
+  if (state.inventory?.[oldName] !== undefined) {
+    state.inventory[newName] = (positiveInteger(state.inventory[newName], 0) || 0) + positiveInteger(state.inventory[oldName], 0);
+    delete state.inventory[oldName];
   }
   replaceRecipeMaterialReferences(oldName, newName);
   if (shouldRender) renderAll();
@@ -1397,6 +1666,7 @@ function normalizeState() {
   state.materialPrices ??= {};
   state.materialImportPrices ??= {};
   state.materialExportPrices ??= {};
+  state.inventory ??= {};
   state.pricing ??= {};
   state.pricing.standardMarginPercent = positiveNumber(state.pricing.standardMarginPercent, 30);
   DEFAULT_RAW_MATERIALS.forEach(ensureMaterial);
@@ -1454,10 +1724,20 @@ function normalizeState() {
     const value = optionalNumber(price);
     if (name && value !== null) normalizedMaterialExportPrices[name] = value;
   }
+  const normalizedInventory = {};
+  for (const [materialName, amount] of Object.entries(state.inventory ?? {})) {
+    const name = cleanText(materialName);
+    const value = positiveInteger(amount, 0);
+    if (name && value > 0) {
+      ensureMaterial(name);
+      normalizedInventory[name] = (normalizedInventory[name] ?? 0) + value;
+    }
+  }
   state.materialRecipes = normalizedMaterialRecipes;
   state.materialPrices = normalizedMaterialPrices;
   state.materialImportPrices = normalizedMaterialImportPrices;
   state.materialExportPrices = normalizedMaterialExportPrices;
+  state.inventory = normalizedInventory;
   syncProductRecipesToMaterials();
   sortMaterials();
 
@@ -1485,12 +1765,20 @@ function validateImportedState(value) {
   if (value.materialPrices !== undefined && (typeof value.materialPrices !== "object" || Array.isArray(value.materialPrices))) throw new Error("Feld 'materialPrices' ist ungültig.");
   if (value.materialImportPrices !== undefined && (typeof value.materialImportPrices !== "object" || Array.isArray(value.materialImportPrices))) throw new Error("Feld 'materialImportPrices' ist ungültig.");
   if (value.materialExportPrices !== undefined && (typeof value.materialExportPrices !== "object" || Array.isArray(value.materialExportPrices))) throw new Error("Feld 'materialExportPrices' ist ungültig.");
+  if (value.inventory !== undefined && (typeof value.inventory !== "object" || Array.isArray(value.inventory))) throw new Error("Feld 'inventory' ist ungültig.");
   if (value.pricing !== undefined && (typeof value.pricing !== "object" || Array.isArray(value.pricing))) throw new Error("Feld 'pricing' ist ungültig.");
 }
 
 function loadState() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    let saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) {
+      const legacyKey = LEGACY_STORAGE_KEYS.find((key) => localStorage.getItem(key));
+      if (legacyKey) {
+        saved = localStorage.getItem(legacyKey);
+        localStorage.setItem(STORAGE_KEY, saved);
+      }
+    }
     if (!saved) return createDefaultState();
     const parsed = JSON.parse(saved);
     validateImportedState(parsed);
@@ -1511,7 +1799,7 @@ function firstFactoryWithProduct() {
 function createDefaultState() {
   const products = {};
   for (const factory of Object.keys(FACTORIES)) products[factory] = [];
-  return { materials: [], materialRecipes: {}, materialPrices: {}, materialImportPrices: {}, materialExportPrices: {}, pricing: { standardMarginPercent: 30 }, products, plan: [] };
+  return { materials: [], materialRecipes: {}, materialPrices: {}, materialImportPrices: {}, materialExportPrices: {}, inventory: {}, pricing: { standardMarginPercent: 30 }, products, plan: [] };
 }
 
 

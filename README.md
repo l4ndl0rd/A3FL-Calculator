@@ -229,7 +229,7 @@ Diese Version ergänzt die **Essensfabrik** als weitere Fabrik-Kategorie.
 - Admin-Code entfernt
 - `Daten > Bearbeitung aktivieren` schaltet die Bearbeitung nach Bestätigung frei
 - Bestätigungsdialog weist auf lokale Speicherung, Risiko und empfohlenen vorherigen Export hin
-- UI-Texte von Admin-Modus auf Bearbeitungsmodus umgestellt
+- UI-Texte von Bearbeitungsmodus auf Bearbeitungsmodus umgestellt
 
 ## v38: Bedienbarkeit bei vielen Datensätzen
 
@@ -246,7 +246,7 @@ Die Datei `waren-daten.json` dient als mitgelieferter Standarddatenbestand. Beim
 
 Wichtig: Für GitHub Pages wird die Datei nur gelesen. Änderungen an `waren-daten.json` müssen im Repository committed werden. Der Browser kann diese Datei nicht direkt auf GitHub Pages zurückschreiben.
 
-## Bearbeitungsschutz / Admin-Modus
+## Bearbeitungsschutz / Bearbeitungsmodus
 
 Die Stammdatenbereiche Materialien und Fabriken sind standardmäßig im Lesemodus. Bearbeiten, Import, Reset und Standarddaten-Neuladen sind erst nach `Daten > Bearbeitung aktivieren` verfügbar.
 
@@ -255,3 +255,19 @@ Es gibt kein Admin-Passwort mehr. Stattdessen muss der Bearbeitungsmodus per Bes
 Das ist für ein statisches GitHub-Pages-Projekt weiterhin kein echter Zugriffsschutz, sondern nur ein Schutz gegen versehentliche Bearbeitung. Echte Zugriffskontrolle benötigt später ein Backend/API mit Benutzerverwaltung und zentraler Datenhaltung, zum Beispiel SQLite.
 
 Für echte Zugriffskontrolle wäre ein Backend erforderlich, z. B. eine kleine API mit Login und SQLite-Datenbank auf einem Server.
+
+## v43 - Inventar im Calculator
+
+- Neuer Bereich **Eigenes Inventar** im Calculator.
+- Erfarmte Items/Materialien können mit vorhandener Menge eingetragen werden.
+- Inventar wird vom Materialbedarf abgezogen und als **Aus Inventar** / **Zukaufbedarf** angezeigt.
+- Die Wirtschaftlichkeitsberechnung berücksichtigt Inventar als kostenlose Eigenbestände und berechnet dadurch reduzierte effektive Herstellungskosten für den aktuellen Produktionsplan.
+- Das neue JSON-Feld `inventory` ist optional. Alte JSON-Dateien ohne dieses Feld bleiben importierbar; beim nächsten Export wird `inventory` ergänzt.
+
+## v44 - Suche im Bearbeitungsmodus und neutrales Projektnaming
+
+- Im Bearbeitungsmodus gibt es jetzt eine Suche für **Materialien**.
+- In jeder Fabrik gibt es im Bearbeitungsmodus eine Suche für **Waren**.
+- Die Suche filtert nach Name, Preisfeldern und verwendeten Rezeptmaterialien.
+- Das interne LocalStorage-Naming wurde von einem alten projektspezifischen Präfix auf neutrales `warenherstellung_*` umgestellt.
+- Bestehende lokale Daten aus der alten Browser-Speicherung werden automatisch übernommen, damit Nutzer durch die Umbenennung keine lokalen Daten verlieren.

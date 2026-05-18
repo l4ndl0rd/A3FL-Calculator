@@ -2848,3 +2848,77 @@ body.admin-locked .floating-add {
     bottom: 72px;
   }
 }
+
+.inventory-card {
+  margin-bottom: 18px;
+}
+
+.inventory-table {
+  min-width: 620px;
+}
+
+.inventory-table td:nth-child(1) {
+  width: 55%;
+}
+
+.inventory-table td:nth-child(2) {
+  width: 220px;
+}
+
+/* v44 edit search + neutral storage naming */
+.edit-search-bar {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.edit-search-bar label {
+  display: grid;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.edit-search-bar input[type="search"] {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: #fff;
+  background: rgba(8, 8, 8, 0.58);
+  padding: 9px 12px;
+  font: inherit;
+  outline: none;
+}
+
+.edit-search-bar input[type="search"]:focus {
+  border-color: rgba(204, 105, 0, 0.75);
+  box-shadow: 0 0 0 3px rgba(204, 105, 0, 0.16);
+}
+
+.search-count {
+  justify-self: end;
+  white-space: nowrap;
+  color: #ffd2a3;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+@media (max-width: 720px) {
+  .edit-search-bar {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .search-count {
+    justify-self: start;
+  }
+}
