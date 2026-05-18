@@ -304,3 +304,11 @@ Für echte Zugriffskontrolle wäre ein Backend erforderlich, z. B. eine kleine A
 - Mengen-Spalte in den Rezepttabellen der Fabrik-Waren vereinheitlicht.
 - Benötigte Mengen sind jetzt rechtsbündig mit tabellarischen Ziffern ausgerichtet.
 - Materialspalte und Mengenspalte verwenden eine feste Tabellenstruktur, damit Karten mit unterschiedlich langen Materialnamen nicht mehr unruhig wirken.
+
+
+### v49 - Materialliste ohne horizontale Scrollbar
+
+- Die Materialstammdaten-Tabelle erzeugt keine eigene horizontale Scrollbar mehr.
+- Die Materialspalte hat jetzt eine feste Breite.
+- Preis-, Ausstoß- und Aktionsspalten sind fest definiert und bleiben ausgerichtet.
+- Lange Materialnamen und Unterrezept-Einträge umbrechen kontrolliert innerhalb der vorhandenen Spalten.
