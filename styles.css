@@ -3266,3 +3266,127 @@ body.admin-locked .floating-add {
     width: 18%;
   }
 }
+
+/* v53: Tabellenbreite wieder bis zum Kartenende; feste, linksnahe Mengenpositionen ohne abgeschnittene UI. */
+.factory-panel .product-card .recipe-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.factory-panel .product-card .recipe-table.data-table,
+.factory-panel .product-card .recipe-table.data-table.compact {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  table-layout: fixed;
+}
+
+.factory-panel .product-card .recipe-table th:first-child,
+.factory-panel .product-card .recipe-table td:first-child {
+  width: 470px !important;
+  max-width: 470px !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.factory-panel .product-card .recipe-table th:last-child,
+.factory-panel .product-card .recipe-table td:last-child {
+  width: auto !important;
+  max-width: none !important;
+  text-align: left !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.factory-panel .product-card .recipe-table td:last-child {
+  font-weight: 800;
+}
+
+#materials .table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+#materials .material-recipe-table {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  table-layout: fixed;
+}
+
+#materials .material-recipe-table th,
+#materials .material-recipe-table td {
+  min-width: 0;
+  max-width: none;
+  overflow: visible;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+#materials .material-recipe-table th:nth-child(1),
+#materials .material-recipe-table td:nth-child(1) {
+  width: 25% !important;
+}
+
+#materials .material-recipe-table th:nth-child(2),
+#materials .material-recipe-table td:nth-child(2) {
+  width: 10% !important;
+  text-align: center;
+}
+
+#materials .material-recipe-table th:nth-child(3),
+#materials .material-recipe-table td:nth-child(3),
+#materials .material-recipe-table th:nth-child(4),
+#materials .material-recipe-table td:nth-child(4),
+#materials .material-recipe-table th:nth-child(5),
+#materials .material-recipe-table td:nth-child(5) {
+  width: 10% !important;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#materials .material-recipe-table th:nth-child(6),
+#materials .material-recipe-table td:nth-child(6) {
+  width: 18% !important;
+}
+
+#materials .material-recipe-table th:nth-child(7),
+#materials .material-recipe-table td:nth-child(7) {
+  width: 17% !important;
+}
+
+#materials .nested-recipe-table {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  table-layout: fixed;
+}
+
+@media (max-width: 760px) {
+  .factory-panel .product-card .recipe-table th:first-child,
+  .factory-panel .product-card .recipe-table td:first-child {
+    width: 55% !important;
+    max-width: 55% !important;
+  }
+
+  .factory-panel .product-card .recipe-table th:last-child,
+  .factory-panel .product-card .recipe-table td:last-child {
+    width: 45% !important;
+  }
+
+  #materials .material-recipe-table th:nth-child(1),
+  #materials .material-recipe-table td:nth-child(1) {
+    width: 24% !important;
+  }
+
+  #materials .material-recipe-table th:nth-child(6),
+  #materials .material-recipe-table td:nth-child(6) {
+    width: 18% !important;
+  }
+}

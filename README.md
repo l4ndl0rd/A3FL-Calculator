@@ -332,3 +332,10 @@ Für echte Zugriffskontrolle wäre ein Backend erforderlich, z. B. eine kleine A
 - Die Rezepttabelle in Fabrik-Warenkarten erzeugt weiterhin keine horizontale Scrollbar.
 - Materialstammdaten nutzen wieder die gesamte verfügbare Tabellenbreite.
 - Die Spalten der Materialliste wurden auf prozentuale Breiten umgestellt, damit die Einträge nicht mehr zusammengedrückt wirken.
+
+### v53 – Tabellenbreite und Mengenspalten korrigiert
+
+- Fabrik-Rezepttabellen laufen wieder bis zum Ende der Warenkarte.
+- Die Spalte „Benötigte Menge pro Produktionszyklus“ sitzt weiter links in festem Abstand neben dem Material.
+- Materialstammdaten nutzen wieder die volle Tabellenbreite, ohne die Spalten optisch zu stauchen.
+- Horizontale Scrollbars bleiben entfernt.
