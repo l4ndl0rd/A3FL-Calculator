@@ -2922,3 +2922,12 @@ body.admin-locked .floating-add {
     justify-self: start;
   }
 }
+
+
+.inventory-table input.inventory-material {
+  min-width: 260px;
+}
+
+.draft-row td {
+  background: rgba(204, 105, 0, 0.06);
+}

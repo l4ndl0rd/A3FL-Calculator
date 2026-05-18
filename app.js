@@ -40,6 +40,7 @@ let state = loadState();
 let adminUnlocked = localStorage.getItem(ADMIN_FLAG_KEY) === "1" || LEGACY_ADMIN_FLAG_KEYS.some((key) => localStorage.getItem(key) === "1");
 let materialSearchQuery = "";
 const productSearchQueries = {};
+let inventoryDraftRows = [];
 let materialDialogMode = "create";
 let materialDialogOriginalName = null;
 let materialDialogRecipe = [];
@@ -54,6 +55,7 @@ const els = {
   materialsTableBody: document.querySelector("#materialsTable tbody"),
   planTableBody: document.querySelector("#planTable tbody"),
   inventoryTableBody: document.querySelector("#inventoryTable tbody"),
+  inventoryItemOptions: document.querySelector("#inventoryItemOptions"),
   addInventoryItemBtn: document.querySelector("#addInventoryItemBtn"),
   requirementsTableBody: document.querySelector("#requirementsTable tbody"),
   rawRequirementsTableBody: document.querySelector("#rawRequirementsTable tbody"),
@@ -365,7 +367,8 @@ function createProductCard(factory, product) {
   node.classList.toggle("locked-entry", !adminUnlocked);
   node.querySelector(".product-name-display").textContent = product.name;
   node.querySelector(".product-output-display").textContent = positiveInteger(product.output, 1).toLocaleString("de-DE");
-  const sale = getSalePrice(product, null);
+  const baseCost = calculateProductUnitCost(product, new Set());
+  const sale = getSalePrice(product, baseCost.complete ? baseCost.unitCost : null);
   const priceDisplay = node.querySelector(".product-price-display");
   if (priceDisplay) priceDisplay.textContent = sale.price > 0 ? `${formatMoney(sale.price)} · ${sale.source}` : "nicht gesetzt";
 
@@ -554,16 +557,19 @@ function renderPlan() {
     factorySelect.addEventListener("change", () => {
       item.factory = factorySelect.value;
       item.productId = state.products[item.factory][0]?.id ?? null;
+      sortPlanAlphabetically();
       renderAll();
     });
 
     productSelect.addEventListener("change", () => {
       item.productId = productSelect.value || null;
+      sortPlanAlphabetically();
       renderAll();
     });
 
     quantityInput.addEventListener("change", () => {
       item.quantity = positiveInteger(quantityInput.value, 0);
+      sortPlanAlphabetically();
       renderAll();
     });
 
@@ -621,14 +627,17 @@ function renderEconomy() {
 
     const cost = calculateProductBatchCostWithInventory(product, runs, inventoryRemaining, new Set());
     const unitCost = cost.complete ? cost.totalCost / produced : null;
-    const sale = getSalePrice(product, unitCost);
+    const baseCost = calculateProductUnitCost(product, new Set());
+    const recommendationCost = baseCost.complete ? baseCost.unitCost : (unitCost !== null && unitCost > 0 ? unitCost : null);
+    const sale = getSalePrice(product, recommendationCost);
     const unitProfit = unitCost !== null && sale.price !== null ? sale.price - unitCost : null;
     const totalProfit = unitProfit !== null ? unitProfit * produced : null;
     const totalCost = unitCost !== null ? unitCost * produced : null;
     const totalRevenue = sale.price !== null ? sale.price * produced : null;
     const assessment = getEconomyAssessment(product, unitCost, sale.price);
 
-    if (!cost.complete) warnings.push(`${product.name}: ${cost.missing.length ? `fehlende Materialpreise (${cost.missing.join(", ")})` : "Kosten unvollständig"}.`);
+    if (!cost.complete) warnings.push(`${product.name}: ${cost.missing.length ? `fehlende Materialpreise für persönliche Kosten (${cost.missing.join(", ")})` : "Kosten unvollständig"}.`);
+    if (sale.price === null && !baseCost.complete) warnings.push(`${product.name}: keine Preisempfehlung möglich, da normale Herstellungskosten unvollständig sind (${baseCost.missing.join(", ")}).`);
 
     rows.push({ product, quantity, produced, runs, unitCost, sale, unitProfit, totalProfit, totalCost, totalRevenue, assessment });
   }
@@ -749,53 +758,84 @@ function renderInventory() {
   if (!els.inventoryTableBody) return;
   els.inventoryTableBody.innerHTML = "";
   state.inventory ??= {};
+  renderInventoryDatalist();
+
   const entries = Object.entries(state.inventory)
     .filter(([, amount]) => positiveInteger(amount, 0) > 0)
     .sort((a, b) => a[0].localeCompare(b[0], "de", { sensitivity: "base" }));
 
-  if (!entries.length) {
+  const hasRows = entries.length || inventoryDraftRows.length;
+  if (!hasRows) {
     const row = document.createElement("tr");
     row.innerHTML = `<td colspan="3" class="empty-state">Noch kein eigenes Inventar eingetragen.</td>`;
     els.inventoryTableBody.appendChild(row);
     return;
   }
 
-  const options = getMaterialOptionsForDialog();
   entries.forEach(([material, amount]) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td><select class="inventory-material"></select></td>
-      <td><input class="inventory-amount" type="number" min="0" step="1" value="${positiveInteger(amount, 0)}" /></td>
-      <td><button class="icon-button remove-inventory-row" type="button" aria-label="Inventarzeile entfernen">×</button></td>
-    `;
-    const materialSelect = row.querySelector(".inventory-material");
-    const amountInput = row.querySelector(".inventory-amount");
-    fillSelect(materialSelect, options.some((item) => item.value === material) ? options : [...options, { value: material, label: material }], material);
-
-    materialSelect.addEventListener("change", () => {
-      const oldMaterial = material;
-      const newMaterial = cleanText(materialSelect.value);
-      const currentAmount = positiveInteger(amountInput.value, 0);
-      if (!newMaterial || oldMaterial === newMaterial) return;
-      delete state.inventory[oldMaterial];
-      state.inventory[newMaterial] = (positiveInteger(state.inventory[newMaterial], 0) || 0) + currentAmount;
-      renderAll();
-    });
-
-    amountInput.addEventListener("change", () => {
-      const value = positiveInteger(amountInput.value, 0);
-      if (value <= 0) delete state.inventory[material];
-      else state.inventory[material] = value;
-      renderAll();
-    });
-
-    row.querySelector(".remove-inventory-row").addEventListener("click", () => {
-      delete state.inventory[material];
-      renderAll();
-    });
-
-    els.inventoryTableBody.appendChild(row);
+    els.inventoryTableBody.appendChild(createInventoryRow({ material, amount, isDraft: false }));
   });
+
+  inventoryDraftRows.forEach((draft) => {
+    els.inventoryTableBody.appendChild(createInventoryRow({ material: draft.material ?? "", amount: draft.amount ?? 1, isDraft: true, draftId: draft.id }));
+  });
+}
+
+function renderInventoryDatalist() {
+  if (!els.inventoryItemOptions) return;
+  els.inventoryItemOptions.innerHTML = "";
+  getMaterialOptionsForDialog().forEach((option) => {
+    const node = document.createElement("option");
+    node.value = option.value;
+    node.label = option.label;
+    els.inventoryItemOptions.appendChild(node);
+  });
+}
+
+function createInventoryRow(config) {
+  const { material, amount, isDraft, draftId } = config;
+  const row = document.createElement("tr");
+  if (isDraft) row.classList.add("draft-row");
+  row.innerHTML = `
+    <td><input class="inventory-material" type="text" list="inventoryItemOptions" autocomplete="off" placeholder="Item auswählen oder suchen" value="${escapeHtml(material)}" /></td>
+    <td><input class="inventory-amount" type="number" min="0" step="1" value="${positiveInteger(amount, 0) || 1}" /></td>
+    <td><button class="icon-button remove-inventory-row" type="button" aria-label="Inventarzeile entfernen">×</button></td>
+  `;
+
+  const materialInput = row.querySelector(".inventory-material");
+  const amountInput = row.querySelector(".inventory-amount");
+
+  const commitInventoryRow = () => {
+    const oldMaterial = cleanText(material);
+    const newMaterial = cleanText(materialInput.value);
+    const currentAmount = positiveInteger(amountInput.value, 0);
+    if (!newMaterial) return;
+    ensureMaterial(newMaterial);
+
+    if (isDraft) {
+      inventoryDraftRows = inventoryDraftRows.filter((item) => item.id !== draftId);
+      if (currentAmount > 0) state.inventory[newMaterial] = (positiveInteger(state.inventory[newMaterial], 0) || 0) + currentAmount;
+      renderAll();
+      return;
+    }
+
+    if (oldMaterial && oldMaterial !== newMaterial) delete state.inventory[oldMaterial];
+    if (currentAmount <= 0) delete state.inventory[newMaterial];
+    else state.inventory[newMaterial] = currentAmount;
+    renderAll();
+  };
+
+  materialInput.addEventListener("change", commitInventoryRow);
+  materialInput.addEventListener("blur", commitInventoryRow);
+  amountInput.addEventListener("change", commitInventoryRow);
+
+  row.querySelector(".remove-inventory-row").addEventListener("click", () => {
+    if (isDraft) inventoryDraftRows = inventoryDraftRows.filter((item) => item.id !== draftId);
+    else delete state.inventory[material];
+    renderAll();
+  });
+
+  return row;
 }
 
 function renderRequirementTable(tbody, requirements, emptyText) {
@@ -828,12 +868,10 @@ function addInventoryItem() {
     alert("Lege zuerst mindestens ein Material oder eine Ware an.");
     return;
   }
-  const material = options.find((item) => !state.inventory?.[item.value])?.value || options[0].value;
-  state.inventory ??= {};
-  state.inventory[material] = positiveInteger(state.inventory[material], 0) || 1;
+  inventoryDraftRows.push({ id: cryptoId(), material: "", amount: 1 });
   renderAll();
   activateTab("calculator");
-  queueFocus("#inventoryTable tbody tr:last-child .inventory-amount");
+  queueFocus("#inventoryTable tbody tr:last-child .inventory-material");
 }
 
 function getInventoryAmount(materialName) {
@@ -1284,7 +1322,7 @@ function showDialog(dialog, focusSelector) {
 
 function addPlanRow() {
   const factory = firstFactoryWithProduct() || Object.keys(FACTORIES)[0];
-  state.plan.unshift({
+  state.plan.push({
     id: cryptoId(),
     factory,
     productId: state.products[factory][0]?.id ?? null,
@@ -1292,7 +1330,19 @@ function addPlanRow() {
   });
   renderAll();
   activateTab("calculator");
-  queueFocus("#planTable tbody tr:first-child .plan-quantity");
+  queueFocus("#planTable tbody tr:last-child .plan-product");
+}
+
+function sortPlanAlphabetically() {
+  state.plan.sort((a, b) => {
+    const productA = findProduct(a.productId);
+    const productB = findProduct(b.productId);
+    const nameA = productA?.name || "";
+    const nameB = productB?.name || "";
+    const productCompare = nameA.localeCompare(nameB, "de", { sensitivity: "base" });
+    if (productCompare !== 0) return productCompare;
+    return (FACTORIES[a.factory] || a.factory).localeCompare(FACTORIES[b.factory] || b.factory, "de", { sensitivity: "base" });
+  });
 }
 
 async function copyRequirementsTable() {

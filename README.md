@@ -271,3 +271,12 @@ Für echte Zugriffskontrolle wäre ein Backend erforderlich, z. B. eine kleine A
 - Die Suche filtert nach Name, Preisfeldern und verwendeten Rezeptmaterialien.
 - Das interne LocalStorage-Naming wurde von einem alten projektspezifischen Präfix auf neutrales `warenherstellung_*` umgestellt.
 - Bestehende lokale Daten aus der alten Browser-Speicherung werden automatisch übernommen, damit Nutzer durch die Umbenennung keine lokalen Daten verlieren.
+
+
+## Version v45
+
+- Mitgelieferte `waren-daten.json` durch die aktuelle Datenbank ersetzt.
+- Preisempfehlung über `Kosten + Marge` nutzt wieder die normalen Herstellungskosten, auch wenn alle benötigten Materialien aus dem eigenen Inventar kommen.
+- Inventar-Auswahl nutzt jetzt ein Textfeld mit Vorschlägen aller bekannten Materialien und Waren.
+- Neue Inventar- und Produktionsplan-Einträge werden zunächst unten angefügt.
+- Nach Auswahl/Änderung werden Inventar und Produktionsplan alphabetisch sortiert.
