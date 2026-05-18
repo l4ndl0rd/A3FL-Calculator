@@ -294,7 +294,7 @@ function renderMaterials() {
       <td><div class="nested-recipe"></div></td>
       <td class="row-actions">
         <button class="button button-secondary edit-material" type="button">Bearbeiten</button>
-        <button class="icon-button remove-material" type="button" aria-label="Material entfernen">×</button>
+        <button class="button button-danger remove-material" type="button" aria-label="Material entfernen">Entfernen</button>
       </td>
     `;
 
