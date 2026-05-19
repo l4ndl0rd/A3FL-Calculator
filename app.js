@@ -19,6 +19,7 @@ const FACTORIES = {
   oil: "Ölfabrik",
   goods: "Warenfabrik",
   food: "Essensfabrik",
+  agriculture: "Landwirtschaft",
   chemistry: "Chemiefabrik",
   illegalWeapons: "Illegale Waffenfabrik"
 };
@@ -361,6 +362,10 @@ function renderFactoryNavigation() {
   els.tabs.append(primaryRow);
 }
 
+function getFactoryPanelTitle(label) {
+  return label === "Landwirtschaft" ? "Landwirtschaft" : `${label}-Rezepte`;
+}
+
 function createPrimaryTab(target, label, isActive) {
   const button = document.createElement("button");
   button.className = "tab";
@@ -395,7 +400,7 @@ function renderFactoryPanels() {
   for (const [factory, label] of Object.entries(FACTORIES)) {
     const panel = els.factoryPanelTemplate.content.firstElementChild.cloneNode(true);
     panel.id = factory;
-    panel.querySelector(".factory-title").textContent = `${label}-Rezepte`;
+    panel.querySelector(".factory-title").textContent = getFactoryPanelTitle(label);
     const addButton = panel.querySelector(".add-product-btn");
     addButton.addEventListener("click", () => {
       if (!requireAdminAccess()) return;

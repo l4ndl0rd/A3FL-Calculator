@@ -1,5 +1,21 @@
 {
   "materials": [
+    ".45 ACP 11Rnd Mag",
+    ".45 ACP 6Rnd Cylinder",
+    ".45 ACP 9Rnd Mag",
+    "10Rnd 9mm Glock26 Mag",
+    "12Rnd .45 P227 Mag",
+    "15Rnd .45 FNX Mag",
+    "15Rnd 9x19mm Beretta Mag",
+    "15Rnd 9x19mm P226 Mag",
+    "17Rnd 9mm Glock17 Mag",
+    "17Rnd 9mm Glock18 Mag",
+    "4-five .45 ACP",
+    "6Rnd .357 Magnum",
+    "7Rnd .50 Mag",
+    "9mm 10Rnd Mag",
+    "9mm 16Rnd Mag",
+    "ACP-C2 .45 ACP",
     "Aluminiumbarren",
     "Aluminiumbarren (aus Palette)",
     "Aluminiumbarrenpalette",
@@ -11,6 +27,9 @@
     "Amethystbarren (aus Palette)",
     "Amethystbarrenpalette",
     "Amethysterz",
+    "Apfel",
+    "Apfelkekse",
+    "Apfelsaft",
     "Baggerschaufel",
     "Bell 214 (Luxury)",
     "Bell 412 (Civil)",
@@ -18,8 +37,18 @@
     "Bell 412 (Veteran Transport)",
     "Benzin",
     "Benzinkanister - leerer Kanister",
+    "Beretta 92",
+    "Brot",
+    "Burgerbrötchen",
     "Campinglampe",
+    "Cola",
+    "Colt Python .357",
+    "Cornflakes",
+    "Desert Eagle",
     "Dietrich",
+    "Donut",
+    "Donut (Schokolade)",
+    "Donut (Zuckerguss)",
     "Dünger",
     "Eisenbarren",
     "Eisenbarren (aus Palette)",
@@ -29,23 +58,42 @@
     "Fenster",
     "Fiberglas",
     "Fischernetz",
+    "Fleischpastete",
+    "FN FNX .45",
+    "Gekochter Fisch (McFishers)",
+    "Gekochter Fisch (TacoHell)",
+    "Gekochter Fischburger",
+    "Gekochter Fischtaco",
     "Glas",
     "Glasfaser",
+    "Glock 17",
+    "Glock 18",
+    "Glock 26",
     "Goldbarren",
     "Goldbarren (aus Palette)",
     "Goldbarrenpalette",
+    "Golden Colt Python .357",
+    "Golden Desert Eagle",
     "Golderz",
     "Goldplatten",
+    "Großer Kaffee",
     "Grumman Goose",
     "Gummi",
+    "Ham & Cheese Sandwich",
+    "Hoagie-Sandwich",
     "Kabelbinder",
+    "Kekse",
     "Kerosin",
+    "Kleiner Kaffee",
     "Kohlebarren",
     "Kohlebarren (aus Palette)",
     "Kohlebarrenpalette",
     "Kohleerz",
+    "Koka",
     "Kunstfaser",
     "Kunststoff",
+    "Lamington",
+    "Lammeintopf",
     "LCM Transportschiff",
     "Leere Tüte",
     "Leere Wasserflasche",
@@ -53,28 +101,50 @@
     "Leerer Eimer",
     "Leerer Spritkanister",
     "M-900",
+    "Mais",
+    "Medium Kaffee",
     "Motorboat",
+    "Ölkanister",
+    "Ölpumpe",
+    "P07 9 mm (Khaki)",
+    "P07 9mm",
+    "P07 9mm (Black)",
+    "P07 9mm (Khaki)",
     "Pallet Lifter",
+    "Pistol Flashlight",
+    "Pizzastück",
+    "PM 9mm",
     "Polyester",
+    "Popcorneimer",
     "Presslufthammer (Bagger)",
     "Raketen (blau)",
+    "Raketen (gelb)",
+    "Raketen (grün)",
     "Raketen (rot)",
     "Rangefinder",
     "Rebreather (NATO)",
     "Reifen",
     "Reparaturschlüssel",
     "RHIB",
+    "Roher Fisch (McFischers)",
+    "Roher Fisch (Taco Hell)",
+    "Roher Fischburger",
     "Rohöl",
+    "Rook-40 9mm",
+    "Salat",
     "Sand",
     "Saphirbarren",
     "Saphirbarren (aus Palette)",
     "Saphirbarrenpalette",
     "Saphirerz",
+    "Schafsfleisch (markiert)",
     "Schießpulver",
     "Schlauch (aufgerollt)",
     "Schlauch Adapter",
     "Schwefelbarren",
     "Schwefelerz",
+    "SIG P226",
+    "SIG P227",
     "Smaragdbarren",
     "Smaragdbarren (aus Palette)",
     "Smaragdbarrenpalette",
@@ -86,6 +156,7 @@
     "Stahlplatten",
     "Stahlplatten (aus Palette)",
     "Steerable Parachute",
+    "Taco Shell",
     "Titanbarren",
     "Titanbarren (aus Palette)",
     "Titanbarrenpalette",
@@ -93,15 +164,26 @@
     "Titanpalette",
     "Titanplatten",
     "Titanplatten (aus Palette)",
+    "Trawlernetz",
+    "Trawlernetz (gerissen)",
+    "Trawlernetz (reparieren)",
+    "Tüte Salat",
+    "Veggie Sandwich",
     "Vivianitbarren",
     "Vivianitbarren (aus Palette)",
     "Vivianitbarrenpalette",
     "Vivianiterz",
+    "Voller Eimer mit Fischen",
     "Wasserski",
     "Water Scooter",
+    "Weizen",
+    "Wildschweinfleisch (markiert)",
+    "Würstchen",
     "Yacht",
-    "Ölkanister",
-    "Ölpumpe"
+    "Ziegenfleisch (markiert)",
+    "Zubr .45 ACP",
+    "Zuckerrohr",
+    "Zuckerstange"
   ],
   "materialRecipes": {
     "Eisenerz": {
@@ -999,6 +1081,1208 @@
           "amount": 3
         }
       ]
+    },
+    "Rebreather (NATO)": {
+      "output": 1,
+      "autoProductId": "04505bc6-12a4-416a-ad60-84cba051b6b7",
+      "recipe": [
+        {
+          "material": "Gummi",
+          "amount": 2
+        },
+        {
+          "material": "Fiberglas",
+          "amount": 8
+        },
+        {
+          "material": "Kunststoff",
+          "amount": 10
+        }
+      ]
+    },
+    "Water Scooter": {
+      "output": 1,
+      "autoProductId": "fa529369-e008-46b4-9c97-f69bfe9dc927",
+      "recipe": [
+        {
+          "material": "Stahlpalette",
+          "amount": 1
+        }
+      ]
+    },
+    "Motorboat": {
+      "output": 1,
+      "autoProductId": "d30daafe-447f-4441-a10a-e8730163cf9c",
+      "recipe": [
+        {
+          "material": "Stahlpalette",
+          "amount": 13
+        }
+      ]
+    },
+    "Wasserski": {
+      "output": 1,
+      "autoProductId": "d9f1ab6d-285d-4d8e-9ddd-398ce7f00b9e",
+      "recipe": [
+        {
+          "material": "Stahlpalette",
+          "amount": 2
+        }
+      ]
+    },
+    "RHIB": {
+      "output": 1,
+      "autoProductId": "92c6d63a-b859-47ea-b837-f0aec1793692",
+      "recipe": [
+        {
+          "material": "Stahlpalette",
+          "amount": 15
+        },
+        {
+          "material": "Aluminiumpalette",
+          "amount": 10
+        }
+      ]
+    },
+    "LCM Transportschiff": {
+      "output": 1,
+      "autoProductId": "165a2264-05db-41d2-af46-5cf84931dd2b",
+      "recipe": [
+        {
+          "material": "Stahlpalette",
+          "amount": 25
+        },
+        {
+          "material": "Aluminiumpalette",
+          "amount": 10
+        }
+      ]
+    },
+    "Yacht": {
+      "output": 1,
+      "autoProductId": "e6d58c06-404d-4a13-8898-a8b87d1d9793",
+      "recipe": [
+        {
+          "material": "Aluminiumpalette",
+          "amount": 200
+        },
+        {
+          "material": "Stahlpalette",
+          "amount": 200
+        },
+        {
+          "material": "Titanpalette",
+          "amount": 100
+        }
+      ]
+    },
+    "Leere Tüte": {
+      "output": 5,
+      "autoProductId": "9ff0cac3-2eb9-4156-8049-14047e46cbef",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 2
+        }
+      ]
+    },
+    "Leerer Container": {
+      "output": 5,
+      "autoProductId": "9f190b61-3eba-4ead-a292-538d5ed80714",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 2
+        }
+      ]
+    },
+    "Dietrich": {
+      "output": 1,
+      "autoProductId": "16072291-093b-4370-8bc4-06bda5bdd091",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 33
+        }
+      ]
+    },
+    "Kabelbinder": {
+      "output": 1,
+      "autoProductId": "eafd0baf-d479-45c6-98b8-21d7c1cccb1f",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 2
+        }
+      ]
+    },
+    "Reparaturschlüssel": {
+      "output": 3,
+      "autoProductId": "ae57d2c7-fe7a-458d-bf31-1259abd11322",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 11
+        }
+      ]
+    },
+    "Rangefinder": {
+      "output": 1,
+      "autoProductId": "c65b0f00-40f0-453d-889b-af28280dd7f1",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 1
+        },
+        {
+          "material": "Glas",
+          "amount": 2
+        },
+        {
+          "material": "Kunststoff",
+          "amount": 4
+        }
+      ]
+    },
+    "Schlauch Adapter": {
+      "output": 5,
+      "autoProductId": "cde99b18-71a4-4df7-9be9-32118c7b7b53",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 4
+        }
+      ]
+    },
+    "Schlauch (aufgerollt)": {
+      "output": 3,
+      "autoProductId": "875c5cee-2702-4596-a286-de96366005a9",
+      "recipe": [
+        {
+          "material": "Gummi",
+          "amount": 1
+        }
+      ]
+    },
+    "Fischernetz": {
+      "output": 10,
+      "autoProductId": "dca10414-68eb-44ee-908d-bb644460db2f",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 3
+        }
+      ]
+    },
+    "Leerer Eimer": {
+      "output": 5,
+      "autoProductId": "c45d7555-7e76-4c07-8699-4f7bcabbb1fb",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 2
+        }
+      ]
+    },
+    "Campinglampe": {
+      "output": 1,
+      "autoProductId": "ae85b56d-53bf-4434-8d20-b30dd990dd97",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 4
+        },
+        {
+          "material": "Ölkanister",
+          "amount": 4
+        }
+      ]
+    },
+    "Raketen (blau)": {
+      "output": 1,
+      "autoProductId": "b213e8cc-3d1e-4da2-8e43-03ebca4777e5",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 1
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 2
+        },
+        {
+          "material": "Schwefelbarren",
+          "amount": 1
+        }
+      ]
+    },
+    "Raketen (rot)": {
+      "output": 1,
+      "autoProductId": "3f2b3a8a-25ab-461f-b80b-2f27f41f0a62",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 1
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 2
+        },
+        {
+          "material": "Schwefelbarren",
+          "amount": 1
+        }
+      ]
+    },
+    "Raketen (grün)": {
+      "output": 1,
+      "autoProductId": "c98c70c3-b81d-4063-93c3-673d8947723c",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 1
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 2
+        },
+        {
+          "material": "Schwefelbarren",
+          "amount": 1
+        }
+      ]
+    },
+    "Raketen (gelb)": {
+      "output": 1,
+      "autoProductId": "9216cb63-a53f-4fd7-b6b6-e47f8c6550bc",
+      "recipe": [
+        {
+          "material": "Kunststoff",
+          "amount": 1
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 2
+        },
+        {
+          "material": "Schwefelbarren",
+          "amount": 1
+        }
+      ]
+    },
+    "Trawlernetz": {
+      "output": 1,
+      "autoProductId": "982932dd-506c-4762-a4a3-c3f36020062b",
+      "recipe": [
+        {
+          "material": "Kunstfaser",
+          "amount": 700
+        },
+        {
+          "material": "Stahlpalette",
+          "amount": 4
+        }
+      ]
+    },
+    "Trawlernetz (reparieren)": {
+      "output": 1,
+      "autoProductId": "087feb64-7429-4cfb-a7e6-23aad4a21af0",
+      "recipe": [
+        {
+          "material": "Kunstfaser",
+          "amount": 15
+        },
+        {
+          "material": "Trawlernetz (gerissen)",
+          "amount": 1
+        }
+      ]
+    },
+    "Trawlernetz (gerissen)": {
+      "output": 1,
+      "recipe": []
+    },
+    "Zuckerstange": {
+      "output": 3,
+      "autoProductId": "22f0fa74-c642-407e-bfbd-1dfd1f527476",
+      "recipe": [
+        {
+          "material": "Zuckerrohr",
+          "amount": 2
+        }
+      ]
+    },
+    "Zuckerrohr": {
+      "output": 1,
+      "recipe": []
+    },
+    "Apfel": {
+      "output": 1,
+      "recipe": []
+    },
+    "Koka": {
+      "output": 1,
+      "recipe": []
+    },
+    "Salat": {
+      "output": 1,
+      "recipe": []
+    },
+    "Weizen": {
+      "output": 1,
+      "recipe": []
+    },
+    "Mais": {
+      "output": 1,
+      "recipe": []
+    },
+    "Schafsfleisch (markiert)": {
+      "output": 1,
+      "recipe": []
+    },
+    "Wildschweinfleisch (markiert)": {
+      "output": 1,
+      "recipe": []
+    },
+    "Ziegenfleisch (markiert)": {
+      "output": 1,
+      "recipe": []
+    },
+    "Voller Eimer mit Fischen": {
+      "output": 1,
+      "recipe": []
+    },
+    "Apfelsaft": {
+      "output": 3,
+      "autoProductId": "e17919a7-6347-4ec0-aa79-629f85d00293",
+      "recipe": [
+        {
+          "material": "Apfel",
+          "amount": 2
+        },
+        {
+          "material": "Zuckerrohr",
+          "amount": 2
+        },
+        {
+          "material": "Aluminiumbarren",
+          "amount": 1
+        }
+      ]
+    },
+    "Cola": {
+      "output": 3,
+      "autoProductId": "8a1bf02c-8b4e-4855-9de3-422675ca92ac",
+      "recipe": [
+        {
+          "material": "Koka",
+          "amount": 2
+        },
+        {
+          "material": "Aluminiumbarren",
+          "amount": 1
+        },
+        {
+          "material": "Zuckerrohr",
+          "amount": 2
+        }
+      ]
+    },
+    "Großer Kaffee": {
+      "output": 4,
+      "autoProductId": "ca06d11a-033c-46a2-b20f-b0887554b184",
+      "recipe": [
+        {
+          "material": "Koka",
+          "amount": 4
+        },
+        {
+          "material": "Kunststoff",
+          "amount": 4
+        }
+      ]
+    },
+    "Medium Kaffee": {
+      "output": 4,
+      "autoProductId": "c17534bc-1d39-432f-8ae9-26e47bb884e5",
+      "recipe": [
+        {
+          "material": "Koka",
+          "amount": 2
+        },
+        {
+          "material": "Kunststoff",
+          "amount": 3
+        }
+      ]
+    },
+    "Kleiner Kaffee": {
+      "output": 4,
+      "autoProductId": "50a7d56a-1666-4121-b96d-1d3ae2775cf8",
+      "recipe": [
+        {
+          "material": "Koka",
+          "amount": 2
+        },
+        {
+          "material": "Kunststoff",
+          "amount": 1
+        }
+      ]
+    },
+    "Hoagie-Sandwich": {
+      "output": 2,
+      "autoProductId": "4b4ce50c-502b-4624-8cf4-68cb3f324466",
+      "recipe": [
+        {
+          "material": "Salat",
+          "amount": 3
+        },
+        {
+          "material": "Wildschweinfleisch (markiert)",
+          "amount": 3
+        },
+        {
+          "material": "Brot",
+          "amount": 1
+        }
+      ]
+    },
+    "Brot": {
+      "output": 2,
+      "autoProductId": "f99e90c8-9f2e-4663-948a-9ff35ab0a9ee",
+      "recipe": [
+        {
+          "material": "Weizen",
+          "amount": 30
+        }
+      ]
+    },
+    "Donut": {
+      "output": 2,
+      "autoProductId": "e5cde44b-f7a4-40fe-8c70-2242615e0f4c",
+      "recipe": [
+        {
+          "material": "Weizen",
+          "amount": 2
+        }
+      ]
+    },
+    "Donut (Schokolade)": {
+      "output": 2,
+      "autoProductId": "5079cbd4-cd15-4b45-acc8-f90e4d7bedbe",
+      "recipe": [
+        {
+          "material": "Weizen",
+          "amount": 2
+        },
+        {
+          "material": "Koka",
+          "amount": 2
+        }
+      ]
+    },
+    "Donut (Zuckerguss)": {
+      "output": 2,
+      "autoProductId": "92c2c402-b538-4755-890e-f3773aa36afd",
+      "recipe": [
+        {
+          "material": "Weizen",
+          "amount": 2
+        },
+        {
+          "material": "Zuckerrohr",
+          "amount": 2
+        }
+      ]
+    },
+    "Ham & Cheese Sandwich": {
+      "output": 2,
+      "autoProductId": "c360a0c3-503a-4fc7-afa6-b7769d552543",
+      "recipe": [
+        {
+          "material": "Brot",
+          "amount": 1
+        },
+        {
+          "material": "Salat",
+          "amount": 2
+        },
+        {
+          "material": "Wildschweinfleisch (markiert)",
+          "amount": 2
+        }
+      ]
+    },
+    "Veggie Sandwich": {
+      "output": 2,
+      "autoProductId": "57389e64-489b-43f6-be3d-1e210122b4f4",
+      "recipe": [
+        {
+          "material": "Brot",
+          "amount": 1
+        },
+        {
+          "material": "Salat",
+          "amount": 2
+        }
+      ]
+    },
+    "Popcorneimer": {
+      "output": 10,
+      "autoProductId": "78f6f63a-ef89-4644-b670-0bc3615d0ebd",
+      "recipe": [
+        {
+          "material": "Mais",
+          "amount": 5
+        }
+      ]
+    },
+    "Burgerbrötchen": {
+      "output": 10,
+      "autoProductId": "9c92367a-e64e-4e29-9cea-2135b3177702",
+      "recipe": [
+        {
+          "material": "Weizen",
+          "amount": 5
+        }
+      ]
+    },
+    "Taco Shell": {
+      "output": 20,
+      "autoProductId": "7895de97-1d38-47d5-954b-b25e043d4280",
+      "recipe": [
+        {
+          "material": "Mais",
+          "amount": 10
+        }
+      ]
+    },
+    "Tüte Salat": {
+      "output": 5,
+      "autoProductId": "1cef97cc-73b3-44ee-a55f-fd63588e793e",
+      "recipe": [
+        {
+          "material": "Salat",
+          "amount": 2
+        }
+      ]
+    },
+    "Roher Fisch (Taco Hell)": {
+      "output": 10,
+      "autoProductId": "6c2efaad-4d41-4dd8-839b-364bcc3b4d00",
+      "recipe": [
+        {
+          "material": "Voller Eimer mit Fischen",
+          "amount": 2
+        }
+      ]
+    },
+    "Roher Fisch (McFischers)": {
+      "output": 10,
+      "autoProductId": "9c2e0b90-7f1c-4130-bc4a-2f7a92a80305",
+      "recipe": [
+        {
+          "material": "Voller Eimer mit Fischen",
+          "amount": 2
+        }
+      ]
+    },
+    "Roher Fischburger": {
+      "output": 1,
+      "recipe": []
+    },
+    "Pizzastück": {
+      "output": 2,
+      "autoProductId": "71284e02-7af0-4458-83b2-18b616350129",
+      "recipe": [
+        {
+          "material": "Wildschweinfleisch (markiert)",
+          "amount": 3
+        },
+        {
+          "material": "Brot",
+          "amount": 1
+        }
+      ]
+    },
+    "Lammeintopf": {
+      "output": 2,
+      "autoProductId": "0658c00a-bed6-4cdd-b55d-e52359319125",
+      "recipe": [
+        {
+          "material": "Schafsfleisch (markiert)",
+          "amount": 1
+        },
+        {
+          "material": "Mais",
+          "amount": 5
+        }
+      ]
+    },
+    "Kekse": {
+      "output": 2,
+      "autoProductId": "01f91220-1d5f-4602-91cd-4febbdd2b150",
+      "recipe": [
+        {
+          "material": "Koka",
+          "amount": 2
+        },
+        {
+          "material": "Zuckerrohr",
+          "amount": 2
+        },
+        {
+          "material": "Weizen",
+          "amount": 15
+        }
+      ]
+    },
+    "Apfelkekse": {
+      "output": 2,
+      "autoProductId": "81717d43-06b9-446b-b6e5-47767f1ade59",
+      "recipe": [
+        {
+          "material": "Koka",
+          "amount": 2
+        },
+        {
+          "material": "Zuckerrohr",
+          "amount": 2
+        },
+        {
+          "material": "Weizen",
+          "amount": 15
+        },
+        {
+          "material": "Apfel",
+          "amount": 2
+        }
+      ]
+    },
+    "Cornflakes": {
+      "output": 1,
+      "autoProductId": "77293d04-ac67-42df-a04b-db8defea4b25",
+      "recipe": [
+        {
+          "material": "Mais",
+          "amount": 10
+        },
+        {
+          "material": "Weizen",
+          "amount": 20
+        }
+      ]
+    },
+    "Lamington": {
+      "output": 2,
+      "autoProductId": "6713bb85-836c-4cc9-b02b-5a9d216e31d0",
+      "recipe": [
+        {
+          "material": "Zuckerrohr",
+          "amount": 3
+        },
+        {
+          "material": "Brot",
+          "amount": 1
+        }
+      ]
+    },
+    "Würstchen": {
+      "output": 2,
+      "autoProductId": "652a4e94-7023-4ed9-8150-ae7cdb35d5f7",
+      "recipe": [
+        {
+          "material": "Wildschweinfleisch (markiert)",
+          "amount": 2
+        }
+      ]
+    },
+    "Gekochter Fischburger": {
+      "output": 2,
+      "autoProductId": "a300f9de-63ef-42bd-bcce-4d80da39682b",
+      "recipe": [
+        {
+          "material": "Tüte Salat",
+          "amount": 1
+        },
+        {
+          "material": "Burgerbrötchen",
+          "amount": 1
+        },
+        {
+          "material": "Gekochter Fisch (McFishers)",
+          "amount": 1
+        }
+      ]
+    },
+    "Gekochter Fisch (McFishers)": {
+      "output": 1,
+      "autoProductId": "740e0345-41c9-4c47-81d1-0acbd82e3783",
+      "recipe": [
+        {
+          "material": "Roher Fisch (McFischers)",
+          "amount": 1
+        }
+      ]
+    },
+    "Gekochter Fisch (TacoHell)": {
+      "output": 1,
+      "autoProductId": "04e82122-f7fd-4ba7-959f-b1d9849bbb6b",
+      "recipe": [
+        {
+          "material": "Roher Fisch (Taco Hell)",
+          "amount": 1
+        }
+      ]
+    },
+    "Gekochter Fischtaco": {
+      "output": 2,
+      "autoProductId": "d8a8f011-12c1-4f71-adfa-d9fdbe590ee7",
+      "recipe": [
+        {
+          "material": "Tüte Salat",
+          "amount": 1
+        },
+        {
+          "material": "Taco Shell",
+          "amount": 1
+        },
+        {
+          "material": "Gekochter Fisch (TacoHell)",
+          "amount": 1
+        }
+      ]
+    },
+    "Fleischpastete": {
+      "output": 2,
+      "autoProductId": "72e8c88a-2eb1-4d00-8b53-616cfa14c3e2",
+      "recipe": [
+        {
+          "material": "Schafsfleisch (markiert)",
+          "amount": 1
+        },
+        {
+          "material": "Wildschweinfleisch (markiert)",
+          "amount": 1
+        },
+        {
+          "material": "Ziegenfleisch (markiert)",
+          "amount": 1
+        },
+        {
+          "material": "Brot",
+          "amount": 1
+        }
+      ]
+    },
+    "P07 9mm": {
+      "output": 1,
+      "autoProductId": "c06884a4-e950-49c2-922f-d5cc49f6ed8c",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 85
+        }
+      ]
+    },
+    "P07 9mm (Khaki)": {
+      "output": 1,
+      "autoProductId": "eabb4136-5091-45b7-be0b-02ef96cac6a9",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 85
+        }
+      ]
+    },
+    "P07 9 mm (Khaki)": {
+      "output": 1,
+      "recipe": []
+    },
+    "P07 9mm (Black)": {
+      "output": 1,
+      "autoProductId": "9656d0ea-e28a-48e9-ad5f-56e34bade875",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 85
+        }
+      ]
+    },
+    "Rook-40 9mm": {
+      "output": 1,
+      "autoProductId": "18da12ab-3dd3-4186-b4f6-c9ab2b4e5fca",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 90
+        }
+      ]
+    },
+    "9mm 16Rnd Mag": {
+      "output": 5,
+      "autoProductId": "9db1f1f4-deff-4c3f-ba1d-79411d332b8b",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 20
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "4-five .45 ACP": {
+      "output": 1,
+      "autoProductId": "1183083a-3177-47d6-aea2-f009861a6271",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 100
+        }
+      ]
+    },
+    ".45 ACP 11Rnd Mag": {
+      "output": 5,
+      "autoProductId": "974b6733-81fb-4560-b40a-78bc68f42041",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 25
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "ACP-C2 .45 ACP": {
+      "output": 1,
+      "autoProductId": "005e4c9f-dc47-47e1-abb9-590a58ef3c9a",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 100
+        }
+      ]
+    },
+    ".45 ACP 9Rnd Mag": {
+      "output": 5,
+      "autoProductId": "c2002d9e-2036-481c-bc95-d82270ebb7a7",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 25
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "PM 9mm": {
+      "output": 1,
+      "autoProductId": "7d03e340-6088-40f4-8535-35b6b29f37a1",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 85
+        }
+      ]
+    },
+    "9mm 10Rnd Mag": {
+      "output": 5,
+      "autoProductId": "5ea15ee9-7e8a-420a-b171-a38b6226da37",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 22
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "Zubr .45 ACP": {
+      "output": 1,
+      "autoProductId": "53b557f7-1435-41d2-b99d-e2fbed77cc8a",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 86
+        }
+      ]
+    },
+    ".45 ACP 6Rnd Cylinder": {
+      "output": 5,
+      "autoProductId": "d62574cb-1b26-4160-b3a3-78762c3e809c",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 20
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "Glock 17": {
+      "output": 1,
+      "autoProductId": "d2430988-d9da-4e26-938d-93e441ef8f64",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 115
+        }
+      ]
+    },
+    "17Rnd 9mm Glock17 Mag": {
+      "output": 5,
+      "autoProductId": "f41cfc20-2a3c-4754-9f9a-4622c92eea81",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 25
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "Glock 18": {
+      "output": 1,
+      "autoProductId": "eb5ab326-5846-427f-9c11-47f2c9841479",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 120
+        }
+      ]
+    },
+    "17Rnd 9mm Glock18 Mag": {
+      "output": 5,
+      "autoProductId": "f6206227-9277-415e-8b9f-68d20cccb136",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 25
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "Glock 26": {
+      "output": 1,
+      "autoProductId": "c1814c41-030a-44b8-a42f-1c6898a1ffad",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 120
+        }
+      ]
+    },
+    "10Rnd 9mm Glock26 Mag": {
+      "output": 5,
+      "autoProductId": "6baefc57-e577-4876-9498-4bc9264d33f8",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 24
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 5
+        }
+      ]
+    },
+    "SIG P226": {
+      "output": 1,
+      "autoProductId": "84d9d2ad-65e0-403a-90d0-c4bf3083ecf3",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 115
+        }
+      ]
+    },
+    "15Rnd 9x19mm P226 Mag": {
+      "output": 5,
+      "autoProductId": "3689492f-24be-4cf2-aec8-65a6c525527c",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 20
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "SIG P227": {
+      "output": 1,
+      "autoProductId": "fda14757-89a6-455b-994d-2143f1a552f0",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 90
+        }
+      ]
+    },
+    "12Rnd .45 P227 Mag": {
+      "output": 5,
+      "autoProductId": "0452bf78-01e0-4ee4-bfd5-ac535a7e7733",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 25
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "FN FNX .45": {
+      "output": 1,
+      "autoProductId": "e3c302f2-54d3-4a09-b854-23961b478c60",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 90
+        }
+      ]
+    },
+    "15Rnd .45 FNX Mag": {
+      "output": 5,
+      "autoProductId": "edd98baf-cba5-414f-b051-5b5d09b23d30",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 24
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "Beretta 92": {
+      "output": 1,
+      "autoProductId": "22dd285f-a04a-4e9e-80a5-8b1ac0da9300",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 91
+        }
+      ]
+    },
+    "15Rnd 9x19mm Beretta Mag": {
+      "output": 5,
+      "autoProductId": "53bb323c-78e1-4658-a8b6-e216d5d1645a",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 24
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "Desert Eagle": {
+      "output": 1,
+      "autoProductId": "0197d84d-4120-4236-843e-dafa805924e7",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 165
+        }
+      ]
+    },
+    "Golden Desert Eagle": {
+      "output": 1,
+      "autoProductId": "acaf5c52-e9b7-4087-b451-335262e1c8e0",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 240
+        },
+        {
+          "material": "Goldplatten",
+          "amount": 42
+        }
+      ]
+    },
+    "7Rnd .50 Mag": {
+      "output": 5,
+      "autoProductId": "3f0a8659-c9db-4a82-b902-29472609fd40",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 25
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "Colt Python .357": {
+      "output": 1,
+      "autoProductId": "a777eead-dccc-475f-a6ed-1b71a2aa1a39",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 135
+        }
+      ]
+    },
+    "Golden Colt Python .357": {
+      "output": 1,
+      "autoProductId": "71d93a9b-ed0f-4c9c-a3a3-ab0bdbe18693",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 167
+        },
+        {
+          "material": "Goldplatten",
+          "amount": 30
+        }
+      ]
+    },
+    "6Rnd .357 Magnum": {
+      "output": 5,
+      "autoProductId": "fc816daa-0571-4e82-9d0f-7098df38a8ca",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 30
+        },
+        {
+          "material": "Schießpulver",
+          "amount": 6
+        }
+      ]
+    },
+    "Pistol Flashlight": {
+      "output": 1,
+      "autoProductId": "b29948d7-1f8f-4eec-8d61-cb33da978ba0",
+      "recipe": [
+        {
+          "material": "Stahlplatten",
+          "amount": 45
+        }
+      ]
     }
   },
   "products": {
@@ -1798,6 +3082,74 @@
     ],
     "goods": [
       {
+        "id": "087feb64-7429-4cfb-a7e6-23aad4a21af0",
+        "name": "Trawlernetz (reparieren)",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Kunstfaser",
+            "amount": 15
+          },
+          {
+            "material": "Trawlernetz (gerissen)",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "982932dd-506c-4762-a4a3-c3f36020062b",
+        "name": "Trawlernetz",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Kunstfaser",
+            "amount": 700
+          },
+          {
+            "material": "Stahlpalette",
+            "amount": 4
+          }
+        ]
+      },
+      {
+        "id": "9216cb63-a53f-4fd7-b6b6-e47f8c6550bc",
+        "name": "Raketen (gelb)",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Kunststoff",
+            "amount": 1
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 2
+          },
+          {
+            "material": "Schwefelbarren",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "c98c70c3-b81d-4063-93c3-673d8947723c",
+        "name": "Raketen (grün)",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Kunststoff",
+            "amount": 1
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 2
+          },
+          {
+            "material": "Schwefelbarren",
+            "amount": 1
+          }
+        ]
+      },
+      {
         "id": "3f2b3a8a-25ab-461f-b80b-2f27f41f0a62",
         "name": "Raketen (rot)",
         "output": 1,
@@ -2212,19 +3564,929 @@
         ]
       }
     ],
-    "illegalWeapons": [],
-    "food": []
+    "illegalWeapons": [
+      {
+        "id": "b29948d7-1f8f-4eec-8d61-cb33da978ba0",
+        "name": "Pistol Flashlight",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 45
+          }
+        ]
+      },
+      {
+        "id": "fc816daa-0571-4e82-9d0f-7098df38a8ca",
+        "name": "6Rnd .357 Magnum",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 30
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "71d93a9b-ed0f-4c9c-a3a3-ab0bdbe18693",
+        "name": "Golden Colt Python .357",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 167
+          },
+          {
+            "material": "Goldplatten",
+            "amount": 30
+          }
+        ]
+      },
+      {
+        "id": "a777eead-dccc-475f-a6ed-1b71a2aa1a39",
+        "name": "Colt Python .357",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 135
+          }
+        ]
+      },
+      {
+        "id": "3f0a8659-c9db-4a82-b902-29472609fd40",
+        "name": "7Rnd .50 Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 25
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "acaf5c52-e9b7-4087-b451-335262e1c8e0",
+        "name": "Golden Desert Eagle",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 240
+          },
+          {
+            "material": "Goldplatten",
+            "amount": 42
+          }
+        ]
+      },
+      {
+        "id": "0197d84d-4120-4236-843e-dafa805924e7",
+        "name": "Desert Eagle",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 165
+          }
+        ]
+      },
+      {
+        "id": "53bb323c-78e1-4658-a8b6-e216d5d1645a",
+        "name": "15Rnd 9x19mm Beretta Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 24
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "22dd285f-a04a-4e9e-80a5-8b1ac0da9300",
+        "name": "Beretta 92",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 91
+          }
+        ]
+      },
+      {
+        "id": "edd98baf-cba5-414f-b051-5b5d09b23d30",
+        "name": "15Rnd .45 FNX Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 24
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "e3c302f2-54d3-4a09-b854-23961b478c60",
+        "name": "FN FNX .45",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 90
+          }
+        ]
+      },
+      {
+        "id": "0452bf78-01e0-4ee4-bfd5-ac535a7e7733",
+        "name": "12Rnd .45 P227 Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 25
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "fda14757-89a6-455b-994d-2143f1a552f0",
+        "name": "SIG P227",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 90
+          }
+        ]
+      },
+      {
+        "id": "3689492f-24be-4cf2-aec8-65a6c525527c",
+        "name": "15Rnd 9x19mm P226 Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 20
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "84d9d2ad-65e0-403a-90d0-c4bf3083ecf3",
+        "name": "SIG P226",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 115
+          }
+        ]
+      },
+      {
+        "id": "6baefc57-e577-4876-9498-4bc9264d33f8",
+        "name": "10Rnd 9mm Glock26 Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 24
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "id": "c1814c41-030a-44b8-a42f-1c6898a1ffad",
+        "name": "Glock 26",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 120
+          }
+        ]
+      },
+      {
+        "id": "f6206227-9277-415e-8b9f-68d20cccb136",
+        "name": "17Rnd 9mm Glock18 Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 25
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "eb5ab326-5846-427f-9c11-47f2c9841479",
+        "name": "Glock 18",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 120
+          }
+        ]
+      },
+      {
+        "id": "f41cfc20-2a3c-4754-9f9a-4622c92eea81",
+        "name": "17Rnd 9mm Glock17 Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 25
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "d2430988-d9da-4e26-938d-93e441ef8f64",
+        "name": "Glock 17",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 115
+          }
+        ]
+      },
+      {
+        "id": "d62574cb-1b26-4160-b3a3-78762c3e809c",
+        "name": ".45 ACP 6Rnd Cylinder",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 20
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "53b557f7-1435-41d2-b99d-e2fbed77cc8a",
+        "name": "Zubr .45 ACP",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 86
+          }
+        ]
+      },
+      {
+        "id": "5ea15ee9-7e8a-420a-b171-a38b6226da37",
+        "name": "9mm 10Rnd Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 22
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "7d03e340-6088-40f4-8535-35b6b29f37a1",
+        "name": "PM 9mm",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 85
+          }
+        ]
+      },
+      {
+        "id": "c2002d9e-2036-481c-bc95-d82270ebb7a7",
+        "name": ".45 ACP 9Rnd Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 25
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "005e4c9f-dc47-47e1-abb9-590a58ef3c9a",
+        "name": "ACP-C2 .45 ACP",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 100
+          }
+        ]
+      },
+      {
+        "id": "974b6733-81fb-4560-b40a-78bc68f42041",
+        "name": ".45 ACP 11Rnd Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 25
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "1183083a-3177-47d6-aea2-f009861a6271",
+        "name": "4-five .45 ACP",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 100
+          }
+        ]
+      },
+      {
+        "id": "9db1f1f4-deff-4c3f-ba1d-79411d332b8b",
+        "name": "9mm 16Rnd Mag",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 20
+          },
+          {
+            "material": "Schießpulver",
+            "amount": 6
+          }
+        ]
+      },
+      {
+        "id": "18da12ab-3dd3-4186-b4f6-c9ab2b4e5fca",
+        "name": "Rook-40 9mm",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 90
+          }
+        ]
+      },
+      {
+        "id": "9656d0ea-e28a-48e9-ad5f-56e34bade875",
+        "name": "P07 9mm (Black)",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 85
+          }
+        ]
+      },
+      {
+        "id": "eabb4136-5091-45b7-be0b-02ef96cac6a9",
+        "name": "P07 9mm (Khaki)",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 85
+          }
+        ]
+      },
+      {
+        "id": "c06884a4-e950-49c2-922f-d5cc49f6ed8c",
+        "name": "P07 9mm",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Stahlplatten",
+            "amount": 85
+          }
+        ]
+      }
+    ],
+    "food": [
+      {
+        "id": "72e8c88a-2eb1-4d00-8b53-616cfa14c3e2",
+        "name": "Fleischpastete",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Schafsfleisch (markiert)",
+            "amount": 1
+          },
+          {
+            "material": "Wildschweinfleisch (markiert)",
+            "amount": 1
+          },
+          {
+            "material": "Ziegenfleisch (markiert)",
+            "amount": 1
+          },
+          {
+            "material": "Brot",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "d8a8f011-12c1-4f71-adfa-d9fdbe590ee7",
+        "name": "Gekochter Fischtaco",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Tüte Salat",
+            "amount": 1
+          },
+          {
+            "material": "Taco Shell",
+            "amount": 1
+          },
+          {
+            "material": "Gekochter Fisch (TacoHell)",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "04e82122-f7fd-4ba7-959f-b1d9849bbb6b",
+        "name": "Gekochter Fisch (TacoHell)",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Roher Fisch (Taco Hell)",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "740e0345-41c9-4c47-81d1-0acbd82e3783",
+        "name": "Gekochter Fisch (McFishers)",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Roher Fisch (McFischers)",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "a300f9de-63ef-42bd-bcce-4d80da39682b",
+        "name": "Gekochter Fischburger",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Tüte Salat",
+            "amount": 1
+          },
+          {
+            "material": "Burgerbrötchen",
+            "amount": 1
+          },
+          {
+            "material": "Gekochter Fisch (McFishers)",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "652a4e94-7023-4ed9-8150-ae7cdb35d5f7",
+        "name": "Würstchen",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Wildschweinfleisch (markiert)",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "6713bb85-836c-4cc9-b02b-5a9d216e31d0",
+        "name": "Lamington",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Zuckerrohr",
+            "amount": 3
+          },
+          {
+            "material": "Brot",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "77293d04-ac67-42df-a04b-db8defea4b25",
+        "name": "Cornflakes",
+        "output": 1,
+        "recipe": [
+          {
+            "material": "Mais",
+            "amount": 10
+          },
+          {
+            "material": "Weizen",
+            "amount": 20
+          }
+        ]
+      },
+      {
+        "id": "81717d43-06b9-446b-b6e5-47767f1ade59",
+        "name": "Apfelkekse",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Koka",
+            "amount": 2
+          },
+          {
+            "material": "Zuckerrohr",
+            "amount": 2
+          },
+          {
+            "material": "Weizen",
+            "amount": 15
+          },
+          {
+            "material": "Apfel",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "01f91220-1d5f-4602-91cd-4febbdd2b150",
+        "name": "Kekse",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Koka",
+            "amount": 2
+          },
+          {
+            "material": "Zuckerrohr",
+            "amount": 2
+          },
+          {
+            "material": "Weizen",
+            "amount": 15
+          }
+        ]
+      },
+      {
+        "id": "0658c00a-bed6-4cdd-b55d-e52359319125",
+        "name": "Lammeintopf",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Schafsfleisch (markiert)",
+            "amount": 1
+          },
+          {
+            "material": "Mais",
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "id": "71284e02-7af0-4458-83b2-18b616350129",
+        "name": "Pizzastück",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Wildschweinfleisch (markiert)",
+            "amount": 3
+          },
+          {
+            "material": "Brot",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "6c2efaad-4d41-4dd8-839b-364bcc3b4d00",
+        "name": "Roher Fisch (Taco Hell)",
+        "output": 10,
+        "recipe": [
+          {
+            "material": "Voller Eimer mit Fischen",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "1cef97cc-73b3-44ee-a55f-fd63588e793e",
+        "name": "Tüte Salat",
+        "output": 5,
+        "recipe": [
+          {
+            "material": "Salat",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "7895de97-1d38-47d5-954b-b25e043d4280",
+        "name": "Taco Shell",
+        "output": 20,
+        "recipe": [
+          {
+            "material": "Mais",
+            "amount": 10
+          }
+        ]
+      },
+      {
+        "id": "9c2e0b90-7f1c-4130-bc4a-2f7a92a80305",
+        "name": "Roher Fisch (McFischers)",
+        "output": 10,
+        "recipe": [
+          {
+            "material": "Voller Eimer mit Fischen",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "9c92367a-e64e-4e29-9cea-2135b3177702",
+        "name": "Burgerbrötchen",
+        "output": 10,
+        "recipe": [
+          {
+            "material": "Weizen",
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "id": "78f6f63a-ef89-4644-b670-0bc3615d0ebd",
+        "name": "Popcorneimer",
+        "output": 10,
+        "recipe": [
+          {
+            "material": "Mais",
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "id": "57389e64-489b-43f6-be3d-1e210122b4f4",
+        "name": "Veggie Sandwich",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Brot",
+            "amount": 1
+          },
+          {
+            "material": "Salat",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "c360a0c3-503a-4fc7-afa6-b7769d552543",
+        "name": "Ham & Cheese Sandwich",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Brot",
+            "amount": 1
+          },
+          {
+            "material": "Salat",
+            "amount": 2
+          },
+          {
+            "material": "Wildschweinfleisch (markiert)",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "92c2c402-b538-4755-890e-f3773aa36afd",
+        "name": "Donut (Zuckerguss)",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Weizen",
+            "amount": 2
+          },
+          {
+            "material": "Zuckerrohr",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "5079cbd4-cd15-4b45-acc8-f90e4d7bedbe",
+        "name": "Donut (Schokolade)",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Weizen",
+            "amount": 2
+          },
+          {
+            "material": "Koka",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "e5cde44b-f7a4-40fe-8c70-2242615e0f4c",
+        "name": "Donut",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Weizen",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "f99e90c8-9f2e-4663-948a-9ff35ab0a9ee",
+        "name": "Brot",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Weizen",
+            "amount": 30
+          }
+        ]
+      },
+      {
+        "id": "4b4ce50c-502b-4624-8cf4-68cb3f324466",
+        "name": "Hoagie-Sandwich",
+        "output": 2,
+        "recipe": [
+          {
+            "material": "Salat",
+            "amount": 3
+          },
+          {
+            "material": "Wildschweinfleisch (markiert)",
+            "amount": 3
+          },
+          {
+            "material": "Brot",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "50a7d56a-1666-4121-b96d-1d3ae2775cf8",
+        "name": "Kleiner Kaffee",
+        "output": 4,
+        "recipe": [
+          {
+            "material": "Koka",
+            "amount": 2
+          },
+          {
+            "material": "Kunststoff",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "c17534bc-1d39-432f-8ae9-26e47bb884e5",
+        "name": "Medium Kaffee",
+        "output": 4,
+        "recipe": [
+          {
+            "material": "Koka",
+            "amount": 2
+          },
+          {
+            "material": "Kunststoff",
+            "amount": 3
+          }
+        ]
+      },
+      {
+        "id": "ca06d11a-033c-46a2-b20f-b0887554b184",
+        "name": "Großer Kaffee",
+        "output": 4,
+        "recipe": [
+          {
+            "material": "Koka",
+            "amount": 4
+          },
+          {
+            "material": "Kunststoff",
+            "amount": 4
+          }
+        ]
+      },
+      {
+        "id": "8a1bf02c-8b4e-4855-9de3-422675ca92ac",
+        "name": "Cola",
+        "output": 3,
+        "recipe": [
+          {
+            "material": "Koka",
+            "amount": 2
+          },
+          {
+            "material": "Aluminiumbarren",
+            "amount": 1
+          },
+          {
+            "material": "Zuckerrohr",
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "id": "e17919a7-6347-4ec0-aa79-629f85d00293",
+        "name": "Apfelsaft",
+        "output": 3,
+        "recipe": [
+          {
+            "material": "Apfel",
+            "amount": 2
+          },
+          {
+            "material": "Zuckerrohr",
+            "amount": 2
+          },
+          {
+            "material": "Aluminiumbarren",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "22f0fa74-c642-407e-bfbd-1dfd1f527476",
+        "name": "Zuckerstange",
+        "output": 3,
+        "recipe": [
+          {
+            "material": "Zuckerrohr",
+            "amount": 2
+          }
+        ]
+      }
+    ]
   },
-  "plan": [],
+  "plan": [
+    {
+      "id": "4d7e0d31-8460-4923-8240-111fee4e87fa",
+      "factory": "steel",
+      "productId": "730239f0-b536-4b5c-9c32-7e59c7488415",
+      "quantity": 1
+    },
+    {
+      "id": "2c091733-a56d-4846-a8c5-defd8d1febcb",
+      "factory": "steel",
+      "productId": "98e50703-8788-4f8f-8ef2-7caa002af625",
+      "quantity": 1
+    }
+  ],
   "materialPrices": {},
   "pricing": {
     "standardMarginPercent": 0
   },
   "inventory": {},
-  "labor": {
-    "hourlyValue": 0
-  },
-  "farmProfiles": {},
   "tradePrices": {
     "Aluminiumerz": {
       "importPrice": 30,
@@ -2344,5 +4606,20 @@
   },
   "tradeAliases": {
     "Goldbarren (aus Palette)": "Goldbarren"
+  },
+  "labor": {
+    "hourlyValue": 20000
+  },
+  "farmProfiles": {
+    "Eisenerz": {
+      "enabled": true,
+      "amountPerHour": 1000,
+      "createdAt": 0
+    },
+    "Kohleerz": {
+      "enabled": true,
+      "amountPerHour": 1000,
+      "createdAt": 0
+    }
   }
 }

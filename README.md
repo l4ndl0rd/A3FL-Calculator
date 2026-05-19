@@ -18,7 +18,7 @@ Der Calculator läuft vollständig statisch und ist für GitHub Pages geeignet. 
 - Zentrale Handelsdaten für Importpreis, Exportpreis und Marktwert
 - Farmraten mit persönlichem Arbeitswert pro Stunde
 - Materialien mit optionalem Wert pro Einheit und optionalem Unterrezept
-- Waren mit Produktionsmenge und Rezeptdaten pro Fabrik
+- Waren mit Produktionsmenge und Rezeptdaten pro Fabrik/Sektion, inklusive Landwirtschaft
 - Gleiche Warennamen können in unterschiedlichen Fabriken existieren
 - Bearbeitungsmodus mit Bestätigungsdialog als UI-Sperre
 - Suche in Material-, Waren- und Handelslisten
@@ -47,7 +47,7 @@ Inventar senkt nicht die angezeigten `Kosten/Stück` und nicht die Preisempfehlu
 
 Bei planweiten Sammelproduktionen mit gemeinsamen Zwischenprodukt-Läufen verwendet `Kosten + Marge` dieselbe inventarbereinigte Kostenbasis wie die angezeigten `Kosten/Stück`, damit die Marge nicht durch Rundungs- oder Überschussmengen negativ ausfällt.
 
-Wenn derselbe Warenname in mehreren Fabriken existiert, behandelt der Produktionsplan die konkrete Ware weiterhin über ihre interne ID. Bei Materialbedarf und Preisberechnung werden gleichnamige Herstellungswege als Alternativen betrachtet; der Calculator verwendet dabei den günstigsten berechenbaren Weg. So können beispielsweise `Stahlplatten` sowohl hergestellt als auch aus einer Palette zerlegt werden, ohne unterschiedliche Handelsartikel pflegen zu müssen.
+Wenn derselbe Warenname in mehreren Fabriken oder Sektionen existiert, behandelt der Produktionsplan die konkrete Ware weiterhin über ihre interne ID. Bei Materialbedarf und Preisberechnung werden gleichnamige Herstellungswege als Alternativen betrachtet; der Calculator verwendet dabei den günstigsten berechenbaren Weg. So können beispielsweise `Stahlplatten` sowohl hergestellt als auch aus einer Palette zerlegt werden, ohne unterschiedliche Handelsartikel pflegen zu müssen.
 
 ## Farmraten und Arbeitszeit
 
