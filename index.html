@@ -61,7 +61,7 @@
                   <th>Fabrik</th>
                   <th>Ware</th>
                   <th>Zielmenge</th>
-                  <th>Ausstoß / Lauf</th>
+                  <th>Produktion / Zyklus</th>
                   <th>Produktionsläufe</th>
                   <th></th>
                 </tr>
@@ -87,7 +87,7 @@
               <strong id="kpiMaterials">0</strong>
             </div>
           </div>
-          <p class="hint">Produktionsläufe werden immer aufgerundet. Beispiel: Zielmenge 11 bei Ausstoß 5 ergibt 3 Läufe.</p>
+          <p class="hint">Produktionsläufe werden immer aufgerundet. Beispiel: Zielmenge 11 bei Produktion 5 ergibt 3 Läufe.</p>
         </section>
       </div>
 
@@ -146,7 +146,7 @@
         <div class="card-header">
           <div>
             <h2>Benötigte Rohmaterialien</h2>
-            <p>Rekursiv aufgelöster Bedarf: Zwischenprodukte werden über ihre Rezepte bis zu Rohmaterialien zurückgerechnet.</p>
+            <p>Zwischenprodukte werden über ihre Rezepte bis zu Rohmaterialien zurückgerechnet.</p>
           </div>
           <button id="copyRawMaterialsBtn" class="button button-secondary" type="button">Tabelle kopieren</button>
         </div>
@@ -243,7 +243,7 @@
           </div>
           <button id="addTradeItemBtn" class="button admin-only" type="button">Handelseintrag hinzufügen</button>
         </div>
-        <p class="hint">Nur Artikel mit einem Eintrag in dieser Liste gelten als kaufbar oder exportierbar. Rezepte und Materialien speichern keine eigenen Import-/Exportpreise mehr.</p>
+        <p class="hint">Nur Artikel mit einem Eintrag in dieser Liste gelten als kaufbar oder exportierbar.</p>
         <div class="edit-search-bar">
           <label>
             Handelsartikel suchen
@@ -311,7 +311,7 @@
           <strong class="product-name-display"></strong>
         </div>
         <div>
-          <span class="field-caption">Produktionsmenge</span>
+          <span class="field-caption">Produktion</span>
           <strong class="product-output-display"></strong>
         </div>
         <div>
