@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="admin-locked">
   <header class="app-header">
     <div class="header-copy">
       <p class="eyebrow">Arma 3 Fishers Life DE</p>
@@ -22,8 +22,13 @@
   <main class="layout">
     <nav class="tabs" aria-label="Bereiche">
       <div id="tabs" class="tab-row">
-        <button class="tab active" data-target="calculator" type="button">Calculator</button>
-        <button class="tab" data-target="materials" type="button">Materialien</button>
+        <div class="primary-tab-row">
+          <button class="tab active" data-target="calculator" type="button">Calculator</button>
+          <button class="tab" type="button" aria-disabled="true">Fabriken</button>
+          <button class="tab" data-target="materials" type="button">Materialien</button>
+          <button class="tab" data-target="trade" type="button">Handel</button>
+          <button class="tab" data-target="farmrates" type="button">Farmraten</button>
+        </div>
       </div>
       <details class="data-actions" aria-label="Datenverwaltung">
         <summary>Daten</summary>

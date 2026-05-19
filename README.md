@@ -173,3 +173,7 @@ Die Wirtschaftlichkeit zeigt die konkrete Beschaffung pro Planposition als farbi
 - Grau: Inventar oder manueller Wert
 
 Das große Gesamturteil wird dadurch nicht mehr prominent dargestellt; relevant sind die Einzelaktionen innerhalb des Rezeptbaums. Die Bezeichnungen der Beschaffungsarten werden zentral in `app.js` gepflegt, damit Tags, Sortierung und spätere Ausgaben konsistent bleiben.
+
+## Layout-Stabilität
+
+Die Oberfläche reserviert für Header, Navigation, Karten und dynamisch gerenderte Tabellen feste Mindestbereiche. Dadurch sollen Layoutverschiebungen beim ersten Laden und beim Nachrendern der JSON-Daten reduziert werden, ohne die Berechnungslogik zu verändern.

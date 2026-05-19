@@ -5744,3 +5744,185 @@ body:not(.admin-locked) #farmrates .farm-table td:nth-child(5) {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* v85: CLS-/Layout-Stabilisierung ohne Funktionsänderungen.
+   Ziel: Platz für nachgerenderte Inhalte reservieren und initiale Admin-/Nav-Zustände stabil halten. */
+.app-header {
+  min-height: clamp(156px, 17vw, 214px);
+}
+
+.brand-logo {
+  flex: 0 0 auto;
+  contain: layout paint;
+}
+
+.tabs {
+  min-height: 58px;
+  contain: layout paint;
+}
+
+.tabs > #tabs.tab-row,
+#tabs > .primary-tab-row,
+.primary-tab-row {
+  min-height: 42px;
+}
+
+.panel.active {
+  min-height: 520px;
+}
+
+.calculator-grid {
+  min-height: 214px;
+}
+
+#calculator .inventory-card,
+#calculator .requirements-card,
+#calculator .economy-card {
+  min-height: 150px;
+}
+
+#calculator .summary-card {
+  min-height: 214px;
+}
+
+#calculator #planTable,
+#calculator #inventoryTable,
+#calculator #requirementsTable,
+#calculator #rawRequirementsTable,
+#calculator #economyTable {
+  contain: layout paint;
+}
+
+#calculator #planTable tbody,
+#calculator #inventoryTable tbody,
+#calculator #requirementsTable tbody,
+#calculator #rawRequirementsTable tbody,
+#calculator #economyTable tbody {
+  min-height: 44px;
+}
+
+#calculator .table-wrap:has(#planTable) {
+  min-height: 112px;
+}
+
+#calculator .table-wrap:has(#inventoryTable),
+#calculator .table-wrap:has(#requirementsTable),
+#calculator .table-wrap:has(#rawRequirementsTable) {
+  min-height: 76px;
+}
+
+#calculator .table-wrap:has(#economyTable) {
+  min-height: 112px;
+}
+
+#materials .card,
+#trade .card,
+#farmrates .card,
+.factory-panel .card {
+  min-height: 300px;
+}
+
+#materials .edit-search-bar,
+#trade .edit-search-bar,
+#farmrates .edit-search-bar {
+  min-height: 66px;
+}
+
+#materials .table-wrap,
+#trade .table-wrap,
+#farmrates .table-wrap {
+  min-height: 118px;
+  contain: layout paint;
+}
+
+#materials #materialsTable tbody,
+#trade #tradeTable tbody,
+#farmrates #farmTable tbody {
+  min-height: 46px;
+}
+
+.factory-panel .product-list {
+  min-height: 120px;
+}
+
+.product-card {
+  contain: layout paint;
+}
+
+/* Initialzustand vor app.js: Admin-Controls sind versteckt, damit beim Laden nichts ein-/ausklappt. */
+body.admin-locked .admin-only,
+body.admin-locked .file-button.admin-only,
+body.admin-locked .floating-add {
+  display: none !important;
+}
+
+/* Dynamisch eingefügte Tabelleninhalte sollen keinen Scroll-Anker auf tieferen Cards erzeugen. */
+.card,
+.product-card,
+.table-wrap,
+.recipe-table-wrap {
+  overflow-anchor: none;
+}
+
+@media (max-width: 980px) {
+  .app-header {
+    min-height: 246px;
+  }
+
+  .calculator-grid,
+  #calculator .summary-card {
+    min-height: 0;
+  }
+
+  #calculator .inventory-card,
+  #calculator .requirements-card,
+  #calculator .economy-card,
+  #materials .card,
+  #trade .card,
+  #farmrates .card,
+  .factory-panel .card {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 700px) {
+  .app-header {
+    min-height: 214px;
+  }
+
+  .tabs {
+    min-height: 104px;
+  }
+
+  #calculator .table-wrap:has(#planTable),
+  #calculator .table-wrap:has(#inventoryTable),
+  #calculator .table-wrap:has(#requirementsTable),
+  #calculator .table-wrap:has(#rawRequirementsTable),
+  #calculator .table-wrap:has(#economyTable),
+  #materials .table-wrap,
+  #trade .table-wrap,
+  #farmrates .table-wrap {
+    min-height: 112px;
+  }
+
+  .panel.active {
+    min-height: 420px;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-header {
+    min-height: 176px;
+  }
+
+  .tabs {
+    min-height: 100px;
+  }
+
+  #materials .card,
+  #trade .card,
+  #farmrates .card,
+  .factory-panel .card {
+    min-height: 260px;
+  }
+}
