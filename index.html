@@ -276,7 +276,7 @@
             <h2>Farmraten und Arbeitszeit</h2>
             <p>Bewerte selbst gefarmte Rohstoffe über deine persönliche Arbeitszeit. Crafting selbst bleibt kostenlos.</p>
           </div>
-          <button id="addFarmProfileBtn" class="button" type="button">Farmprofil hinzufügen</button>
+          <button id="addFarmProfileBtn" class="button admin-only" type="button">Farmprofil hinzufügen</button>
         </div>
         <div class="labor-settings">
           <label>
@@ -285,7 +285,7 @@
           </label>
           <p class="hint">Farmkosten pro Einheit = Arbeitswert pro Stunde / Farmmenge pro Stunde. Bei 0 $ Arbeitswert wird Farmen als kostenlos bewertet.</p>
         </div>
-        <div class="edit-search-bar">
+        <div class="edit-search-bar admin-only">
           <label>
             Farmprofil suchen
             <input id="farmSearchInput" name="farmSearchInput" type="search" placeholder="Material oder Rate eingeben" autocomplete="off" />
@@ -424,6 +424,46 @@
       <div class="modal-actions">
         <button class="button button-secondary" type="button" id="cancelTradeDialogBtn">Abbrechen</button>
         <button id="tradeDialogSubmitBtn" class="button" type="submit">Handelseintrag speichern</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="farmDialog" class="modal-dialog">
+    <form id="farmForm" class="modal-card" method="dialog">
+      <div class="modal-header">
+        <div>
+          <p id="farmDialogEyebrow" class="eyebrow modal-eyebrow">Farmrate</p>
+          <h2 id="farmDialogTitle">Farmprofil hinzufügen</h2>
+          <p id="farmDialogIntro">Lege fest, welche Rohstoffe du farmen kannst und wie viele Einheiten du pro Stunde schaffst.</p>
+        </div>
+        <button id="closeFarmDialogBtn" class="icon-button" type="button" aria-label="Fenster schließen">×</button>
+      </div>
+
+      <div class="modal-fields farm-profile-fields">
+        <label>
+          Material / Rohstoff
+          <input id="farmDialogName" name="farmDialogName" list="farmItemOptions" type="text" placeholder="z. B. Eisenerz" autocomplete="off" />
+        </label>
+        <label>
+          Menge pro Stunde
+          <input id="farmDialogRate" name="farmDialogRate" type="number" min="0" step="1" placeholder="0" />
+        </label>
+      </div>
+
+      <div class="modal-section">
+        <label class="checkbox-row">
+          <input id="farmDialogEnabled" name="farmDialogEnabled" type="checkbox" checked />
+          <span>
+            <strong>Farmbar</strong>
+            <small>Wenn deaktiviert, wird dieses Farmprofil in der Kostenkalkulation ignoriert.</small>
+          </span>
+        </label>
+        <p class="hint">Berechnete Farmkosten pro Einheit: <strong id="farmDialogUnitCost">—</strong></p>
+      </div>
+
+      <div class="modal-actions">
+        <button class="button button-secondary" type="button" id="cancelFarmDialogBtn">Abbrechen</button>
+        <button id="farmDialogSubmitBtn" class="button" type="submit">Farmprofil speichern</button>
       </div>
     </form>
   </dialog>

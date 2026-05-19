@@ -4933,3 +4933,93 @@ body:not(.admin-locked) #trade .trade-table td:nth-child(4) {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+/* v76: Farmraten im Bearbeitungsmodus an Material-/Handelstabellen angleichen. */
+#farmrates .card > .card-header {
+  position: sticky;
+  top: 94px;
+  z-index: 35;
+  margin: -20px -20px 16px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: linear-gradient(180deg, rgba(32, 32, 32, 0.98), rgba(22, 22, 22, 0.94));
+  backdrop-filter: blur(10px);
+}
+
+body.admin-locked #farmrates .card > .card-header::after {
+  content: "Nur Lesen · Bearbeitung über Daten > Bearbeitung aktivieren";
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 10px;
+  padding: 7px 10px;
+  border: 1px solid rgba(204, 105, 0, 0.45);
+  border-radius: 10px;
+  color: #ffd2a3;
+  background: rgba(204, 105, 0, 0.1);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+#farmrates .farm-table th:nth-child(1),
+#farmrates .farm-table td:nth-child(1) {
+  width: 32%;
+}
+
+#farmrates .farm-table th:nth-child(2),
+#farmrates .farm-table td:nth-child(2) {
+  width: 160px;
+}
+
+#farmrates .farm-table th:nth-child(3),
+#farmrates .farm-table td:nth-child(3),
+#farmrates .farm-table th:nth-child(4),
+#farmrates .farm-table td:nth-child(4) {
+  width: 190px;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+
+#farmrates .farm-table th:nth-child(5),
+#farmrates .farm-table td:nth-child(5) {
+  width: 190px;
+}
+
+#farmrates .farm-table .row-actions[hidden] {
+  display: none !important;
+}
+
+body.admin-locked #laborHourlyValueInput {
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+.farm-profile-fields {
+  grid-template-columns: minmax(0, 1fr) 220px;
+}
+
+@media (max-width: 980px) {
+  #farmrates .card > .card-header {
+    top: 88px;
+  }
+}
+
+@media (max-width: 640px) {
+  #farmrates .card > .card-header {
+    position: sticky;
+    top: 116px;
+    z-index: 35;
+    margin: -16px -16px 16px;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: linear-gradient(180deg, rgba(32, 32, 32, 0.98), rgba(22, 22, 22, 0.94));
+    backdrop-filter: blur(10px);
+  }
+
+  .farm-profile-fields {
+    grid-template-columns: 1fr;
+  }
+}

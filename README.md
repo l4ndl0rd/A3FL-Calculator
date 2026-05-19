@@ -47,7 +47,7 @@ Wenn derselbe Warenname in mehreren Fabriken existiert, behandelt der Produktion
 
 ## Farmraten und Arbeitszeit
 
-Farmen kann optional mit einem persönlichen Zeitwert bewertet werden. Dafür gibt es den Bereich **Farmraten**.
+Farmen kann optional mit einem persönlichen Zeitwert bewertet werden. Dafür gibt es den Bereich **Farmraten**. Farmprofile und Arbeitswert sind Stammdaten und werden nur im Bearbeitungsmodus geändert.
 
 ```json
 {
@@ -57,7 +57,8 @@ Farmen kann optional mit einem persönlichen Zeitwert bewertet werden. Dafür gi
   "farmProfiles": {
     "Eisenerz": {
       "enabled": true,
-      "amountPerHour": 1200
+      "amountPerHour": 1200,
+      "createdAt": 0
     }
   }
 }

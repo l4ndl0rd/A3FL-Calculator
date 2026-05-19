@@ -50,6 +50,8 @@ let tradeDraftRows = [];
 let tradeDialogMode = "create";
 let tradeDialogOriginalName = null;
 let farmSearchQuery = "";
+let farmDialogMode = "create";
+let farmDialogOriginalName = null;
 
 const els = {
   tabs: document.querySelector("#tabs"),
@@ -81,6 +83,18 @@ const els = {
   farmSearchInput: document.querySelector("#farmSearchInput"),
   farmSearchCount: document.querySelector("#farmSearchCount"),
   addFarmProfileBtn: document.querySelector("#addFarmProfileBtn"),
+  farmDialog: document.querySelector("#farmDialog"),
+  farmForm: document.querySelector("#farmForm"),
+  farmDialogEyebrow: document.querySelector("#farmDialogEyebrow"),
+  farmDialogTitle: document.querySelector("#farmDialogTitle"),
+  farmDialogIntro: document.querySelector("#farmDialogIntro"),
+  farmDialogSubmitBtn: document.querySelector("#farmDialogSubmitBtn"),
+  farmDialogName: document.querySelector("#farmDialogName"),
+  farmDialogEnabled: document.querySelector("#farmDialogEnabled"),
+  farmDialogRate: document.querySelector("#farmDialogRate"),
+  farmDialogUnitCost: document.querySelector("#farmDialogUnitCost"),
+  closeFarmDialogBtn: document.querySelector("#closeFarmDialogBtn"),
+  cancelFarmDialogBtn: document.querySelector("#cancelFarmDialogBtn"),
   tradeDialog: document.querySelector("#tradeDialog"),
   tradeForm: document.querySelector("#tradeForm"),
   tradeDialogEyebrow: document.querySelector("#tradeDialogEyebrow"),
@@ -197,6 +211,10 @@ function bindStaticEvents() {
   if (els.addTradeItemBtn) els.addTradeItemBtn.addEventListener("click", openTradeDialogCreate);
   if (els.laborHourlyValueInput) {
     els.laborHourlyValueInput.addEventListener("change", () => {
+      if (!requireAdminAccess()) {
+        els.laborHourlyValueInput.value = formatInputNumber(positiveNumber(state.labor?.hourlyValue, 0));
+        return;
+      }
       state.labor ??= {};
       state.labor.hourlyValue = positiveNumber(els.laborHourlyValueInput.value, 0);
       renderAll();
@@ -210,7 +228,7 @@ function bindStaticEvents() {
       applyResponsiveTableLabels();
     });
   }
-  if (els.addFarmProfileBtn) els.addFarmProfileBtn.addEventListener("click", addFarmProfile);
+  if (els.addFarmProfileBtn) els.addFarmProfileBtn.addEventListener("click", openFarmDialogCreate);
   els.copyMaterialsBtn.addEventListener("click", copyRequirementsTable);
   els.copyRawMaterialsBtn.addEventListener("click", copyRawRequirementsTable);
   els.exportDataBtn.addEventListener("click", exportData);
@@ -259,6 +277,17 @@ function bindStaticEvents() {
   if (els.tradeDialog) {
     els.tradeDialog.addEventListener("click", (event) => {
       if (event.target === els.tradeDialog) closeTradeDialog();
+    });
+  }
+
+  if (els.farmForm) els.farmForm.addEventListener("submit", handleFarmDialogSubmit);
+  if (els.closeFarmDialogBtn) els.closeFarmDialogBtn.addEventListener("click", closeFarmDialog);
+  if (els.cancelFarmDialogBtn) els.cancelFarmDialogBtn.addEventListener("click", closeFarmDialog);
+  if (els.farmDialogRate) els.farmDialogRate.addEventListener("input", updateFarmDialogUnitCost);
+  if (els.farmDialogEnabled) els.farmDialogEnabled.addEventListener("change", updateFarmDialogUnitCost);
+  if (els.farmDialog) {
+    els.farmDialog.addEventListener("click", (event) => {
+      if (event.target === els.farmDialog) closeFarmDialog();
     });
   }
 }
@@ -786,7 +815,12 @@ function renderFarmRates() {
   const rows = Object.entries(state.farmProfiles)
     .map(([name, profile]) => ({ name: cleanText(name), profile }))
     .filter(({ name }) => name)
-    .sort((a, b) => a.name.localeCompare(b.name, "de", { sensitivity: "base" }));
+    .sort((a, b) => {
+      const aCreated = positiveNumber(a.profile?.createdAt, 0);
+      const bCreated = positiveNumber(b.profile?.createdAt, 0);
+      if (aCreated || bCreated) return bCreated - aCreated;
+      return a.name.localeCompare(b.name, "de", { sensitivity: "base" });
+    });
 
   const query = cleanText(farmSearchQuery).toLocaleLowerCase("de-DE");
   const visibleRows = query
@@ -832,54 +866,139 @@ function renderFarmDatalist() {
 function createFarmProfileRow(name, profile) {
   const row = document.createElement("tr");
   row.className = "farm-row";
+  const currentName = cleanText(name);
   const amountPerHour = positiveNumber(profile?.amountPerHour, 0);
-  const unitCost = getFarmUnitCost(name);
+  const unitCost = getFarmUnitCost(currentName);
+  const enabled = profile?.enabled !== false;
+
   row.innerHTML = `
-    <td><input class="farm-profile-name" name="farmProfileName" type="text" list="farmItemOptions" autocomplete="off" value="${escapeHtml(name)}" /></td>
-    <td><label class="table-checkbox"><input class="farm-profile-enabled" name="farmProfileEnabled" type="checkbox" ${profile?.enabled === false ? "" : "checked"} /><span>Farmbar</span></label></td>
-    <td><input class="farm-profile-rate" name="farmProfileRate" type="number" min="0" step="1" placeholder="0" value="${amountPerHour > 0 ? formatInputNumber(amountPerHour) : ""}" /></td>
+    <td><strong>${escapeHtml(currentName)}</strong></td>
+    <td><span class="source-badge ${enabled ? "" : "assessment-neutral"}">${enabled ? "Farmbar" : "Deaktiviert"}</span></td>
+    <td>${amountPerHour > 0 ? amountPerHour.toLocaleString("de-DE") : "—"}</td>
     <td>${formatOptionalMoney(unitCost)}</td>
-    <td class="row-actions"><button class="button button-danger remove-farm-profile" type="button">Entfernen</button></td>
+    <td class="row-actions">
+      <button class="button button-secondary edit-farm-profile" type="button">Bearbeiten</button>
+      <button class="button button-danger remove-farm-profile" type="button">Entfernen</button>
+    </td>
   `;
 
-  const nameInput = row.querySelector(".farm-profile-name");
-  const enabledInput = row.querySelector(".farm-profile-enabled");
-  const rateInput = row.querySelector(".farm-profile-rate");
+  const rowActions = row.querySelector(".row-actions");
+  if (rowActions) rowActions.hidden = !adminUnlocked;
 
-  const commit = () => {
-    const oldName = cleanText(name);
-    const nextName = cleanText(nameInput.value);
-    const nextRate = positiveNumber(rateInput.value, 0);
-    const enabled = Boolean(enabledInput.checked);
-    if (!nextName) return;
-    ensureMaterial(nextName);
-    if (oldName && oldName !== nextName) delete state.farmProfiles[oldName];
-    state.farmProfiles[nextName] = { enabled, amountPerHour: nextRate };
-    renderAll();
-    activateTab("farmrates");
-  };
+  row.querySelector(".edit-farm-profile")?.addEventListener("click", () => {
+    if (!requireAdminAccess()) return;
+    openFarmDialogEdit(currentName);
+  });
 
-  nameInput.addEventListener("change", commit);
-  nameInput.addEventListener("blur", commit);
-  enabledInput.addEventListener("change", commit);
-  rateInput.addEventListener("change", commit);
-  row.querySelector(".remove-farm-profile").addEventListener("click", () => {
-    if (!confirm(`Farmprofil für "${name}" wirklich entfernen?`)) return;
-    delete state.farmProfiles[name];
+  row.querySelector(".remove-farm-profile")?.addEventListener("click", () => {
+    if (!requireAdminAccess()) return;
+    if (!confirm(`Farmprofil für "${currentName}" wirklich entfernen?`)) return;
+    delete state.farmProfiles[currentName];
     renderAll();
     activateTab("farmrates");
   });
+
   return row;
 }
 
-function addFarmProfile() {
-  state.farmProfiles ??= {};
-  const existing = new Set(Object.keys(state.farmProfiles).map((name) => cleanText(name).toLocaleLowerCase("de-DE")));
-  const candidate = getAllItemNames().find((name) => !existing.has(cleanText(name).toLocaleLowerCase("de-DE"))) || "Neues Farmmaterial";
-  state.farmProfiles[candidate] = { enabled: true, amountPerHour: 0 };
+function openFarmDialogCreate() {
+  if (!requireAdminAccess()) return;
+  farmDialogMode = "create";
+  farmDialogOriginalName = null;
+  renderFarmDatalist();
+  els.farmDialogEyebrow.textContent = "Farmrate";
+  els.farmDialogTitle.textContent = "Farmprofil hinzufügen";
+  els.farmDialogIntro.textContent = "Lege fest, welche Rohstoffe du farmen kannst und wie viele Einheiten du pro Stunde schaffst.";
+  els.farmDialogSubmitBtn.textContent = "Farmprofil speichern";
+  els.farmForm.reset();
+  els.farmDialogName.value = "";
+  els.farmDialogEnabled.checked = true;
+  els.farmDialogRate.value = "";
+  updateFarmDialogUnitCost();
+  els.farmDialog.showModal();
+  setTimeout(() => els.farmDialogName.focus(), 0);
+}
+
+function openFarmDialogEdit(name) {
+  if (!requireAdminAccess()) return;
+  const currentName = cleanText(name);
+  const profile = state.farmProfiles?.[currentName] ?? {};
+  farmDialogMode = "edit";
+  farmDialogOriginalName = currentName;
+  renderFarmDatalist();
+  els.farmDialogEyebrow.textContent = "Farmrate bearbeiten";
+  els.farmDialogTitle.textContent = currentName;
+  els.farmDialogIntro.textContent = "Änderungen wirken sich direkt auf die Kostenkalkulation aus.";
+  els.farmDialogSubmitBtn.textContent = "Änderungen speichern";
+  els.farmDialogName.value = currentName;
+  els.farmDialogEnabled.checked = profile.enabled !== false;
+  const rate = positiveNumber(profile.amountPerHour, 0);
+  els.farmDialogRate.value = rate > 0 ? formatInputNumber(rate) : "";
+  updateFarmDialogUnitCost();
+  els.farmDialog.showModal();
+  setTimeout(() => els.farmDialogName.focus(), 0);
+}
+
+function closeFarmDialog() {
+  els.farmDialog?.close();
+}
+
+function updateFarmDialogUnitCost() {
+  if (!els.farmDialogUnitCost) return;
+  const enabled = Boolean(els.farmDialogEnabled?.checked);
+  const rate = positiveNumber(els.farmDialogRate?.value, 0);
+  const hourly = getLaborHourlyValue();
+  if (!enabled) {
+    els.farmDialogUnitCost.textContent = "deaktiviert";
+    return;
+  }
+  if (rate <= 0) {
+    els.farmDialogUnitCost.textContent = "—";
+    return;
+  }
+  els.farmDialogUnitCost.textContent = formatMoney(hourly / rate);
+}
+
+function handleFarmDialogSubmit(event) {
+  event.preventDefault();
+  if (!requireAdminAccess()) return;
+
+  const nextName = cleanText(els.farmDialogName.value);
+  const nextRate = positiveNumber(els.farmDialogRate.value, 0);
+  const enabled = Boolean(els.farmDialogEnabled.checked);
+
+  if (!nextName) {
+    alert("Bitte einen Material-/Rohstoffnamen angeben.");
+    queueFocus("#farmDialogName");
+    return;
+  }
+
+  const exists = Object.keys(state.farmProfiles ?? {}).some((name) => name.toLocaleLowerCase("de-DE") === nextName.toLocaleLowerCase("de-DE"));
+  if (farmDialogMode === "create" && exists) {
+    alert(`Für "${nextName}" existiert bereits ein Farmprofil.`);
+    queueFocus("#farmDialogName");
+    return;
+  }
+
+  if (farmDialogMode === "edit" && farmDialogOriginalName && farmDialogOriginalName !== nextName) {
+    delete state.farmProfiles[farmDialogOriginalName];
+  }
+
+  ensureMaterial(nextName);
+  const previous = state.farmProfiles?.[nextName] ?? {};
+  state.farmProfiles[nextName] = {
+    enabled,
+    amountPerHour: nextRate,
+    createdAt: farmDialogMode === "create" ? Date.now() : positiveNumber(previous.createdAt, 0)
+  };
+
+  closeFarmDialog();
   renderAll();
   activateTab("farmrates");
-  queueFocus(`#farmTable tbody tr:last-child .farm-profile-name`);
+}
+
+function addFarmProfile() {
+  openFarmDialogCreate();
 }
 
 function renderPlan() {
@@ -1948,11 +2067,14 @@ function updateAdminUi() {
   document.body.classList.toggle("admin-locked", !adminUnlocked);
   if (els.adminAccessBtn) els.adminAccessBtn.textContent = adminUnlocked ? "Bearbeitung sperren" : "Bearbeitung aktivieren";
   if (els.standardMarginInput) els.standardMarginInput.disabled = !adminUnlocked;
+  if (els.laborHourlyValueInput) els.laborHourlyValueInput.disabled = !adminUnlocked;
   if (!adminUnlocked) {
     materialSearchQuery = "";
     tradeSearchQuery = "";
+    farmSearchQuery = "";
     if (els.materialSearchInput) els.materialSearchInput.value = "";
     if (els.tradeSearchInput) els.tradeSearchInput.value = "";
+    if (els.farmSearchInput) els.farmSearchInput.value = "";
     Object.keys(productSearchQueries).forEach((key) => { productSearchQueries[key] = ""; });
   }
   document.querySelectorAll(".admin-only").forEach((item) => {
@@ -2360,10 +2482,16 @@ function normalizeState() {
     if (!name || !profile || typeof profile !== "object") continue;
     const amountPerHour = positiveNumber(profile.amountPerHour, 0);
     const enabled = profile.enabled !== false;
+    const createdAt = positiveNumber(profile.createdAt, 0);
     ensureMaterial(name);
-    normalizedFarmProfiles[name] = { enabled, amountPerHour };
+    normalizedFarmProfiles[name] = { enabled, amountPerHour, createdAt };
   }
-  state.farmProfiles = Object.fromEntries(Object.entries(normalizedFarmProfiles).sort(([a], [b]) => a.localeCompare(b, "de", { sensitivity: "base" })));
+  state.farmProfiles = Object.fromEntries(Object.entries(normalizedFarmProfiles).sort(([a, av], [b, bv]) => {
+    const aCreated = positiveNumber(av?.createdAt, 0);
+    const bCreated = positiveNumber(bv?.createdAt, 0);
+    if (aCreated || bCreated) return bCreated - aCreated;
+    return a.localeCompare(b, "de", { sensitivity: "base" });
+  }));
   delete state.materialImportPrices;
   delete state.materialExportPrices;
   state.inventory = normalizedInventory;
