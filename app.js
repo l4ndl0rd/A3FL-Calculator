@@ -227,6 +227,15 @@ function bindStaticEvents() {
   els.productDialog.addEventListener("click", (event) => {
     if (event.target === els.productDialog) closeProductDialog();
   });
+
+  if (els.tradeForm) els.tradeForm.addEventListener("submit", handleTradeDialogSubmit);
+  if (els.closeTradeDialogBtn) els.closeTradeDialogBtn.addEventListener("click", closeTradeDialog);
+  if (els.cancelTradeDialogBtn) els.cancelTradeDialogBtn.addEventListener("click", closeTradeDialog);
+  if (els.tradeDialog) {
+    els.tradeDialog.addEventListener("click", (event) => {
+      if (event.target === els.tradeDialog) closeTradeDialog();
+    });
+  }
 }
 
 function renderAll() {
