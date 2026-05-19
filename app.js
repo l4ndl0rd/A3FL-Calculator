@@ -981,40 +981,69 @@ function calculateMaterialBatchCostWithInventory(materialName, requiredAmount, i
 function calculateMaterialCraftBatchCostWithInventory(materialName, requiredAmount, inventoryPool, stack = new Set()) {
   const name = cleanText(materialName);
   const materialKey = `material:${name.toLocaleLowerCase("de-DE")}`;
+  if (stack.has(materialKey)) return { complete: false, totalCost: null, missing: [name] };
 
+  const nextStack = new Set(stack);
+  nextStack.add(materialKey);
+  const required = positiveInteger(requiredAmount, 0);
+  const options = [];
+  const missing = [];
   const recipeDef = getExistingMaterialRecipe(name);
-  const autoOrigin = recipeDef?.autoProductId ? getProductOrigin(recipeDef.autoProductId) : null;
-  if (autoOrigin?.product) {
-    const output = positiveInteger(autoOrigin.product.output, 1);
-    const runs = Math.ceil(positiveInteger(requiredAmount, 0) / output);
-    return calculateProductBatchCostWithInventory(autoOrigin.product, runs, inventoryPool, stack);
+
+  const addBatchOption = (factory) => {
+    const optionPool = cloneInventoryPool(inventoryPool);
+    const result = factory(optionPool);
+    if (result.complete) options.push({ ...result, inventoryPool: optionPool });
+    else missing.push(...result.missing);
+  };
+
+  if (recipeDef?.recipe?.length && !recipeDef.autoProductId) {
+    addBatchOption((optionPool) => calculateRecipeDefinitionBatchCostWithInventory(recipeDef, required, optionPool, nextStack));
   }
 
-  if (recipeDef?.recipe?.length) {
-    const nextStack = new Set(stack);
-    nextStack.add(materialKey);
-    const runs = Math.ceil(positiveInteger(requiredAmount, 0) / positiveInteger(recipeDef.output, 1));
-    let totalCost = 0;
-    const missing = [];
-    for (const item of recipeDef.recipe) {
-      const result = calculateMaterialBatchCostWithInventory(item.material, positiveInteger(item.amount, 0) * runs, inventoryPool, nextStack);
-      if (!result.complete) missing.push(...result.missing);
-      else totalCost += result.totalCost;
-    }
-    if (missing.length) return { complete: false, totalCost: null, missing: unique(missing) };
-    return { complete: true, totalCost, missing: [] };
+  for (const product of findProductsByName(name).filter((item) => item.recipe?.length)) {
+    const productKey = `product:${product.id}`;
+    if (nextStack.has(productKey)) continue;
+    const output = positiveInteger(product.output, 1);
+    const runs = Math.ceil(required / output);
+    addBatchOption((optionPool) => calculateProductBatchCostWithInventory(product, runs, optionPool, nextStack));
   }
 
-  const craftableProduct = findProductByName(name);
-  if (craftableProduct?.recipe?.length) {
-    const output = positiveInteger(craftableProduct.output, 1);
-    const runs = Math.ceil(positiveInteger(requiredAmount, 0) / output);
-    return calculateProductBatchCostWithInventory(craftableProduct, runs, inventoryPool, stack);
+  if (recipeDef?.recipe?.length && recipeDef.autoProductId && !findProductsByName(name).some((product) => product.id === recipeDef.autoProductId)) {
+    addBatchOption((optionPool) => calculateRecipeDefinitionBatchCostWithInventory(recipeDef, required, optionPool, nextStack));
+  }
+
+  if (options.length) {
+    const best = options.reduce((currentBest, current) => current.totalCost < currentBest.totalCost ? current : currentBest);
+    replaceInventoryPool(inventoryPool, best.inventoryPool);
+    return { complete: true, totalCost: best.totalCost, missing: [] };
   }
 
   const materialCost = getMaterialManualPrice(name);
-  if (materialCost === null) return { complete: false, totalCost: null, missing: [name] };
-  return { complete: true, totalCost: materialCost * positiveInteger(requiredAmount, 0), missing: [] };
+  if (materialCost !== null) return { complete: true, totalCost: materialCost * required, missing: [] };
+  return { complete: false, totalCost: null, missing: unique(missing.length ? missing : [name]) };
+}
+
+function cloneInventoryPool(pool) {
+  return Object.fromEntries(Object.entries(pool ?? {}).map(([name, amount]) => [name, positiveInteger(amount, 0)]));
+}
+
+function replaceInventoryPool(target, source) {
+  for (const key of Object.keys(target)) delete target[key];
+  for (const [key, value] of Object.entries(source ?? {})) target[key] = value;
+}
+
+function calculateRecipeDefinitionBatchCostWithInventory(recipeDef, requiredAmount, inventoryPool, stack = new Set()) {
+  const runs = Math.ceil(positiveInteger(requiredAmount, 0) / positiveInteger(recipeDef.output, 1));
+  let totalCost = 0;
+  const missing = [];
+  for (const item of recipeDef.recipe ?? []) {
+    const result = calculateMaterialBatchCostWithInventory(item.material, positiveInteger(item.amount, 0) * runs, inventoryPool, stack);
+    if (!result.complete) missing.push(...result.missing);
+    else totalCost += result.totalCost;
+  }
+  if (missing.length) return { complete: false, totalCost: null, missing: unique(missing) };
+  return { complete: true, totalCost, missing: [] };
 }
 
 function chooseCheapestBatchOption(buyOption, craftOption, fallbackName) {
@@ -1237,7 +1266,7 @@ function expandRawMaterial(material, requiredAmount, totals, warnings, stack) {
     return;
   }
 
-  const craftableProduct = findProductByName(material);
+  const craftableProduct = selectCraftableProductForExpansion(material, stack);
   if (!craftableProduct || !craftableProduct.recipe.length) {
     addTotal(totals, material, requiredAmount);
     return;
@@ -1486,11 +1515,8 @@ function saveProductFromDialog(event) {
 
   const existingMaterial = state.materials.find((material) => material.toLocaleLowerCase("de-DE") === name.toLocaleLowerCase("de-DE"));
   const existingRecipe = existingMaterial ? getExistingMaterialRecipe(existingMaterial) : null;
-  if (existingMaterial && existingRecipe?.autoProductId !== productDialogProductId) {
-    const origin = getAutoMaterialOrigin(existingMaterial);
-    alert(origin
-      ? `"${name}" existiert bereits als Ware aus der ${origin.factoryLabel}. Warennamen müssen eindeutig sein.`
-      : `"${name}" existiert bereits als manuelles Material. Lege die Ware bitte unter einem anderen Namen an oder benenne das Material vorher um.`);
+  if (existingMaterial && existingRecipe && !existingRecipe.autoProductId) {
+    alert(`"${name}" existiert bereits als manuelles Material. Lege die Ware bitte unter einem anderen Namen an oder benenne das Material vorher um.`);
     queueFocus("#newProductName");
     return;
   }
@@ -1852,9 +1878,31 @@ function findProduct(productId) {
 }
 
 function findProductByName(productName) {
+  return findProductsByName(productName)[0] ?? null;
+}
+
+function findProductsByName(productName) {
   const normalizedName = cleanText(productName).toLocaleLowerCase("de-DE");
-  if (!normalizedName) return null;
-  return Object.values(state.products).flat().find((product) => product.name.toLocaleLowerCase("de-DE") === normalizedName) ?? null;
+  if (!normalizedName) return [];
+  return Object.values(state.products ?? {}).flat().filter((product) => cleanText(product.name).toLocaleLowerCase("de-DE") === normalizedName);
+}
+
+function productNameIsUsedByAnotherProduct(name, excludedProductId = null) {
+  const normalizedName = cleanText(name).toLocaleLowerCase("de-DE");
+  if (!normalizedName) return false;
+  return Object.values(state.products ?? {}).flat().some((product) => product.id !== excludedProductId && cleanText(product.name).toLocaleLowerCase("de-DE") === normalizedName);
+}
+
+function selectCraftableProductForExpansion(productName, stack = new Set()) {
+  const candidates = findProductsByName(productName).filter((product) => product.recipe?.length && !stack.has(`product:${product.id}`));
+  if (!candidates.length) return null;
+
+  const scored = candidates
+    .map((product) => ({ product, cost: calculateProductUnitCostWithOptimalInputs(product, new Set(stack)) }))
+    .filter((item) => item.cost.complete);
+
+  if (scored.length) return scored.reduce((best, current) => current.cost.unitCost < best.cost.unitCost ? current : best).product;
+  return candidates[0];
 }
 
 function getMaterialRecipe(materialName) {
@@ -1912,7 +1960,8 @@ function renameMaterial(oldName, newName, shouldRender = true) {
 }
 
 function replaceProductMaterialName(oldName, newName, productId) {
-  if (state.materials.includes(oldName)) renameMaterial(oldName, newName, false);
+  const oldNameStillUsed = productNameIsUsedByAnotherProduct(oldName, productId);
+  if (state.materials.includes(oldName) && !oldNameStillUsed) renameMaterial(oldName, newName, false);
   else ensureMaterial(newName);
 
   for (const [materialName, recipeDef] of Object.entries(state.materialRecipes ?? {})) {
@@ -2340,30 +2389,14 @@ function calculateMaterialUnitCost(materialName, stack = new Set()) {
   const materialKey = `material:${name.toLocaleLowerCase("de-DE")}`;
   if (stack.has(materialKey)) return { complete: false, unitCost: null, missing: [name] };
 
-  const recipeDef = getExistingMaterialRecipe(name);
-  const autoOrigin = recipeDef?.autoProductId ? getProductOrigin(recipeDef.autoProductId) : null;
-  if (autoOrigin?.product) return calculateProductUnitCost(autoOrigin.product, stack);
-
-  if (recipeDef?.recipe?.length) {
-    const nextStack = new Set(stack);
-    nextStack.add(materialKey);
-    let total = 0;
-    const missing = [];
-    for (const item of recipeDef.recipe) {
-      const child = calculateMaterialUnitCost(item.material, nextStack);
-      if (!child.complete) missing.push(...child.missing);
-      else total += child.unitCost * positiveInteger(item.amount, 0);
-    }
-    if (missing.length) return { complete: false, unitCost: null, missing: unique(missing) };
-    return { complete: true, unitCost: total / positiveInteger(recipeDef.output, 1), missing: [] };
-  }
-
-  const craftableProduct = findProductByName(name);
-  if (craftableProduct?.recipe?.length) return calculateProductUnitCost(craftableProduct, stack);
+  const nextStack = new Set(stack);
+  nextStack.add(materialKey);
+  const craftOption = calculateNamedMaterialCraftUnitCost(name, nextStack, false);
+  if (craftOption.complete) return craftOption;
 
   const materialCost = getMaterialCostPrice(name);
-  if (materialCost === null) return { complete: false, unitCost: null, missing: [name] };
-  return { complete: true, unitCost: materialCost, missing: [] };
+  if (materialCost !== null) return { complete: true, unitCost: materialCost, missing: [] };
+  return { complete: false, unitCost: null, missing: unique([...(craftOption.missing ?? []), name]) };
 }
 
 function calculateMaterialUnitCostWithOptimalInputs(materialName, stack = new Set()) {
@@ -2388,30 +2421,56 @@ function calculateMaterialCraftUnitCostWithOptimalInputs(materialName, stack = n
   const materialKey = `material-craft:${name.toLocaleLowerCase("de-DE")}`;
   if (stack.has(materialKey)) return { complete: false, unitCost: null, missing: [name] };
 
-  const recipeDef = getExistingMaterialRecipe(name);
-  const autoOrigin = recipeDef?.autoProductId ? getProductOrigin(recipeDef.autoProductId) : null;
-  if (autoOrigin?.product) return calculateProductUnitCostWithOptimalInputs(autoOrigin.product, stack);
-
-  if (recipeDef?.recipe?.length) {
-    const nextStack = new Set(stack);
-    nextStack.add(materialKey);
-    let total = 0;
-    const missing = [];
-    for (const item of recipeDef.recipe) {
-      const child = calculateMaterialUnitCostWithOptimalInputs(item.material, nextStack);
-      if (!child.complete) missing.push(...child.missing);
-      else total += child.unitCost * positiveInteger(item.amount, 0);
-    }
-    if (missing.length) return { complete: false, unitCost: null, missing: unique(missing) };
-    return { complete: true, unitCost: total / positiveInteger(recipeDef.output, 1), missing: [] };
-  }
-
-  const craftableProduct = findProductByName(name);
-  if (craftableProduct?.recipe?.length) return calculateProductUnitCostWithOptimalInputs(craftableProduct, stack);
+  const nextStack = new Set(stack);
+  nextStack.add(materialKey);
+  const craftOption = calculateNamedMaterialCraftUnitCost(name, nextStack, true);
+  if (craftOption.complete) return craftOption;
 
   const manualCost = getMaterialManualPrice(name);
-  if (manualCost === null) return { complete: false, unitCost: null, missing: [name] };
-  return { complete: true, unitCost: manualCost, missing: [] };
+  if (manualCost !== null) return { complete: true, unitCost: manualCost, missing: [] };
+  return { complete: false, unitCost: null, missing: unique([...(craftOption.missing ?? []), name]) };
+}
+
+function calculateNamedMaterialCraftUnitCost(materialName, stack = new Set(), optimalInputs = true) {
+  const name = cleanText(materialName);
+  const options = [];
+  const missing = [];
+  const recipeDef = getExistingMaterialRecipe(name);
+
+  if (recipeDef?.recipe?.length && !recipeDef.autoProductId) {
+    const result = calculateRecipeDefinitionUnitCost(recipeDef, stack, optimalInputs);
+    if (result.complete) options.push(result);
+    else missing.push(...result.missing);
+  }
+
+  for (const product of findProductsByName(name).filter((item) => item.recipe?.length)) {
+    const productKey = `${optimalInputs ? "product-optimal" : "product"}:${product.id}`;
+    if (stack.has(productKey)) continue;
+    const result = optimalInputs ? calculateProductUnitCostWithOptimalInputs(product, stack) : calculateProductUnitCost(product, stack);
+    if (result.complete) options.push(result);
+    else missing.push(...result.missing);
+  }
+
+  if (recipeDef?.recipe?.length && recipeDef.autoProductId && !findProductsByName(name).some((product) => product.id === recipeDef.autoProductId)) {
+    const result = calculateRecipeDefinitionUnitCost(recipeDef, stack, optimalInputs);
+    if (result.complete) options.push(result);
+    else missing.push(...result.missing);
+  }
+
+  if (options.length) return options.reduce((best, current) => current.unitCost < best.unitCost ? current : best);
+  return { complete: false, unitCost: null, missing: unique(missing.length ? missing : [name]) };
+}
+
+function calculateRecipeDefinitionUnitCost(recipeDef, stack = new Set(), optimalInputs = true) {
+  let total = 0;
+  const missing = [];
+  for (const item of recipeDef.recipe ?? []) {
+    const child = optimalInputs ? calculateMaterialUnitCostWithOptimalInputs(item.material, stack) : calculateMaterialUnitCost(item.material, stack);
+    if (!child.complete) missing.push(...child.missing);
+    else total += child.unitCost * positiveInteger(item.amount, 0);
+  }
+  if (missing.length) return { complete: false, unitCost: null, missing: unique(missing) };
+  return { complete: true, unitCost: total / positiveInteger(recipeDef.output, 1), missing: [] };
 }
 
 function calculateProductUnitCost(product, stack = new Set()) {
