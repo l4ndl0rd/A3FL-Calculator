@@ -22,6 +22,7 @@ Der Calculator läuft vollständig statisch und ist für GitHub Pages geeignet. 
 - Gleiche Warennamen können in unterschiedlichen Fabriken existieren
 - Bearbeitungsmodus mit Bestätigungsdialog als UI-Sperre
 - Suche in Material-, Waren- und Handelslisten
+- Responsive Tabellenlayouts nach Materialien-Layout als Referenz
 - JSON Import, Export und Zurücksetzen
 - Standarddatenbestand über `waren-daten.json`
 
