@@ -189,3 +189,10 @@ Die Navigation reserviert stabilen Platz, ohne Dropdown-Menüs durch CSS-Contain
 - Fabriklisten werden erst beim Öffnen der jeweiligen Sektion aufgebaut.
 - Produkt-/Material-Kostenberechnungen nutzen Runtime-Caches und einen Provider-Index.
 - Der erste Paint wird nicht mehr durch das komplette Datenbank-Rendering blockiert.
+
+## v90 Lazy-Render-Korrektur
+
+- Tabwechsel rendert den geöffneten Bereich jetzt direkt nach.
+- Materialien, Handel und Farmraten bleiben dadurch nicht leer, wenn sie nach dem Start oder nach dem Umschalten des Bearbeitungsmodus geöffnet werden.
+- Fabrikpanels werden weiterhin als Shells vorbereitet, aber Produktkarten werden nur für die aktuell sichtbare Fabrik aufgebaut.
+- Das Sperren/Entsperren der Bearbeitung baut nicht mehr alle Fabriklisten vollständig neu auf.

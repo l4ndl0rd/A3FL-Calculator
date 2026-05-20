@@ -196,7 +196,10 @@ function bindStaticEvents() {
     const navItem = event.target.closest("[data-target]");
     if (!navItem) return;
 
-    activateTab(navItem.dataset.target);
+    const targetId = navItem.dataset.target;
+    activateTab(targetId);
+    renderActivePanelContent(targetId);
+    applyResponsiveTableLabels();
     closeFactoryMenu();
   });
 
@@ -454,14 +457,15 @@ function closeFactoryMenu() {
   toggle.setAttribute("aria-expanded", "false");
 }
 
-function renderFactoryPanels() {
-  const activeTarget = document.querySelector(".panel.active")?.id || document.querySelector(".tab.active")?.dataset.target || "calculator";
+function renderFactoryPanels(activeTarget = getActivePanelId()) {
   els.factoryPanels.innerHTML = "";
 
   for (const [factory, label] of Object.entries(FACTORIES)) {
     const panel = els.factoryPanelTemplate.content.firstElementChild.cloneNode(true);
     panel.id = factory;
+    panel.dataset.rendered = "0";
     panel.querySelector(".factory-title").textContent = getFactoryPanelTitle(label);
+
     const addButton = panel.querySelector(".add-product-btn");
     addButton.addEventListener("click", () => {
       if (!requireAdminAccess()) return;
@@ -480,13 +484,28 @@ function renderFactoryPanels() {
       });
     }
 
-    renderProductListForFactory(panel, factory);
-    if (searchCount) searchCount.hidden = !adminUnlocked;
+    if (searchCount) {
+      searchCount.hidden = !adminUnlocked;
+      searchCount.textContent = `${(state.products[factory] ?? []).length.toLocaleString("de-DE")} Waren`;
+    }
 
     els.factoryPanels.appendChild(panel);
   }
 
   activateTab(document.getElementById(activeTarget) ? activeTarget : "calculator");
+}
+
+function renderFactoryProductPanel(factory) {
+  const panel = document.getElementById(factory);
+  if (!panel) return;
+
+  const searchInput = panel.querySelector(".product-search-input");
+  if (searchInput && searchInput.value !== (productSearchQueries[factory] || "")) {
+    searchInput.value = productSearchQueries[factory] || "";
+  }
+
+  renderProductListForFactory(panel, factory);
+  panel.dataset.rendered = "1";
 }
 
 function renderProductListForFactory(panel, factory) {
