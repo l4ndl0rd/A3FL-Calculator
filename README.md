@@ -210,3 +210,11 @@ Die Navigation reserviert stabilen Platz, ohne Dropdown-Menüs durch CSS-Contain
 - Sichtbarkeit von Admin-Controls wird nur noch im Datenmenü und im aktiven Bereich synchronisiert.
 - Globale `.admin-only`-CSS-Abhängigkeit von `body.admin-locked` entfernt; `hidden` ist jetzt maßgeblich.
 - Rechenlogik und Datenmodell unverändert.
+
+## v93 - Calculator INP-Fix
+
+- Planänderungen im Calculator rendern nicht mehr synchron alle abgeleiteten Tabellen.
+- Materialbedarf, Rohmaterialien und Wirtschaftlichkeit werden nach Planänderungen verzögert aktualisiert.
+- Speichern in `localStorage` nach Planänderungen ist entkoppelt/debounced.
+- Responsive Tabellenlabels werden nicht mehr global direkt im Klick-Handler berechnet.
+- Berechnungslogik und Datenmodell unverändert.

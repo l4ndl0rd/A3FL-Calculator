@@ -66,6 +66,10 @@ let farmDialogMode = "create";
 let farmDialogOriginalName = null;
 let unitCostCache = new Map();
 let productProviderIndex = new Map();
+let calculatorDerivedRenderFrame = null;
+let calculatorDerivedRenderTimer = null;
+let responsiveTableLabelFrame = null;
+let stateSaveTimer = null;
 
 const els = {
   tabs: document.querySelector("#tabs"),
@@ -200,7 +204,7 @@ function bindStaticEvents() {
     syncAdminBodyClass(targetId, true);
     activateTab(targetId);
     renderActivePanelContent(targetId);
-    applyResponsiveTableLabels();
+    scheduleResponsiveTableLabels(document.querySelector(`#${CSS.escape(targetId)}`) ?? document);
     closeFactoryMenu();
   });
 
@@ -223,14 +227,14 @@ function bindStaticEvents() {
     els.materialSearchInput.addEventListener("input", () => {
       materialSearchQuery = cleanText(els.materialSearchInput.value);
       renderMaterials();
-      applyResponsiveTableLabels();
+      scheduleResponsiveTableLabels(document.querySelector("#materials"));
     });
   }
   if (els.tradeSearchInput) {
     els.tradeSearchInput.addEventListener("input", () => {
       tradeSearchQuery = cleanText(els.tradeSearchInput.value);
       renderTrade();
-      applyResponsiveTableLabels();
+      scheduleResponsiveTableLabels(document.querySelector("#trade"));
     });
   }
   if (els.addTradeItemBtn) els.addTradeItemBtn.addEventListener("click", openTradeDialogCreate);
@@ -250,7 +254,7 @@ function bindStaticEvents() {
     els.farmSearchInput.addEventListener("input", () => {
       farmSearchQuery = cleanText(els.farmSearchInput.value);
       renderFarmRates();
-      applyResponsiveTableLabels();
+      scheduleResponsiveTableLabels(document.querySelector("#farmrates"));
     });
   }
   if (els.addFarmProfileBtn) els.addFarmProfileBtn.addEventListener("click", openFarmDialogCreate);
@@ -327,8 +331,64 @@ function renderAll() {
   renderFactoryPanels(activeTarget);
   renderActivePanelContent(activeTarget);
   if (els.standardMarginInput) els.standardMarginInput.value = formatInputNumber(state.pricing.standardMarginPercent);
-  applyResponsiveTableLabels();
+  scheduleResponsiveTableLabels();
   saveState();
+}
+
+function renderCalculatorForPlanChange(focusSelector = null) {
+  renderPlan();
+  updateCalculatorKpisFast();
+  scheduleCalculatorDerivedRender();
+  scheduleResponsiveTableLabels(document.querySelector("#calculator"));
+  scheduleSaveState();
+  if (focusSelector) queueFocus(focusSelector);
+}
+
+function updateCalculatorKpisFast() {
+  const directRequirements = calculateRequirements();
+  const totalRuns = state.plan.reduce((sum, item) => {
+    const product = findProduct(item.productId);
+    if (!product) return sum;
+    const output = positiveInteger(product.output, 1);
+    const quantity = positiveInteger(item.quantity, 0);
+    return sum + (quantity > 0 ? Math.ceil(quantity / output) : 0);
+  }, 0);
+
+  els.kpiPositions.textContent = state.plan.length.toLocaleString("de-DE");
+  els.kpiRuns.textContent = totalRuns.toLocaleString("de-DE");
+  els.kpiMaterials.textContent = Object.keys(directRequirements).length.toLocaleString("de-DE");
+}
+
+function scheduleCalculatorDerivedRender() {
+  if (calculatorDerivedRenderFrame) cancelAnimationFrame(calculatorDerivedRenderFrame);
+  if (calculatorDerivedRenderTimer) window.clearTimeout(calculatorDerivedRenderTimer);
+
+  calculatorDerivedRenderFrame = requestAnimationFrame(() => {
+    calculatorDerivedRenderFrame = null;
+    calculatorDerivedRenderTimer = window.setTimeout(() => {
+      calculatorDerivedRenderTimer = null;
+      if (getActivePanelId() !== "calculator") return;
+      renderRequirements();
+      renderEconomy();
+      scheduleResponsiveTableLabels(document.querySelector("#calculator"));
+    }, 0);
+  });
+}
+
+function scheduleResponsiveTableLabels(root = document) {
+  if (responsiveTableLabelFrame) cancelAnimationFrame(responsiveTableLabelFrame);
+  responsiveTableLabelFrame = requestAnimationFrame(() => {
+    responsiveTableLabelFrame = null;
+    applyResponsiveTableLabels(root);
+  });
+}
+
+function scheduleSaveState() {
+  if (stateSaveTimer) window.clearTimeout(stateSaveTimer);
+  stateSaveTimer = window.setTimeout(() => {
+    stateSaveTimer = null;
+    saveState();
+  }, 150);
 }
 
 function getActivePanelId() {
@@ -1142,24 +1202,24 @@ function renderPlan() {
       item.factory = factorySelect.value;
       item.productId = state.products[item.factory][0]?.id ?? null;
       sortPlanAlphabetically();
-      renderAll();
+      renderCalculatorForPlanChange();
     });
 
     productSelect.addEventListener("change", () => {
       item.productId = productSelect.value || null;
       sortPlanAlphabetically();
-      renderAll();
+      renderCalculatorForPlanChange();
     });
 
     quantityInput.addEventListener("change", () => {
       item.quantity = positiveInteger(quantityInput.value, 0);
       sortPlanAlphabetically();
-      renderAll();
+      renderCalculatorForPlanChange();
     });
 
     row.querySelector(".remove-plan-row").addEventListener("click", () => {
       state.plan = state.plan.filter((planItem) => planItem.id !== item.id);
-      renderAll();
+      renderCalculatorForPlanChange();
     });
 
     els.planTableBody.appendChild(row);
@@ -1169,7 +1229,7 @@ function renderPlan() {
 function clearPlan() {
   if (!state.plan.length) return;
   state.plan = [];
-  renderAll();
+  renderCalculatorForPlanChange();
 }
 
 function resetInventory() {
@@ -2122,9 +2182,8 @@ function addPlanRow() {
     productId: state.products[factory][0]?.id ?? null,
     quantity: 1
   });
-  renderAll();
   activateTab("calculator");
-  queueFocus("#planTable tbody tr:last-child .plan-product");
+  renderCalculatorForPlanChange("#planTable tbody tr:last-child .plan-product");
 }
 
 function sortPlanAlphabetically() {
@@ -2252,7 +2311,7 @@ function toggleAdminAccess() {
 
     if (hadActiveFilter) {
       renderActivePanelContent(activeTarget);
-      applyResponsiveTableLabels();
+      scheduleResponsiveTableLabels(document.querySelector(`#${CSS.escape(activeTarget)}`) ?? document);
     } else {
       syncRenderedAdminVisibility(activeTarget);
     }
