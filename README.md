@@ -196,3 +196,17 @@ Die Navigation reserviert stabilen Platz, ohne Dropdown-Menüs durch CSS-Contain
 - Materialien, Handel und Farmraten bleiben dadurch nicht leer, wenn sie nach dem Start oder nach dem Umschalten des Bearbeitungsmodus geöffnet werden.
 - Fabrikpanels werden weiterhin als Shells vorbereitet, aber Produktkarten werden nur für die aktuell sichtbare Fabrik aufgebaut.
 - Das Sperren/Entsperren der Bearbeitung baut nicht mehr alle Fabriklisten vollständig neu auf.
+
+## v91 – schnelleres Sperren/Entsperren
+
+- Bearbeitungsmodus wird jetzt ohne vollständiges Neurendern der gesamten App umgeschaltet.
+- Beim Entsperren werden nur Admin-Controls des aktuell sichtbaren Bereichs sichtbar geschaltet.
+- Beim Sperren wird nur der aktuell sichtbare Bereich neu gerendert, falls dort eine aktive Suche/Filterung zurückgesetzt werden muss.
+- Keine Änderung an Berechnungslogik oder Datenmodell.
+
+### v92 - Admin-Toggle Performance
+
+- Admin-Status schaltet auf dem Calculator nicht mehr die komplette Seitenlayout-Klasse um.
+- Sichtbarkeit von Admin-Controls wird nur noch im Datenmenü und im aktiven Bereich synchronisiert.
+- Globale `.admin-only`-CSS-Abhängigkeit von `body.admin-locked` entfernt; `hidden` ist jetzt maßgeblich.
+- Rechenlogik und Datenmodell unverändert.

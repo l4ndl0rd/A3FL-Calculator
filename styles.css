@@ -2744,12 +2744,7 @@ body.admin-locked .factory-panel .card > .card-header::after {
   background: var(--accent-hover);
 }
 
-body.admin-locked .admin-only,
 .admin-only[hidden] {
-  display: none !important;
-}
-
-body.admin-locked .file-button.admin-only {
   display: none !important;
 }
 

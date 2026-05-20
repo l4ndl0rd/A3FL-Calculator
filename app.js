@@ -197,6 +197,7 @@ function bindStaticEvents() {
     if (!navItem) return;
 
     const targetId = navItem.dataset.target;
+    syncAdminBodyClass(targetId, true);
     activateTab(targetId);
     renderActivePanelContent(targetId);
     applyResponsiveTableLabels();
@@ -320,6 +321,7 @@ function renderAll() {
   normalizeState();
   rebuildRuntimeIndexes();
   const activeTarget = getActivePanelId();
+  syncAdminBodyClass(activeTarget, true);
   updateAdminUi();
   renderFactoryNavigation(activeTarget);
   renderFactoryPanels(activeTarget);
@@ -331,6 +333,16 @@ function renderAll() {
 
 function getActivePanelId() {
   return document.querySelector(".panel.active")?.id || "calculator";
+}
+
+function targetNeedsAdminLayoutClass(targetId = getActivePanelId()) {
+  return targetId === "materials" || targetId === "trade" || targetId === "farmrates" || Object.hasOwn(FACTORIES, targetId);
+}
+
+function syncAdminBodyClass(targetId = getActivePanelId(), force = false) {
+  if (!force && !targetNeedsAdminLayoutClass(targetId)) return;
+  document.body.classList.toggle("admin-unlocked", adminUnlocked);
+  document.body.classList.toggle("admin-locked", !adminUnlocked);
 }
 
 function rebuildRuntimeIndexes() {
@@ -2229,17 +2241,29 @@ async function bootstrapBundledData(force) {
 }
 
 function toggleAdminAccess() {
+  const activeTarget = getActivePanelId();
+
   if (adminUnlocked) {
+    const hadActiveFilter = hasActiveAdminFilter(activeTarget);
     adminUnlocked = false;
     localStorage.removeItem(ADMIN_FLAG_KEY);
-    renderAll();
+    clearAllAdminSearchState();
+    updateAdminUi({ resetSearches: false });
+
+    if (hadActiveFilter) {
+      renderActivePanelContent(activeTarget);
+      applyResponsiveTableLabels();
+    } else {
+      syncRenderedAdminVisibility(activeTarget);
+    }
     return;
   }
 
   if (!confirm(EDIT_CONFIRMATION_TEXT)) return;
   adminUnlocked = true;
   localStorage.setItem(ADMIN_FLAG_KEY, "1");
-  renderAll();
+  updateAdminUi({ resetSearches: false });
+  syncRenderedAdminVisibility(activeTarget);
 }
 
 function requireAdminAccess() {
@@ -2248,24 +2272,65 @@ function requireAdminAccess() {
   return false;
 }
 
-function updateAdminUi() {
-  document.body.classList.toggle("admin-unlocked", adminUnlocked);
-  document.body.classList.toggle("admin-locked", !adminUnlocked);
+function updateAdminUi(options = {}) {
+  const resetSearches = options.resetSearches ?? !adminUnlocked;
+  const activeTarget = getActivePanelId();
+  syncAdminBodyClass(activeTarget);
   if (els.adminAccessBtn) els.adminAccessBtn.textContent = adminUnlocked ? "Bearbeitung sperren" : "Bearbeitung aktivieren";
   if (els.standardMarginInput) els.standardMarginInput.disabled = !adminUnlocked;
   if (els.laborHourlyValueInput) els.laborHourlyValueInput.disabled = !adminUnlocked;
-  if (!adminUnlocked) {
-    materialSearchQuery = "";
-    tradeSearchQuery = "";
-    farmSearchQuery = "";
-    if (els.materialSearchInput) els.materialSearchInput.value = "";
-    if (els.tradeSearchInput) els.tradeSearchInput.value = "";
-    if (els.farmSearchInput) els.farmSearchInput.value = "";
-    Object.keys(productSearchQueries).forEach((key) => { productSearchQueries[key] = ""; });
-  }
-  document.querySelectorAll(".admin-only").forEach((item) => {
+  if (!adminUnlocked && resetSearches) clearAllAdminSearchState();
+  syncAdminOnlyVisibility(document.querySelector(".data-actions"));
+  syncAdminOnlyVisibility(document.getElementById(activeTarget));
+  updateFloatingAddButton();
+}
+
+function syncAdminOnlyVisibility(scope) {
+  if (!scope) return;
+  scope.querySelectorAll(".admin-only").forEach((item) => {
     item.hidden = !adminUnlocked;
   });
+}
+
+function clearAllAdminSearchState() {
+  materialSearchQuery = "";
+  tradeSearchQuery = "";
+  farmSearchQuery = "";
+  if (els.materialSearchInput) els.materialSearchInput.value = "";
+  if (els.tradeSearchInput) els.tradeSearchInput.value = "";
+  if (els.farmSearchInput) els.farmSearchInput.value = "";
+
+  Object.keys(productSearchQueries).forEach((key) => { productSearchQueries[key] = ""; });
+  document.querySelectorAll(".product-search-input").forEach((input) => { input.value = ""; });
+}
+
+function hasActiveAdminFilter(targetId = getActivePanelId()) {
+  if (targetId === "materials") return Boolean(materialSearchQuery);
+  if (targetId === "trade") return Boolean(tradeSearchQuery);
+  if (targetId === "farmrates") return Boolean(farmSearchQuery);
+  if (Object.hasOwn(FACTORIES, targetId)) return Boolean(productSearchQueries[targetId]);
+  return false;
+}
+
+function syncRenderedAdminVisibility(targetId = getActivePanelId()) {
+  syncAdminOnlyVisibility(document.querySelector(".data-actions"));
+  const panel = document.getElementById(targetId);
+  if (panel) {
+    syncAdminOnlyVisibility(panel);
+
+    panel.querySelectorAll(".row-actions, .product-actions").forEach((item) => {
+      item.hidden = !adminUnlocked;
+    });
+
+    panel.querySelectorAll(".add-product-btn").forEach((item) => {
+      item.hidden = !adminUnlocked;
+    });
+
+    panel.querySelectorAll(".product-search-count").forEach((item) => {
+      item.hidden = !adminUnlocked;
+    });
+  }
+
   updateFloatingAddButton();
 }
 
