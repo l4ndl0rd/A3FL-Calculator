@@ -18,7 +18,7 @@ Der Calculator läuft vollständig statisch und ist für GitHub Pages geeignet. 
 - Zentrale Handelsdaten für Importpreis, Exportpreis und Marktwert
 - Farmraten mit persönlichem Arbeitswert pro Stunde
 - Materialien mit optionalem Wert pro Einheit und optionalem Unterrezept
-- Waren mit Produktionsmenge und Rezeptdaten pro Fabrik/Sektion, inklusive Landwirtschaft
+- Waren mit Produktionsmenge und Rezeptdaten pro Fabrik/Sektion, inklusive Landwirtschaft und Fischerei
 - Gleiche Warennamen können in unterschiedlichen Fabriken existieren
 - Bearbeitungsmodus mit Bestätigungsdialog als UI-Sperre
 - Suche in Material-, Waren- und Handelslisten

@@ -20,6 +20,7 @@ const FACTORIES = {
   goods: "Warenfabrik",
   food: "Essensfabrik",
   agriculture: "Landwirtschaft",
+  fishery: "Fischerei",
   chemistry: "Chemiefabrik",
   illegalWeapons: "Illegale Waffenfabrik"
 };
@@ -363,7 +364,7 @@ function renderFactoryNavigation() {
 }
 
 function getFactoryPanelTitle(label) {
-  return label === "Landwirtschaft" ? "Landwirtschaft" : `${label}-Rezepte`;
+  return ["Landwirtschaft", "Fischerei"].includes(label) ? label : `${label}-Rezepte`;
 }
 
 function createPrimaryTab(target, label, isActive) {
